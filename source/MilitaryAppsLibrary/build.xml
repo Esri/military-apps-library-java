@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MilitaryAppsLibrary" default="default" basedir=".">
+
+  <property name="dir.src" value="."/>
+  <property name="dir.build" value="build"/>
+  <property name="dir.dist" value="dist"/>
+  <property name="dir.lib3rdParty" value="lib"/>
+  <property name="dir.deploy" value="../../application/MilitaryAppsLibrary"/>
+  <property name="main.class" value="com.esri.militaryapps.util.Version" />
+  <property name="jar.name" value="MilitaryAppsLibrary.jar" />
+
+  <path id="project.classpath">
+    <!--pathelement location="${dir.dist}/${jar.name}"/-->
+    <!--pathelement location="${dir.lib3rdParty}/junit-4.10.jar"/-->
+  </path>
+  <path id="test.classpath">
+    <pathelement location="${dir.dist}/${jar.name}"/>
+    <pathelement location="${dir.lib3rdParty}/junit-4.10.jar"/>
+  </path>
+
+  <target name="build" depends="create,compile,jar,dist-files">
+  </target>
+
+  <target name="dist-files" depends="jar">
+    <!-- copy any additional dependent files here -->
+    <!--copy todir="${dir.dist}/lib">
+      <fileset dir="${dir.lib3rdParty}" />
+    </copy-->
+    <!--copy todir="${dir.dist}">
+      <fileset file="${dir.src}/mapconfig.xml" />
+    </copy-->
+  </target>
+  
+  <target name="compile" depends="create">
+    <javac srcdir="${dir.src}/src" classpathref="project.classpath" destdir="${dir.build}/classes" includeantruntime="true" debug="${debug}" />
+    <copy todir="${dir.build}/classes">
+      <fileset dir="${dir.src}/src" excludes="**/*.java,**/*.form" />
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile">
+    <copy overwrite="true" file="${dir.src}/src/version.properties" todir="${dir.build}/classes" />
+    <pathconvert pathsep=" " property="project.classpath.string" refid="project.classpath">
+      <chainedmapper>
+        <flattenmapper/>
+        <filtermapper>
+          <replacestring from=" " to="%20"/>
+        </filtermapper>
+        <globmapper from="*" to="lib/*"/>
+      </chainedmapper>
+    </pathconvert>
+    <jar destfile="${dir.dist}/${jar.name}">
+      <fileset dir="${dir.build}/classes" />
+      <manifest>
+        <attribute name="Main-Class" value="${main.class}" />
+        <attribute name="Class-Path" value="${project.classpath.string}" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="run" depends="jar">
+    <java classname="${main.class}" fork="true" failonerror="true">
+        <classpath>
+            <path refid="project.classpath" />
+            <path location="${dir.dist}/${jar.name}" />
+        </classpath>
+    </java>
+  </target>
+
+  <target name="increment-build">
+    <propertyfile file="${dir.src}/src/version.properties">
+      <entry key="BUILD" value="1" type="int" operation="+"/>
+    </propertyfile>
+  </target>
+
+  <target name="deploy" depends="increment-build,dist-files">
+    <delete dir="${dir.deploy}" />
+    <copy todir="${dir.deploy}">
+      <fileset dir="${dir.dist}"/>
+    </copy>
+  </target>
+
+  <target name="clean">
+    <delete dir="${dir.build}" />
+    <delete dir="${dir.dist}" />
+    <echo message="Deleting path: ${dir.build}" />
+    <echo message="Deleting path: ${dir.dist}" />
+  </target>
+
+  <target name="create">
+    <mkdir dir="${dir.build}/classes"/>
+    <mkdir dir="${dir.build}/test/classes"/>
+    <mkdir dir="${dir.dist}"/>
+    <mkdir dir="${dir.deploy}"/>
+    <echo message="Creating: ${dir.build}" />
+    <echo message="Creating: ${dir.dist}" />
+    <echo message="Creating: ${dir.deploy}" />
+  </target>
+  
+  <target name="run-tests" depends="jar">
+      <javac srcdir="${dir.src}/test" classpathref="test.classpath" destdir="${dir.build}/test/classes" includeantruntime="true" debug="${debug}" />
+      <junit printsummary="no">
+          <classpath>
+              <path refid="test.classpath" />
+              <path location="${dir.build}/test/classes" />
+          </classpath>
+          <formatter type="plain" usefile="false" />
+          <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
+      </junit>
+  </target>
+
+</project>
