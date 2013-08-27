@@ -39,7 +39,7 @@
     </copy>
   </target>
 
-  <target name="jar" depends="compile">
+  <target name="jar" depends="compile" description="Build the project JAR">
     <copy overwrite="true" file="${dir.src}/src/version.properties" todir="${dir.build}/classes" />
     <pathconvert pathsep=" " property="project.classpath.string" refid="project.classpath">
       <chainedmapper>
@@ -59,7 +59,7 @@
     </jar>
   </target>
 
-  <target name="run" depends="jar">
+  <target name="run" depends="jar" description="Run the project">
     <java classname="${main.class}" fork="true" failonerror="true">
         <classpath>
             <path refid="project.classpath" />
@@ -98,9 +98,38 @@
     <echo message="Creating: ${dir.deploy}" />
   </target>
   
-  <target name="run-tests" depends="jar">
+  <target name="run-tests" depends="jar" description="Run Ant tests">
       <javac srcdir="${dir.src}/test" classpathref="test.classpath" destdir="${dir.build}/test/classes" includeantruntime="true" debug="${debug}" />
+      <copy todir="${dir.build}/test/classes">
+          <fileset file="${dir.src}/test/*" />
+      </copy>
       <junit printsummary="no">
+          <classpath>
+              <path refid="test.classpath" />
+              <path location="${dir.build}/test/classes" />
+          </classpath>
+          <formatter type="plain" usefile="false" />
+          <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
+      </junit>
+  </target>
+  
+  <target name="debug-tests" description="Run Ant tests">
+      <property name="debug" value="true" />
+      <antcall target="clean" />
+      <antcall target="jar" />
+      <javac srcdir="${dir.src}/test" classpathref="test.classpath" destdir="${dir.build}/test/classes" includeantruntime="true" debug="true" />
+      <copy todir="${dir.build}/test/classes">
+          <fileset file="${dir.src}/test/*" />
+      </copy>
+      <nbjpdastart addressproperty="jpda.address" name="MilitaryAppsLibrary" transport="dt_socket">
+          <classpath>
+              <path refid="test.classpath" />
+              <path location="${dir.build}/test/classes" />
+          </classpath>
+      </nbjpdastart>
+      <junit printsummary="no" fork="yes" forkmode="once">
+          <jvmarg value="-Xdebug"/>
+          <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
           <classpath>
               <path refid="test.classpath" />
               <path location="${dir.build}/test/classes" />

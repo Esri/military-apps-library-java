@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -38,15 +37,8 @@ public class MapConfigReader {
     private static final Logger logger = Logger.getLogger(MapConfigReader.class.getName());
     
     private static class MapConfigHandler extends DefaultHandler {
-
-//        private final MapController mapController;
-//        private final AppConfigController appConfig;
-//        private boolean addedLayersToMap = false;
-//        private final Object addedLayersToMapLock = new Object();
-
-//        private List<Layer> nonBasemapLayers = new ArrayList<Layer>();
+        
         private List<LayerInfo> nonBasemapLayers = new ArrayList<LayerInfo>();
-//        private BasemapLayerList basemapLayers = new BasemapLayerList();
         private List<BasemapLayerInfo> basemapLayers = new ArrayList<BasemapLayerInfo>();
         private Double x = null;
         private Double y = null;
@@ -89,11 +81,6 @@ public class MapConfigReader {
         private String currentLayerName = null;
         private boolean currentLayerBasemap = false;
         private String currentLayerThumbnail = null;
-
-        public MapConfigHandler(/*MapController mapController, AppConfigController appConfig*/) {
-//            this.mapController = mapController;
-//            this.appConfig = appConfig;
-        }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -155,15 +142,7 @@ public class MapConfigReader {
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             String string = new String(ch, start, length);            
-            if (readingDatasetpath) {
-            	
-            	if (!(new File(string).exists())) {
-                    if (!string.contains("http")) { // Web Address
-                        logger.log(Level.SEVERE, "ERROR: Dataset File or path does not exist: {0}", string);
-                        currentLayerType = "INVALID_DATASET_PATH";
-                    }
-            	}
-            	
+            if (readingDatasetpath) {            	
                 LayerInfo layerInfo = currentLayerBasemap ? new BasemapLayerInfo(currentLayerThumbnail) : new LayerInfo();
                 layerInfo.setDatasetPath(string);
                 if ("TiledCacheLayer".equals(currentLayerType)) {
@@ -173,64 +152,11 @@ public class MapConfigReader {
                     layerInfo.setDatasetPath(string);
                     layerInfo.setLayerType(LayerType.TILED_MAP_SERVICE);
                 } else if ("LocalDynamicMapLayer".equals(currentLayerType)) {
-                    /**
-                     * Open it as a feature layer so we can get attachments, but
-                     * add the map layer to the map.
-                     */
-//                    final boolean isBasemapLayer = currentLayerBasemap;
-//                    final String layerName = currentLayerName;
-                    
-                    //Dummy layer for TOC
-//                    final GraphicsLayer dummyLayer = new GraphicsLayer();
-//                    dummyLayer.setName("Loading...");
-//                    layer = dummyLayer;
-                    
-                    //The feature service that will provide the real map layer and a feature layer
-//                    final LocalFeatureService featureService = new LocalFeatureService(string);
                     layerInfo.setLayerType(LayerType.LOCAL_DYNAMIC_MAP);
-//                    featureService.addLocalServiceStartCompleteListener(new LocalServiceStartCompleteListener() {
-//                        
-//                        private final boolean layerIsVisible = currentLayerVisible;
-//
-//                        public void localServiceStartComplete(LocalServiceStartCompleteEvent e) {
-//                            ArcGISDynamicMapServiceLayer mapLayer = new ArcGISDynamicMapServiceLayer(featureService.getUrlMapService());
-//                            mapLayer.setVisible(layerIsVisible);
-//                            mapLayer.setName(layerName);
-//                            for (LayerDetails featureLayerDetails : featureService.getFeatureLayers()) {
-//                                ArcGISFeatureLayer featureLayer = new ArcGISFeatureLayer(featureLayerDetails.getUrl());
-//                                featureLayer.initializeAsync();
-//                                mapController.saveFeatureLayer(mapLayer, featureLayerDetails.getId(), featureLayer);
-//                            }
-//                            synchronized (addedLayersToMapLock) {
-//                                List<Layer> layerList = isBasemapLayer ? basemapLayers.getLayers() : nonBasemapLayers;
-//                                layerList.add(layerList.indexOf(dummyLayer), mapLayer);
-//                                layerList.remove(dummyLayer);
-//                                if (addedLayersToMap) {
-//                                    int layerIndex = mapController.removeLayer(dummyLayer);
-//                                    if (-1 < layerIndex) {
-//                                        mapController.addLayer(layerIndex, mapLayer, !isBasemapLayer);
-//                                    } else {
-//                                        mapController.addLayer(mapLayer, !isBasemapLayer);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        
-//                    });
-//                    featureService.startAsync();
-                    
                 } else if ("DynamicMapServiceLayer".equals(currentLayerType)) {
-//                    layer = new ArcGISDynamicMapServiceLayer(string);
                     layerInfo.setLayerType(LayerType.DYNAMIC_MAP_SERVICE);
                 } else if ("Mil2525CMessageLayer".equals(currentLayerType)) {
                     layerInfo.setLayerType(LayerType.MIL2525C_MESSAGE);
-//                    try {
-//                        layer = new Mil2525CMessageLayer(string, currentLayerName, mapController, appConfig);
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(MapConfigReader.class.getName()).log(Level.SEVERE, null, ex);
-//                    } catch (ParserConfigurationException ex) {
-//                        Logger.getLogger(MapConfigReader.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
                 }
                 if (null != layerInfo.getLayerType() && null != currentLayerName) {
                     layerInfo.setName(currentLayerName);
@@ -346,30 +272,18 @@ public class MapConfigReader {
      * @throws SAXException
      */
     public static MapConfig readMapConfig(
-            File mapConfigFile/*,
-            MapController mapController,
-            AppConfigController appConfig,
-            ViewshedController viewshedController*/) throws IOException, ParserConfigurationException, SAXException {
-        MapConfigHandler handler = new MapConfigHandler(/*mapController, appConfig*/);
+            File mapConfigFile) throws IOException, ParserConfigurationException, SAXException {
+        MapConfigHandler handler = new MapConfigHandler();
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         parser.parse(mapConfigFile, handler);
 
         MapConfig mapConfig = new MapConfig(handler.toolbarItems);
 
-//        synchronized (handler.addedLayersToMapLock) {
-        //Add layers to map
-//        mapController.addLayers(handler.basemapLayers.getLayers(), false);
-//        mapController.addLayers(handler.nonBasemapLayers, true);
-
         //Record the layers in the MapConfig object
         mapConfig.setBasemapLayers(handler.basemapLayers);
         mapConfig.setNonBasemapLayers(handler.nonBasemapLayers);
 
-//        handler.addedLayersToMap = true;
-//        }
-
         if (null != handler.x && null != handler.y && null != handler.scale) {
-//            mapController.zoomToScale(handler.scale, new Point(handler.x, handler.y));
             mapConfig.setScale(handler.scale);
             mapConfig.setCenterX(handler.x);
             mapConfig.setCenterY(handler.y);
