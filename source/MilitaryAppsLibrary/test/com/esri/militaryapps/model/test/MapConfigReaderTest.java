@@ -114,7 +114,7 @@ public class MapConfigReaderTest {
         File thumbnailFile = ResourceCopier.copyResourceToTemp(thumbnailFilename, getClass().getResourceAsStream("/" + thumbnailFilename));
         thumbnailFile.deleteOnExit();
         BasemapLayerInfo basemapLayerInfo = new BasemapLayerInfo(thumbnailFile.getAbsolutePath());
-        Assert.assertNotNull("Thumbnail should not be null", basemapLayerInfo.getThumbnail());
+        Assert.assertNotNull("Thumbnail should not be null", basemapLayerInfo.getThumbnailUrl());
     }
     
     @After
