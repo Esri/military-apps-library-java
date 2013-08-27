@@ -155,15 +155,7 @@ public class MapConfigReader {
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             String string = new String(ch, start, length);            
-            if (readingDatasetpath) {
-            	
-            	if (!(new File(string).exists())) {
-                    if (!string.contains("http")) { // Web Address
-                        logger.log(Level.SEVERE, "ERROR: Dataset File or path does not exist: {0}", string);
-                        currentLayerType = "INVALID_DATASET_PATH";
-                    }
-            	}
-            	
+            if (readingDatasetpath) {            	
                 LayerInfo layerInfo = currentLayerBasemap ? new BasemapLayerInfo(currentLayerThumbnail) : new LayerInfo();
                 layerInfo.setDatasetPath(string);
                 if ("TiledCacheLayer".equals(currentLayerType)) {

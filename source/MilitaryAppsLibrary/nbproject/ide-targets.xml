@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="MilitaryAppsLibrary-IDE">
+    <import file="../build.xml"/>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#debugj2se) -->
+    <target description="Run the project" name="debug-nb">
+        <property name="debug" value="true" />
+        <antcall target="jar" />
+        <nbjpdastart addressproperty="jpda.address" name="MilitaryAppsLibrary" transport="dt_socket">
+            <classpath>
+                <path refid="project.classpath"/>
+                <path location="${dir.dist}/${jar.name}"/>
+            </classpath>
+        </nbjpdastart>
+        <java classname="${main.class}" failonerror="true" fork="true">
+            <classpath>
+                <path refid="project.classpath"/>
+                <path location="${dir.dist}/${jar.name}"/>
+            </classpath>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+</project>
