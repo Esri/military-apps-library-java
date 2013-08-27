@@ -25,26 +25,24 @@
     map as a basemap layer, but it will not render unless the map is not moving.
     -->
     <layers>
-<!--         
-		<layer name="Imagery" visible="true" type="TiledCacheLayer" basemap="true" thumbnail="C:\data\thumbnail.jpg">
-            <datasetpath>C:/Example/basemaps/Imagery</datasetpath>
-        </layer>
--->        
-        <!--layer name="Scanned" visible="true" type="TiledMapServiceLayer" basemap="true">
-              <datasetpath>http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer</datasetpath>
-        </layer-->
         <layer name="Topo" visible="false" type="TiledCacheLayer" basemap="true">
             <datasetpath>/data/JbadBasemaps/Topographic.tpk</datasetpath>
         </layer>
-        <layer name="Imagery" visible="true" type="TiledCacheLayer" basemap="true">
-            <datasetpath>/data/JbadBasemaps/Imagery.tpk</datasetpath>
+		<layer name="Imagery" visible="true" type="TiledCacheLayer" basemap="true">
+            <datasetpath>C:/Example/basemaps/Imagery</datasetpath>
         </layer>
-        <!--layer name="Bihsud Bridge and Environs" visible="true" type="LocalDynamicMapLayer" basemap="false">
+        <layer name="National Geographic" visible="false" type="TiledMapServiceLayer" basemap="true">
+              <url>http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer</url>
+        </layer>
+        <layer name="USA" visible="false" type="DynamicMapServiceLayer" basemap="true">
+            <datasetpath>http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer</datasetpath>
+        </layer>
+        <layer name="Bihsud Bridge and Environs" visible="true" type="LocalDynamicMapLayer" basemap="false">
             <datasetpath>../../BihsudBridgeVCP.mpk</datasetpath>
-        </layer> -->
-        <!--layer name="COA Sketch" visible="true" type="Mil2525CMessageLayer" basemap="false">
+        </layer>
+        <layer name="COA Sketch" visible="false" type="Mil2525CMessageLayer" basemap="false">
             <datasetpath>../../data/coa.xml</datasetpath>
-        </layer-->
+        </layer>
     </layers>
     <initialextent>
         <anchor>
