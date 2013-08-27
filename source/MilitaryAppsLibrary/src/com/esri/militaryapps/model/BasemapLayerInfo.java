@@ -15,9 +15,11 @@
  ******************************************************************************/
 package com.esri.militaryapps.model;
 
-import java.awt.MediaTracker;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A bean to contain a Layer object and other information, such as a thumbnail image,
@@ -25,30 +27,37 @@ import javax.swing.ImageIcon;
  */
 public class BasemapLayerInfo extends LayerInfo {
     
-    private final Icon thumbnail;
+    private final URL thumbnailUrl;
     private Object layer;
 
     /**
-     * Constructs a new BasemapLayerInfo bean.
-     * @param layer the layer object for the basemap layer. This parameter's class
-     *              is Layer (or a child of Layer) in the SDK you're using.
-     * @param thumbnail a thumbnail icon for the basemap layer.
+     * Constructs a new BasemapLayer bean.
+     * @param thumbnailUrl the URL (file:, http:, etc.) for a thumbnail icon for the basemap
+     *                          layer.
      */
-    public BasemapLayerInfo(Icon thumbnail) {
-        this.thumbnail = thumbnail;
+    public BasemapLayerInfo(URL thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
     
     /**
      * Constructs a new BasemapLayer bean.
-     * @param thumbnailFilename the filename for a thumbnail icon for the basemap
-     *                          layer.
+     * @param thumbnailPath the URL or filename for a thumbnail icon for the basemap layer.
      */
-    public BasemapLayerInfo(String thumbnailFilename) {
-        if (null == thumbnailFilename) {
-            thumbnail = null;
+    public BasemapLayerInfo(String thumbnailPath) {
+        if (null == thumbnailPath) {
+            thumbnailUrl = null;
         } else {
-            ImageIcon imageIcon = new ImageIcon(thumbnailFilename);
-            thumbnail = MediaTracker.COMPLETE == imageIcon.getImageLoadStatus() ? imageIcon : null;
+            URL url = null;
+            try {
+                url = new URL(thumbnailPath);
+            } catch (MalformedURLException ex) {
+                try {
+                    url = new File(thumbnailPath).toURI().toURL();
+                } catch (MalformedURLException ex1) {
+                    Logger.getLogger(BasemapLayerInfo.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+            }
+            thumbnailUrl = url;
         }
     }
 
@@ -72,8 +81,8 @@ public class BasemapLayerInfo extends LayerInfo {
     /**
      * @return the thumbnail
      */
-    public Icon getThumbnail() {
-        return thumbnail;
+    public URL getThumbnailUrl() {
+        return thumbnailUrl;
     }
     
 }
