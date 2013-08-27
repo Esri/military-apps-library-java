@@ -27,6 +27,14 @@ import java.io.OutputStream;
  */
 public class ResourceCopier {
 
+    /**
+     * Copies the resource specified by the InputStream to a temporary file.
+     * @param filename the original resource's filename, in order to get the proper
+     *                 filename extension; the rest of the name is ignored.
+     * @param resource the resource to copy.
+     * @return a temporary file.
+     * @throws IOException 
+     */
     public static File copyResourceToTemp(String filename, InputStream resource) throws IOException {
         String extension = null;
         String name = filename;

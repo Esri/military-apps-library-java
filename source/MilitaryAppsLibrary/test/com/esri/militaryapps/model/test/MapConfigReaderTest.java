@@ -42,13 +42,8 @@ public class MapConfigReaderTest {
     
     @Test
     public void testReadMapConfig() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
-        final String thumbnailFilename = "ThumbnailTest.png";
-        File thumbnailFile = ResourceCopier.copyResourceToTemp(thumbnailFilename, getClass().getResourceAsStream("/" + thumbnailFilename));
-        thumbnailFile.deleteOnExit();
-        //        File mapConfigFile = new File("mapconfig.xml");
         URL resource = getClass().getResource("/mapconfig_MapConfigReaderTest.xml");
         File mapConfigFile = new File(resource.toURI());
-        //        try {
         MapConfig mapConfig = MapConfigReader.readMapConfig(mapConfigFile);
         List<BasemapLayerInfo> basemapLayers = mapConfig.getBasemapLayers();
         final int basemapLayerCount = 4;
@@ -115,6 +110,9 @@ public class MapConfigReaderTest {
         Assert.assertFalse("Layer 5 should not be a BasemapLayerInfo", nonBasemapLayers.get(1) instanceof BasemapLayerInfo);
         
         //The easiest way to test the thumbnail is like this:
+        final String thumbnailFilename = "ThumbnailTest.png";
+        File thumbnailFile = ResourceCopier.copyResourceToTemp(thumbnailFilename, getClass().getResourceAsStream("/" + thumbnailFilename));
+        thumbnailFile.deleteOnExit();
         BasemapLayerInfo basemapLayerInfo = new BasemapLayerInfo(thumbnailFile.getAbsolutePath());
         Assert.assertNotNull("Thumbnail should not be null", basemapLayerInfo.getThumbnail());
     }
