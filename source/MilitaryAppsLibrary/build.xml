@@ -7,7 +7,7 @@
   <property name="dir.dist" value="dist"/>
   <property name="dir.lib3rdParty" value="lib"/>
   <property name="dir.deploy" value="../../application/MilitaryAppsLibrary"/>
-  <property name="main.class" value="com.esri.militaryapps.util.Version" />
+  <!--property name="main.class" value="com.esri.militaryapps.util.Version" /-->
   <property name="jar.name" value="MilitaryAppsLibrary.jar" />
 
   <path id="project.classpath">
@@ -40,7 +40,6 @@
   </target>
 
   <target name="jar" depends="compile" description="Build the project JAR">
-    <copy overwrite="true" file="${dir.src}/src/version.properties" todir="${dir.build}/classes" />
     <pathconvert pathsep=" " property="project.classpath.string" refid="project.classpath">
       <chainedmapper>
         <flattenmapper/>
@@ -59,22 +58,16 @@
     </jar>
   </target>
 
-  <target name="run" depends="jar" description="Run the project">
+  <!--target name="run" depends="jar" description="Run the project">
     <java classname="${main.class}" fork="true" failonerror="true">
         <classpath>
             <path refid="project.classpath" />
             <path location="${dir.dist}/${jar.name}" />
         </classpath>
     </java>
-  </target>
+  </target-->
 
-  <target name="increment-build">
-    <propertyfile file="${dir.src}/src/version.properties">
-      <entry key="BUILD" value="1" type="int" operation="+"/>
-    </propertyfile>
-  </target>
-
-  <target name="deploy" depends="increment-build,dist-files">
+  <target name="deploy" depends="dist-files">
     <delete dir="${dir.deploy}" />
     <copy todir="${dir.deploy}">
       <fileset dir="${dir.dist}"/>
