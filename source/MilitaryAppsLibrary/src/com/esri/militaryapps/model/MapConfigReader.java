@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -52,7 +51,7 @@ public class MapConfigReader {
         private String observerHeightParamName = "ObserverHeight";
         private String radiusParamName = "Radius";
         private String elevationParamName = "Elevation";
-        private final List<Map<String, String>> toolbarItems = new ArrayList<Map<String, String>>();
+        private final List<HashMap<String, String>> toolbarItems = new ArrayList<HashMap<String, String>>();
 
         private boolean readingMapconfig = false;
         private boolean readingLayers = false;
@@ -277,11 +276,11 @@ public class MapConfigReader {
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         parser.parse(mapConfigFile, handler);
 
-        MapConfig mapConfig = new MapConfig(handler.toolbarItems);
+        MapConfig mapConfig = new MapConfig(handler.toolbarItems.toArray(new HashMap[0]));
 
         //Record the layers in the MapConfig object
-        mapConfig.setBasemapLayers(handler.basemapLayers);
-        mapConfig.setNonBasemapLayers(handler.nonBasemapLayers);
+        mapConfig.setBasemapLayers(handler.basemapLayers.toArray(new BasemapLayerInfo[handler.basemapLayers.size()]));
+        mapConfig.setNonBasemapLayers(handler.nonBasemapLayers.toArray(new LayerInfo[handler.nonBasemapLayers.size()]));
 
         if (null != handler.x && null != handler.y && null != handler.scale) {
             mapConfig.setScale(handler.scale);
