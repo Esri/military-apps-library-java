@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.esri.militaryapps.model;
 
+import java.io.Serializable;
+
 /**
  * A bean containing metadata for a layer.
  */
-public class LayerInfo {
+public class LayerInfo implements Serializable {
     
     private LayerType layerType = null;
     private String datasetPath;

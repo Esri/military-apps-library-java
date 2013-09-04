@@ -15,17 +15,16 @@
  ******************************************************************************/
 package com.esri.militaryapps.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * A bean containing map configuration details, typically read from XML by MapConfigReader.
  */
-public class MapConfig {
+public class MapConfig implements Serializable {
 
-    private List<BasemapLayerInfo> basemapLayers = new ArrayList<BasemapLayerInfo>();
-    private List<LayerInfo> nonBasemapLayers = new ArrayList<LayerInfo>();
+    private BasemapLayerInfo[] basemapLayers = new BasemapLayerInfo[0];
+    private LayerInfo[] nonBasemapLayers = new LayerInfo[0];
     private double scale = Double.NaN;
     private double centerX = Double.NaN;
     private double centerY = Double.NaN;
@@ -40,13 +39,13 @@ public class MapConfig {
     private String viewshedRadiusParamName = "Radius";
     private String viewshedElevationParamName = "Elevation";
     
-    private final List<Map<String, String>> toolbarItems;
+    private final HashMap<String, String>[] toolbarItems;
     
     /**
      * Instantiates a MapConfig with an empty list of toolbar items.
      */
     public MapConfig() {
-        this.toolbarItems = new ArrayList<Map<String, String>>();
+        this.toolbarItems = new HashMap[0];
     }
 
     /**
@@ -54,7 +53,7 @@ public class MapConfig {
      * @param toolbarItems the toolbar items. Each item in the list is a map of
      *                     key-value pairs used to instantiate a toolbar item.
      */
-    public MapConfig(List<Map<String, String>> toolbarItems) {
+    public MapConfig(HashMap<String, String>[] toolbarItems) {
         this.toolbarItems = toolbarItems;
     }
 
@@ -62,7 +61,7 @@ public class MapConfig {
      * Returns the basemap layers contained by this MapConfig.
      * @return The basemap layers contained by this MapConfig.
      */
-    public List<BasemapLayerInfo> getBasemapLayers() {
+    public BasemapLayerInfo[] getBasemapLayers() {
         return basemapLayers;
     }
 
@@ -70,7 +69,7 @@ public class MapConfig {
      * Sets this MapConfig's basemap layers.
      * @param layers the basemap layers to be stored by this MapConfig
      */
-    public void setBasemapLayers(List<BasemapLayerInfo> layers) {
+    public void setBasemapLayers(BasemapLayerInfo[] layers) {
         this.basemapLayers = layers;
     }
     
@@ -78,21 +77,21 @@ public class MapConfig {
      * Returns the toolbar items as a list of key-value pairs.
      * @return the toolbar items.
      */
-    public List<Map<String, String>> getToolbarItems() {
+    public HashMap<String, String>[] getToolbarItems() {
         return toolbarItems;
     }
 
     /**
      * @return the nonBasemapLayers
      */
-    public List<LayerInfo> getNonBasemapLayers() {
+    public LayerInfo[] getNonBasemapLayers() {
         return nonBasemapLayers;
     }
 
     /**
      * @param nonBasemapLayers the nonBasemapLayers to set
      */
-    public void setNonBasemapLayers(List<LayerInfo> nonBasemapLayers) {
+    public void setNonBasemapLayers(LayerInfo[] nonBasemapLayers) {
         this.nonBasemapLayers = nonBasemapLayers;
     }
 

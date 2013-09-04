@@ -15,10 +15,12 @@
  ******************************************************************************/
 package com.esri.militaryapps.model;
 
+import java.io.Serializable;
+
 /**
  * An enum of layer types. Not all of these types are supported in every ArcGIS SDK.
  */
-public enum LayerType {
+public enum LayerType implements Serializable {
     
     TILED_CACHE,
     TILED_MAP_SERVICE,
