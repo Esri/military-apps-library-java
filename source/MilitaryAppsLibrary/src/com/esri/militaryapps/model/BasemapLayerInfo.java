@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 public class BasemapLayerInfo extends LayerInfo {
     
     private final URL thumbnailUrl;
-    private Object layer;
 
     /**
      * Constructs a new BasemapLayer bean.
@@ -59,23 +58,6 @@ public class BasemapLayerInfo extends LayerInfo {
             }
             thumbnailUrl = url;
         }
-    }
-
-    /**
-     * @return the layer. Its class is Layer (or a child of Layer) in the ArcGIS
-     *         SDK you're using.
-     */
-    public Object getLayer() {
-        return layer;
-    }
-    
-    /**
-     * Sets the layer. Its class is Layer (or a child of Layer) in the ArcGIS SDK
-     * you're using.
-     * @param layer 
-     */
-    public void setLayer(Object layer) {
-        this.layer = layer;
     }
 
     /**
