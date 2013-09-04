@@ -16,7 +16,9 @@
 package com.esri.militaryapps.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -264,18 +266,29 @@ public class MapConfigReader {
     /**
      * Reads a map configuration XML file and applies its contents to the MapController's map.
      * @param mapConfigFile the map configuration XML file.
-     * @param mapController the MapController to whose map this map configuration will apply.
-     * @param appConfig the application's configuration controller.
+     * @return a new MapConfig object.
      * @throws IOException
      * @throws ParserConfigurationException
      * @throws SAXException
      */
     public static MapConfig readMapConfig(
             File mapConfigFile) throws IOException, ParserConfigurationException, SAXException {
+        return readMapConfig(new FileInputStream(mapConfigFile));
+    }
+    
+    /**
+     * Reads a map configuration XML from a stream and applies its contents to the MapController's map.
+     * @param inStream the map configuration XML InputStream.
+     * @return a new MapConfig object.
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     */
+    public static MapConfig readMapConfig(
+            InputStream inStream) throws IOException, ParserConfigurationException, SAXException {
         MapConfigHandler handler = new MapConfigHandler();
         SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-        parser.parse(mapConfigFile, handler);
-
+        parser.parse(inStream, handler);
         MapConfig mapConfig = new MapConfig(handler.toolbarItems.toArray(new HashMap[0]));
 
         //Record the layers in the MapConfig object
