@@ -12,9 +12,10 @@
 
   <path id="project.classpath">
     <!--pathelement location="${dir.dist}/${jar.name}"/-->
-    <!--pathelement location="${dir.lib3rdParty}/junit-4.10.jar"/-->
+    <pathelement location="${dir.lib3rdParty}/json.jar"/>
   </path>
   <path id="test.classpath">
+    <path refid="project.classpath"/>
     <pathelement location="${dir.dist}/${jar.name}"/>
     <pathelement location="${dir.lib3rdParty}/junit-4.10.jar"/>
   </path>
@@ -103,6 +104,7 @@
           </classpath>
           <formatter type="plain" usefile="false" />
           <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
+          <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
       </junit>
   </target>
   
@@ -129,6 +131,7 @@
           </classpath>
           <formatter type="plain" usefile="false" />
           <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
+          <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
       </junit>
   </target>
 
