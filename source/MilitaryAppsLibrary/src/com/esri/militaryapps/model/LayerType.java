@@ -26,6 +26,7 @@ public enum LayerType implements Serializable {
     TILED_MAP_SERVICE,
     LOCAL_DYNAMIC_MAP,
     DYNAMIC_MAP_SERVICE,
-    MIL2525C_MESSAGE
-    
+    MIL2525C_MESSAGE,
+    IMAGE_SERVICE,
+    FEATURE_SERVICE
 }
