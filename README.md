@@ -3,6 +3,11 @@ military-apps-library-java
 
 A common, SDK-agnostic Java library for building military-oriented apps, especially for ArcGIS for the Military.
 
+## Example Capabilities
+
+- Read a map configuration XML file and return a MapConfig object for the layers in the map configuration.
+- Read an ArcGIS Server REST service endpoint and return a list of LayerInfo objects for the layers in the service.
+
 ## Licensing
 
 Copyright 2013 Esri
