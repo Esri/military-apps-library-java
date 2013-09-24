@@ -20,6 +20,7 @@ import java.io.Serializable;
 /**
  * An enum of layer types. Not all of these types are supported in every ArcGIS SDK.
  */
+@SuppressWarnings("serial")
 public enum LayerType implements Serializable {
     
     TILED_CACHE,
