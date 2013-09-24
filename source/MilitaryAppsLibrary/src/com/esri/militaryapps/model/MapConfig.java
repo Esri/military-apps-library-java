@@ -21,6 +21,7 @@ import java.util.HashMap;
 /**
  * A bean containing map configuration details, typically read from XML by MapConfigReader.
  */
+@SuppressWarnings("serial")
 public class MapConfig implements Serializable {
 
     private BasemapLayerInfo[] basemapLayers = new BasemapLayerInfo[0];

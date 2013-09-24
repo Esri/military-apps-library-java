@@ -20,6 +20,7 @@ import java.io.Serializable;
 /**
  * A bean containing metadata for a layer.
  */
+@SuppressWarnings("serial")
 public class LayerInfo implements Serializable {
     
     private LayerType layerType = null;
