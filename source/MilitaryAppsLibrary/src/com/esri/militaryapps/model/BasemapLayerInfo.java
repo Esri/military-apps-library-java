@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  * A bean to contain a Layer object and other information, such as a thumbnail image,
  * that would go with a basemap layer.
  */
+@SuppressWarnings("serial")
 public class BasemapLayerInfo extends LayerInfo {
     
     private final URL thumbnailUrl;
