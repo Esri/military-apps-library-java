@@ -122,6 +122,10 @@ public class MapControllerTest {
         private double rotation = 0.0;
         private boolean gridVisible = false;
 
+        public MapControllerImpl() {
+            fireMapReady();
+        }
+        
         @Override
         public void zoom(double factor) {
             scale *= factor;
@@ -140,11 +144,6 @@ public class MapControllerTest {
         @Override
         protected void _zoomToScale(double scale, double centerPointX, double centerPointY) {
             this.scale = scale;
-        }
-
-        @Override
-        public boolean isReady() {
-            return true;
         }
 
         @Override
