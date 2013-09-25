@@ -36,7 +36,7 @@ public abstract class MapController {
     public enum PanDirection {
         UP, DOWN, LEFT, RIGHT
     }
-    protected final List<MapControllerListener> listeners = new ArrayList<MapControllerListener>();
+    private final List<MapControllerListener> listeners = new ArrayList<MapControllerListener>();
     
     /**
      * Adds a MapControllerListener to this MapController.
