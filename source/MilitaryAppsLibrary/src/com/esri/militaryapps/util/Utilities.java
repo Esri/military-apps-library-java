@@ -112,9 +112,11 @@ public class Utilities {
     }
 
     /**
-     * Private constructor because Utilities is not meant to be instantiated.
+     * Protected constructor because Utilities is not meant to be instantiated.
+     * Protected instead of private so that an application can extend it for convenience
+     * (so that you only have to have one Utilities class).
      */
-    private Utilities() {
+    protected Utilities() {
     }
 
     /**
