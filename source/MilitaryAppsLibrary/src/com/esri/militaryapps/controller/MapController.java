@@ -38,6 +38,8 @@ public abstract class MapController {
     }
     private final List<MapControllerListener> listeners = new ArrayList<MapControllerListener>();
     
+    private boolean mapReady = false;
+    
     /**
      * Adds a MapControllerListener to this MapController.
      * @param listener the listener to add.
@@ -70,6 +72,7 @@ public abstract class MapController {
      * Called by an implementing class when the map is ready.
      */
     protected void fireMapReady() {
+        mapReady = true;
         for (MapControllerListener listener : listeners) {
             listener.mapReady();
         }
@@ -159,7 +162,9 @@ public abstract class MapController {
      * Returns true if the map is ready and false otherwise.
      * @return true if the map is ready and false otherwise.
      */
-    public abstract boolean isReady();
+    public boolean isReady() {
+        return mapReady;
+    }
     
     /**
      * Pans the map in the specified direction.
