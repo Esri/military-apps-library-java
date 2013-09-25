@@ -105,6 +105,8 @@
           <formatter type="plain" usefile="false" />
           <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
           <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
+          <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
+          <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
       </junit>
   </target>
   
@@ -132,6 +134,8 @@
           <formatter type="plain" usefile="false" />
           <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
           <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
+          <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
+          <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
       </junit>
   </target>
 
