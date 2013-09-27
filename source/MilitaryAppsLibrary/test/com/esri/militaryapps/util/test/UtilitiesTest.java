@@ -292,7 +292,7 @@ public class UtilitiesTest {
         assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
         
         //Return null if there are an odd number of easting/northing digits
-        input = "62SXD12345";
+        input = "42SXD12345";
         expected = null;
         referenceMgrs = null;
         assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
