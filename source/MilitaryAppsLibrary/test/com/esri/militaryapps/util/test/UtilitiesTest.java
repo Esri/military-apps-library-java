@@ -242,4 +242,59 @@ public class UtilitiesTest {
         result = Utilities.getAFMGeoEventColorString(colorRgb);
         assertEquals(expResult, result);
     }
+    
+    @Test
+    public void testConvertToValidMgrs() {
+        String input;
+        String expected;
+        String referenceMgrs;
+        
+        //Leave a good string alone
+        input = "42SXD1234";
+        expected = input;
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Remove non-alphanumeric
+        input = "42S XD: 123, 456";
+        expected = "42SXD123456";
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Add grid zone from reference MGRS
+        input = "XD123456";
+        expected = "42SXD123456";
+        referenceMgrs = "42SXD567890";
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Leave alone a good string starting with A, B, Y, or Z
+        input = "YXW456789";
+        expected = "YXW456789";
+        referenceMgrs = "12ABC567890";
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Strip leading digits off of a polar string (starting with A, B, Y, or Z)
+        input = "12ABC456789";
+        expected = "ABC456789";
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Reject a non-polar string without digits on the front
+        input = "CBC456789";
+        expected = null;
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Reject a bad grid zone number
+        input = "62SXD1234";
+        expected = null;
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+        
+        //Return null if there are an odd number of easting/northing digits
+        input = "42SXD12345";
+        expected = null;
+        referenceMgrs = null;
+        assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+    }
 }
