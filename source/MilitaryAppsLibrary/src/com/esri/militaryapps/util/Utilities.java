@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utilities that don't belong in a specific class. This class is a necessary evil. :-)
@@ -224,6 +226,105 @@ public class Utilities {
             }
             return "#" + hex;
         }
+    }
+    
+    /**
+     * Converts the string to a best-guess valid MGRS string, if possible.<br/>
+     * <br/>
+     * This method checks only the pattern, not the coordinate itself. For example,
+     * 60CVS1234567890 is valid, but 60CVR1234567890 is not, because zone 60C has
+     * a VS square but not a VR square. This method considers both of those strings
+     * to be valid, because both of them match the pattern.<br/>
+     * <br/>
+     * This method will check and try to correct at least the following:
+     * <ul>
+     *     <li>Digits before zone A, B, Y, Z (correction: omit the numbers)</li>
+     *     <li>More than two digits before zone letter (no correction)</li>
+     *     <li>Grid zone number higher than 60 (no correction available)</li>
+     *     <li>100,000-meter square with more than two letters (no correction)</li>
+     *     <li>100,000-meter square with fewer than two letters (no correction available)</li>
+     *     <li>Odd number of easting/northing digits (no correction)</li>
+     * </ul>
+     * TODO this method might go away when fromMilitaryGrid handles bad strings gracefully.
+     * @param mgrs the MGRS string.
+     * @param referenceMgrs a reference MGRS location for calculating a missing grid
+     *        zone identifier. If mgrs does not include a grid zone identifier,
+     *        this parameter's grid zone identifier will be prepended to mgrs.
+     *        This parameter can be null if mgrs contains a grid zone identifier.
+     * @return the string itself, or a best guess at a valid equivalent of the string,
+     *         or null if the string is known to be invalid and cannot be converted.
+     */
+    public static String convertToValidMgrs(String mgrs, String referenceMgrs) {
+        if (null == mgrs) {
+            return null;
+        }
+        
+        //Remove non-alphanumeric
+        mgrs = mgrs.replaceAll("[^a-zA-Z0-9]", "").toUpperCase();
+
+        //Check for MGRS without grid zone identifier and add it if necessary
+        Matcher gzlessMatcher = Pattern.compile("[A-Z]{2}[0-9]*").matcher(mgrs);
+        if (null != referenceMgrs && gzlessMatcher.matches()) {
+            Matcher gzMatcher = Pattern.compile("[0-9]{0,2}[A-Z]").matcher(referenceMgrs);
+            if (gzMatcher.find() && 0 == gzMatcher.start()) {
+                mgrs = referenceMgrs.substring(0, gzMatcher.end()) + mgrs;
+            }
+        }
+        
+        /**
+         * A good MGRS string looks like this:
+         * <grid zone ID><2 letters><even number of digits>
+         * A grid zone ID looks like this:
+         * <1-2 digits><letter C-X>
+         * or
+         * <letter A, B, Y, or Z>
+         * That means every MGRS string looks like this:
+         * <0-2 digits><3 letters><even number of digits>
+         */
+        Pattern pattern = Pattern.compile("[A-Z]+");
+        Matcher matcher = pattern.matcher(mgrs);
+        if (!matcher.find()) {
+            //There are no letters; nothing we can do
+            return null;
+        }
+        Pattern polarPattern = Pattern.compile("[ABYZ][A-Z]{2}[0-9]*");
+        if (0 == matcher.start()) {
+            //This string starts with letters; make sure it's polar
+            if (!polarPattern.matcher(mgrs).matches()) {
+                return null;
+            }
+        } else {
+            //If the first letter is A, B, Y, or Z, omit the leading digits
+            char firstLetter = mgrs.charAt(matcher.start());
+            if ('A' == firstLetter || 'B' == firstLetter || 'Y' == firstLetter || 'Z' == firstLetter) {
+                mgrs = mgrs.substring(matcher.start());
+                if (!polarPattern.matcher(mgrs).matches()) {
+                    return null;
+                }
+            } else {
+                Matcher nonPolarMatcher = Pattern.compile("[0-9]{1,2}[C-X][A-Z]{2}[0-9]*").matcher(mgrs);
+                if (!nonPolarMatcher.matches()) {
+                    return null;
+                }
+                //This string starts with numbers; see what they are
+                int gridZoneNumber = Integer.parseInt(mgrs.substring(0, matcher.start()));
+                if (0 >= gridZoneNumber || 60 < gridZoneNumber) {
+                    return null;
+                }
+            }
+        }
+        
+        //Last thing: return null if there's an odd number of easting/northing digits
+        Matcher threeLetters = Pattern.compile("[A-Z]{3}").matcher(mgrs);
+        threeLetters.find();
+        if (threeLetters.end() < mgrs.length()) {
+            String eastingNorthing = mgrs.substring(threeLetters.end());
+            if (1 == eastingNorthing.length() % 2) {
+                return null;
+            }
+        }
+        
+        return mgrs;
     }
     
 }
