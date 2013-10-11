@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -325,6 +326,78 @@ public class Utilities {
         }
         
         return mgrs;
+    }
+    
+    /**
+     * Parses an XML Schema Part 2 dateTime string and returns a corresponding Calendar.
+     * Java SE includes this capability in javax.xml.bind.DataTypeConverter.parseDateTime(String),
+     * but Android does not.
+     * @param xmlDateTime an XML Schema Part 2 dateTime string, as defined in
+     *                    http://www.w3.org/TR/xmlschema-2 . This method ignores
+     *                    any spaces in the string.
+     * @return a Calendar set to the time corresponding to xmlDateTime.
+     * @throws Exception if the input is null or improperly formatted.
+     */
+    public static Calendar parseXmlDateTime(String xmlDateTime) throws Exception {
+        xmlDateTime = xmlDateTime.replace(" ", "");
+        int dashIndex = xmlDateTime.indexOf('-');
+        if (0 == dashIndex) {
+            dashIndex = xmlDateTime.indexOf('-', 1);
+        }
+        int year = Integer.parseInt(xmlDateTime.substring(0, dashIndex));
+
+        int cursor = dashIndex + 1;
+        dashIndex += 3;
+        int month = Integer.parseInt(xmlDateTime.substring(cursor, dashIndex));
+        
+        cursor = dashIndex + 1;
+        int tIndex = dashIndex + 3;
+        int day = Integer.parseInt(xmlDateTime.substring(cursor, tIndex));
+        
+        cursor = tIndex + 1;
+        int colonIndex = tIndex + 3;
+        int hour = Integer.parseInt(xmlDateTime.substring(cursor, colonIndex));
+        
+        cursor = colonIndex + 1;
+        colonIndex += 3;
+        int minute = Integer.parseInt(xmlDateTime.substring(cursor, colonIndex));
+        
+        cursor = colonIndex + 1;
+        int wholeSeconds = Integer.parseInt(xmlDateTime.substring(cursor, cursor + 2));
+        cursor = cursor += 2;
+        
+        //Fractional seconds and time zone are optional. That means we might be done.
+        float fractionalSeconds = 0f;
+        TimeZone timeZone = null;
+        if (xmlDateTime.length() > (colonIndex + 3)) {
+            //Check for fractional seconds
+            if ('.' == xmlDateTime.charAt(cursor)) {
+                //Get all the numeric chars
+                char nextChar;
+                float factor = 0.1f;
+                while ('0' <= (nextChar = xmlDateTime.charAt(++cursor)) && '9' >= nextChar) {
+                    fractionalSeconds += factor * (float) (nextChar - 48);
+                    factor *= 0.1;
+                }
+            }
+            
+            //Check for time zone
+            if (cursor < xmlDateTime.length()) {
+                String tzString = xmlDateTime.substring(cursor);
+                if ("Z".equals(tzString)) {
+                    tzString = "UTC";
+                }
+                timeZone = TimeZone.getTimeZone(tzString);
+            }
+        }
+        
+        if (null == timeZone) {
+            timeZone = TimeZone.getTimeZone("UTC");
+        }
+        Calendar cal = Calendar.getInstance(timeZone);
+        cal.set(year, month, day, hour, minute, wholeSeconds);
+        cal.set(Calendar.MILLISECOND, Math.round(fractionalSeconds * 1000f));
+        return cal;
     }
     
 }
