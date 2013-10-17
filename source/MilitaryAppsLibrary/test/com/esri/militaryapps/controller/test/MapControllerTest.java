@@ -15,7 +15,10 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller.test;
 
+import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.MapController;
+import com.esri.militaryapps.model.Location;
+import com.esri.militaryapps.model.LocationProvider;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -115,12 +118,13 @@ public class MapControllerTest {
         MapController instance = new MapControllerImpl();
         instance.pan(direction);
     }
-
+    
     public class MapControllerImpl extends MapController {
         
         private double scale = 15000.0;
         private double rotation = 0.0;
         private boolean gridVisible = false;
+        private Location currentLocation = null;
 
         public MapControllerImpl() {
             fireMapReady();
@@ -178,6 +182,29 @@ public class MapControllerTest {
         
         public double getScale() {
             return scale;
+        }
+
+        @Override
+        protected LocationController createLocationController() {
+            try {
+                return new LocationController(LocationController.LocationMode.SIMULATOR, false){
+
+                    @Override
+                    protected LocationProvider createLocationServiceProvider() {
+                        throw new UnsupportedOperationException(
+                                "We're not testing LocationDaemon here. This shouldn't be called.");
+                    }
+
+                };
+            } catch (Exception e) {
+                fail("Couldn't create LocationController: " + e.getMessage());
+                return null;
+            }
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            currentLocation = location;
         }
         
     }
