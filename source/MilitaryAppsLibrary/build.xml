@@ -107,6 +107,7 @@
           <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
           <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
           <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
       </junit>
   </target>
   
@@ -136,6 +137,7 @@
           <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
           <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
           <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
       </junit>
   </target>
 
