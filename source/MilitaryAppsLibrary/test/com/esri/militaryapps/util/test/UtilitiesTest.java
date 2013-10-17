@@ -17,6 +17,10 @@ package com.esri.militaryapps.util.test;
 
 import com.esri.militaryapps.util.Utilities;
 import java.awt.Color;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -296,5 +300,26 @@ public class UtilitiesTest {
         expected = null;
         referenceMgrs = null;
         assertEquals(expected, Utilities.convertToValidMgrs(input, referenceMgrs));
+    }
+    
+    @Test
+    public void testParseXmlDateTime() {
+        String input;
+        Calendar output;
+        
+        input = "2013-10-11T13:34:40.4567-05:00";
+        try {
+            output = Utilities.parseXmlDateTime(input);
+            assertEquals(2013, output.get(Calendar.YEAR));
+            assertEquals(10, output.get(Calendar.MONTH));
+            assertEquals(11, output.get(Calendar.DAY_OF_MONTH));
+            assertEquals(13, output.get(Calendar.HOUR_OF_DAY));
+            assertEquals(34, output.get(Calendar.MINUTE));
+            assertEquals(40, output.get(Calendar.SECOND));
+            assertEquals(457, output.get(Calendar.MILLISECOND));
+            assertEquals(TimeZone.getTimeZone("-05:00"), output.getTimeZone());
+        } catch (Exception ex) {
+            fail("Couldn't parse string: " + ex.getMessage());
+        }
     }
 }

@@ -28,7 +28,7 @@ import java.util.List;
  * etc.) at appropriate times. This is likely accomplished by setting listeners
  * on the map control in your constructor.
  */
-public abstract class MapController {
+public abstract class MapController implements LocationListener {
     
     /**
      * Directions used when panning with MapController.pan(PanDirection).
@@ -36,9 +36,25 @@ public abstract class MapController {
     public enum PanDirection {
         UP, DOWN, LEFT, RIGHT
     }
+    
     private final List<MapControllerListener> listeners = new ArrayList<MapControllerListener>();
     
     private boolean mapReady = false;
+    private final LocationController locationController;
+    
+    /**
+     * Instantiates a new MapController.
+     */
+    public MapController() {
+        locationController = createLocationController();
+        locationController.addListener(this);
+    }
+    
+    /**
+     * Instantiates a new LocationController.
+     * @return a new LocationController.
+     */
+    protected abstract LocationController createLocationController();
     
     /**
      * Adds a MapControllerListener to this MapController.
