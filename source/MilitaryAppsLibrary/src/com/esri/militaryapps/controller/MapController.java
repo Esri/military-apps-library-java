@@ -234,6 +234,14 @@ public abstract class MapController implements LocationListener {
     }
     
     /**
+     * Returns the map's LocationController.
+     * @return the LocationController, or null if the controller could not be initialized.
+     */
+    public LocationController getLocationController() {
+        return locationController;
+    }
+    
+    /**
      * Returns the width of the map control in pixels.
      * @return the width of the map control in pixels.
      */
