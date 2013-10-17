@@ -47,7 +47,9 @@ public abstract class MapController implements LocationListener {
      */
     public MapController() {
         locationController = createLocationController();
-        locationController.addListener(this);
+        if (null != locationController) {
+            locationController.addListener(this);
+        }
     }
     
     /**
@@ -272,5 +274,17 @@ public abstract class MapController implements LocationListener {
      * @return the visibility of the map's grid.
      */
     public abstract boolean isGridVisible();
+    
+    /**
+     * Sets whether the map should auto-pan to the current location.
+     * @param autoPan true if and only if the map should auto-pan.
+     */
+    public abstract void setAutoPan(boolean autoPan);
+    
+    /**
+     * Indicates whether the map is set to auto-pan to the current location.
+     * @return true if and only if the map should auto-pan.
+     */
+    public abstract boolean isAutoPan();
     
 }
