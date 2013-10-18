@@ -134,6 +134,9 @@ public abstract class LocationController {
      */
     public void addListener(LocationListener listener) {
         listeners.add(listener);
+        if (null != provider) {
+            provider.addListener(listener);
+        }
     }
     
 }
