@@ -206,6 +206,16 @@ public class MapControllerTest {
         public void onLocationChanged(Location location) {
             currentLocation = location;
         }
+
+        @Override
+        public void setAutoPan(boolean autoPan) {
+            
+        }
+
+        @Override
+        public boolean isAutoPan() {
+            return false;
+        }
         
     }
     

@@ -44,7 +44,7 @@ public class LocationSimulator extends LocationProvider {
     private static final Logger logger = Logger.getLogger(LocationSimulator.class.getName());
 
     private class GPXHandler extends DefaultHandler {
-
+        
         private List<Location> locations = new ArrayList<Location>();
 
         private Double lat = null;
@@ -55,6 +55,7 @@ public class LocationSimulator extends LocationProvider {
         private boolean readingTrkpt = false;
         private boolean readingTime = false;
         private boolean readingSpeed = false;
+        private StringBuilder charsBuffer = new StringBuilder();
 
         @Override
         public void startDocument() throws SAXException {
@@ -84,20 +85,7 @@ public class LocationSimulator extends LocationProvider {
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
-            if (readingTime) {
-                String dateTimeString = new String(ch, start, length);
-                try {
-                    time = Utilities.parseXmlDateTime(dateTimeString);
-                } catch (Exception e) {
-                    logger.log(Level.INFO, "Couldn''t parse datetime {0}", dateTimeString);
-                }
-            } else if (readingSpeed) {
-                try {
-                    speed = Double.parseDouble(new String(ch, start, length));
-                } catch (NumberFormatException nfe) {
-                    //Do nothing
-                }
-            }
+            charsBuffer.append(ch, start, length);
         }
 
         @Override
@@ -118,10 +106,22 @@ public class LocationSimulator extends LocationProvider {
                 time = null;
                 speed = 0;
             } else if (readingTime && "time".equalsIgnoreCase(qName)) {
+                String dateTimeString = charsBuffer.toString().trim();
+                try {
+                    time = Utilities.parseXmlDateTime(dateTimeString);
+                } catch (Exception e) {
+                    logger.log(Level.INFO, "Couldn''t parse datetime ''{0}''", dateTimeString);
+                }
                 readingTime = false;
             } else if (readingSpeed && "speed".equalsIgnoreCase(qName)) {
+                try {
+                    speed = Double.parseDouble(charsBuffer.toString().trim());
+                } catch (NumberFormatException nfe) {
+                    //Do nothing
+                }
                 readingSpeed = false;
             }
+            charsBuffer = new StringBuilder();
         }
 
         @Override
