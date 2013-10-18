@@ -68,8 +68,11 @@ public class LocationControllerTest {
 
             @Override
             public void onLocationChanged(Location location) {
-                System.out.println("Added " + location.getLongitude() + ", " + location.getLatitude());
-                locations.add(location);
+                if (null != location) {
+                    synchronized (locations) {
+                        locations.add(location);
+                    }
+                }
             }
         };
         LocationController instance = new LocationControllerImpl();
@@ -80,9 +83,11 @@ public class LocationControllerTest {
         } catch (InterruptedException ex) {
             Logger.getLogger(LocationControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
-        assertTrue("LocationController should have provided a location", 0 < locations.size());
-        assertEquals(70.426874211, locations.get(0).getLongitude(), 0.000001);
-        assertEquals(34.440280645, locations.get(0).getLatitude(), 0.000001);
+        synchronized (locations) {
+            assertTrue("LocationController should have provided a location", 0 < locations.size());
+            assertEquals(70.426874211, locations.get(0).getLongitude(), 0.000001);
+            assertEquals(34.440280645, locations.get(0).getLatitude(), 0.000001);
+        }
     }
 
     public class LocationControllerImpl extends LocationController {

@@ -132,6 +132,7 @@ public class LocationSimulator extends LocationProvider {
     }
     
     private final List<Location> locations;
+    private final Object gpsPointsIndexLock = new Object();
 
     private Timer timer = null;
     private TimerTask timerTask = null;
@@ -162,10 +163,24 @@ public class LocationSimulator extends LocationProvider {
                 );
     }
 
-    private LocationSimulator(InputStream gpxInputStream) throws ParserConfigurationException, SAXException, IOException {
+    private LocationSimulator(final InputStream gpxInputStream) throws ParserConfigurationException, SAXException, IOException {
         final GPXHandler handler = new GPXHandler();
-        SAXParserFactory.newInstance().newSAXParser().parse(gpxInputStream, handler);
-        locations = handler.locations;
+        locations = new ArrayList<Location>();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    SAXParserFactory.newInstance().newSAXParser().parse(gpxInputStream, handler);
+                    synchronized (locations) {
+                        locations.addAll(handler.locations);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+            }
+        }.start();
+        
     }
     
     private static InputStream getSimulatedGPXInputStream() {
@@ -191,16 +206,24 @@ public class LocationSimulator extends LocationProvider {
      * @return
      */
     private Location getTrackPoint(int index, boolean isRelativeIndex) {
-        if (0 == locations.size()) {
+        int locationsSize;
+        synchronized (locations) {
+            locationsSize = locations.size();
+        }
+        if (0 == locationsSize) {
             return null;
         } else {
-            if (isRelativeIndex) {
-                while (index < 0) {
-                    index += locations.size();
+            synchronized (locations) {
+                if (isRelativeIndex) {
+                    while (index < 0) {
+                        index += locations.size();
+                    }
+                    synchronized (gpsPointsIndexLock) {
+                        index = (gpsPointsIndex + index) % locations.size();
+                    }
                 }
-                index = (gpsPointsIndex + index) % locations.size();
+                return locations.get(index);
             }
-            return locations.get(index);
         }
     }
     
@@ -224,14 +247,23 @@ public class LocationSimulator extends LocationProvider {
     }
     
     private long getNextDelay() {
-        if (1 >= locations.size()) {
+        int locationsSize;
+        synchronized (locations) {
+            locationsSize = locations.size();
+        }
+        if (1 >= locationsSize) {
             return 1000;
         }
         else {
-            int currentIndex = gpsPointsIndex;
+            int currentIndex;
+            synchronized (gpsPointsIndexLock) {
+                currentIndex = gpsPointsIndex;
+            }
             int previousIndex = currentIndex - 1;
             if (previousIndex < 0) {
-                previousIndex = locations.size() - 1;
+                synchronized (locations) {
+                    previousIndex = locations.size() - 1;
+                }
             }
             long theDelay = getTrackPoint(currentIndex, true).getTimestamp().getTimeInMillis()
                         - getTrackPoint(previousIndex, true).getTimestamp().getTimeInMillis();
@@ -254,8 +286,16 @@ public class LocationSimulator extends LocationProvider {
         
         Location currentTrackPoint = getTrackPoint(0, true);
         sendLocation(currentTrackPoint);
-        gpsPointsIndex++;
-        gpsPointsIndex %= locations.size();
+        synchronized (gpsPointsIndexLock) {
+            gpsPointsIndex++;
+            synchronized (locations) {
+                if (0 < locations.size()) {
+                    gpsPointsIndex %= locations.size();
+                } else {
+                    gpsPointsIndex = 0;
+                }
+            }
+        }
 
         timer = new Timer(true);
         timerTask = new TimerTask() {
@@ -288,7 +328,9 @@ public class LocationSimulator extends LocationProvider {
     @Override
     public void stop() {
         pause();
-        gpsPointsIndex = 0;
+        synchronized (gpsPointsIndexLock) {
+            gpsPointsIndex = 0;
+        }
         state = LocationProviderState.STOPPED;
     }
 
