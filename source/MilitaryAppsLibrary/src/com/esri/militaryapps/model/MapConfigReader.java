@@ -19,9 +19,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -143,29 +146,46 @@ public class MapConfigReader {
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             String string = new String(ch, start, length);            
-            if (readingDatasetpath) {            	
-                LayerInfo layerInfo = currentLayerBasemap ? new BasemapLayerInfo(currentLayerThumbnail) : new LayerInfo();
-                layerInfo.setDatasetPath(string);
+            if (readingDatasetpath) {
+                List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
+                layerInfos.add(currentLayerBasemap ? new BasemapLayerInfo(currentLayerThumbnail) : new LayerInfo());
+                layerInfos.get(0).setDatasetPath(string);
                 if ("TiledCacheLayer".equals(currentLayerType)) {
-                    layerInfo.setDatasetPath(string);
-                    layerInfo.setLayerType(LayerType.TILED_CACHE);
+                    layerInfos.get(0).setLayerType(LayerType.TILED_CACHE);
                 } else if ("TiledMapServiceLayer".equals(currentLayerType)) {
-                    layerInfo.setDatasetPath(string);
-                    layerInfo.setLayerType(LayerType.TILED_MAP_SERVICE);
+                    layerInfos.get(0).setLayerType(LayerType.TILED_MAP_SERVICE);
                 } else if ("LocalDynamicMapLayer".equals(currentLayerType)) {
-                    layerInfo.setLayerType(LayerType.LOCAL_DYNAMIC_MAP);
+                    layerInfos.get(0).setLayerType(LayerType.LOCAL_DYNAMIC_MAP);
                 } else if ("DynamicMapServiceLayer".equals(currentLayerType)) {
-                    layerInfo.setLayerType(LayerType.DYNAMIC_MAP_SERVICE);
+                    layerInfos.get(0).setLayerType(LayerType.DYNAMIC_MAP_SERVICE);
                 } else if ("Mil2525CMessageLayer".equals(currentLayerType)) {
-                    layerInfo.setLayerType(LayerType.MIL2525C_MESSAGE);
-                }
-                if (null != layerInfo.getLayerType() && null != currentLayerName) {
-                    layerInfo.setName(currentLayerName);
-                    layerInfo.setVisible(currentLayerVisible);
-                    if (currentLayerBasemap) {
-                        basemapLayers.add((BasemapLayerInfo) layerInfo);
+                    layerInfos.get(0).setLayerType(LayerType.MIL2525C_MESSAGE);
+                } else if ("ImageServiceLayer".equals(currentLayerType)) {
+                    layerInfos.get(0).setLayerType(LayerType.IMAGE_SERVICE);
+                } else if ("FeatureServiceLayer".equals(currentLayerType)) {
+                    if (string.endsWith(("/FeatureServer"))) {
+                        try {
+                            layerInfos = Arrays.asList(RestServiceReader.readService(new URL(string), currentLayerBasemap));
+                        } catch (Exception ex) {
+                            Logger.getLogger(MapConfigReader.class.getName()).log(Level.SEVERE, null, ex);
+                            layerInfos.clear();
+                        }
                     } else {
-                        nonBasemapLayers.add(layerInfo);
+                        layerInfos.get(0).setLayerType(LayerType.FEATURE_SERVICE);
+                    }
+                }
+                for (int i = layerInfos.size() - 1; i >= 0; i--) {
+                    LayerInfo layerInfo = layerInfos.get(i);
+                    if (null != layerInfo.getLayerType() && null != currentLayerName) {
+                        if (null == layerInfo.getName()) {
+                            layerInfo.setName(currentLayerName);
+                        }
+                        layerInfo.setVisible(currentLayerVisible);
+                        if (currentLayerBasemap) {
+                            basemapLayers.add((BasemapLayerInfo) layerInfo);
+                        } else {
+                            nonBasemapLayers.add(layerInfo);
+                        }
                     }
                 }
             } else if (readingX) {
