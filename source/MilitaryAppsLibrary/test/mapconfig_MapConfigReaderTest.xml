@@ -12,6 +12,8 @@
     - TiledMapServiceLayer: URL of a cached map service
     - LocalDynamicMapLayer: filename of a map package (MPK) (relative or absolute)
     - DynamicMapServiceLayer: URL of a dynamic map service
+    - FeatureServiceLayer: URL of a feature service, or the URL of an individual layer in a feature service
+    - ImageServiceLayer: URL of an image service
     - Mil2525CMessageLayer: filename of an XML file containing MIL-STD-2525C messages in XML
 
     Each layer element has a basemap property that can be set to true or false. If absent, the
@@ -42,6 +44,15 @@
         </layer>
         <layer name="COA Sketch" visible="false" type="Mil2525CMessageLayer" basemap="false">
             <datasetpath>../../data/coa.xml</datasetpath>
+        </layer>
+        <layer name="Entire Feature Service" visible="true" type="FeatureServiceLayer" basemap="false">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer</url>
+        </layer>
+        <layer name="Single Feature Layer" visible="true" type="FeatureServiceLayer" basemap="false">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/1</url>
+        </layer>
+        <layer name="Image Service" visible="false" type="ImageServiceLayer" basemap="true">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/CaliforniaDEM/ImageServer</url>
         </layer>
     </layers>
     <initialextent>

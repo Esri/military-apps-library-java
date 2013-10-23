@@ -68,7 +68,7 @@ public class MapConfigReaderTest {
     
     private void testReadMapConfig(MapConfig mapConfig, boolean serializeAndRetest) throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         BasemapLayerInfo[] basemapLayers = mapConfig.getBasemapLayers();
-        final int basemapLayerCount = 4;
+        final int basemapLayerCount = 5;
         Assert.assertEquals("MapConfig should have " + basemapLayerCount + " basemap layers", basemapLayerCount, basemapLayers.length);
         
         final String layer0Name = "Topo";
@@ -108,7 +108,7 @@ public class MapConfigReaderTest {
         Assert.assertEquals("Layer 3 dataset path should be " + layer3DatasetPath, layer3DatasetPath, basemapLayers[3].getDatasetPath());
         
         LayerInfo[] nonBasemapLayers = mapConfig.getNonBasemapLayers();
-        final int nonBasemapLayerCount = 2;
+        final int nonBasemapLayerCount = 6;
         Assert.assertEquals("MapConfig should have " + nonBasemapLayerCount + " non-basemap layers", nonBasemapLayerCount, nonBasemapLayers.length);
         
         final String layer4Name = "Bihsud Bridge and Environs";
@@ -130,6 +130,56 @@ public class MapConfigReaderTest {
         Assert.assertEquals("Layer 5 type should be " + layer5Type, layer5Type, nonBasemapLayers[1].getLayerType());
         Assert.assertEquals("Layer 5 dataset path should be " + layer5DatasetPath, layer5DatasetPath, nonBasemapLayers[1].getDatasetPath());
         Assert.assertFalse("Layer 5 should not be a BasemapLayerInfo", nonBasemapLayers[1] instanceof BasemapLayerInfo);
+        
+        final String layer6Name = "Incident Areas";
+        final boolean layer6Visible = true;
+        final LayerType layer6Type = LayerType.FEATURE_SERVICE;
+        final String layer6DatasetPath = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/2";
+        Assert.assertEquals("Layer 6 name should be " + layer6Name, layer6Name, nonBasemapLayers[2].getName());
+        Assert.assertEquals("Layer 6 visible should be " + layer6Visible, layer6Visible, nonBasemapLayers[2].isVisible());
+        Assert.assertEquals("Layer 6 type should be " + layer6Type, layer6Type, nonBasemapLayers[2].getLayerType());
+        Assert.assertEquals("Layer 6 dataset path should be " + layer6DatasetPath, layer6DatasetPath, nonBasemapLayers[2].getDatasetPath());
+        Assert.assertFalse("Layer 6 should not be a BasemapLayerInfo", nonBasemapLayers[2] instanceof BasemapLayerInfo);
+        
+        final String layer7Name = "Incident Lines";
+        final boolean layer7Visible = true;
+        final LayerType layer7Type = LayerType.FEATURE_SERVICE;
+        final String layer7DatasetPath = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/1";
+        Assert.assertEquals("Layer 7 name should be " + layer7Name, layer7Name, nonBasemapLayers[3].getName());
+        Assert.assertEquals("Layer 7 visible should be " + layer7Visible, layer7Visible, nonBasemapLayers[3].isVisible());
+        Assert.assertEquals("Layer 7 type should be " + layer7Type, layer7Type, nonBasemapLayers[3].getLayerType());
+        Assert.assertEquals("Layer 7 dataset path should be " + layer7DatasetPath, layer7DatasetPath, nonBasemapLayers[3].getDatasetPath());
+        Assert.assertFalse("Layer 7 should not be a BasemapLayerInfo", nonBasemapLayers[3] instanceof BasemapLayerInfo);
+        
+        final String layer8Name = "Incident Points";
+        final boolean layer8Visible = true;
+        final LayerType layer8Type = LayerType.FEATURE_SERVICE;
+        final String layer8DatasetPath = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/0";
+        Assert.assertEquals("Layer 8 name should be " + layer8Name, layer8Name, nonBasemapLayers[4].getName());
+        Assert.assertEquals("Layer 8 visible should be " + layer8Visible, layer8Visible, nonBasemapLayers[4].isVisible());
+        Assert.assertEquals("Layer 8 type should be " + layer8Type, layer8Type, nonBasemapLayers[4].getLayerType());
+        Assert.assertEquals("Layer 8 dataset path should be " + layer8DatasetPath, layer8DatasetPath, nonBasemapLayers[4].getDatasetPath());
+        Assert.assertFalse("Layer 8 should not be a BasemapLayerInfo", nonBasemapLayers[4] instanceof BasemapLayerInfo);
+        
+        final String layer9Name = "Single Feature Layer";
+        final boolean layer9Visible = true;
+        final LayerType layer9Type = LayerType.FEATURE_SERVICE;
+        final String layer9DatasetPath = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/1";
+        Assert.assertEquals("Layer 9 name should be " + layer9Name, layer9Name, nonBasemapLayers[5].getName());
+        Assert.assertEquals("Layer 9 visible should be " + layer9Visible, layer9Visible, nonBasemapLayers[5].isVisible());
+        Assert.assertEquals("Layer 9 type should be " + layer9Type, layer9Type, nonBasemapLayers[5].getLayerType());
+        Assert.assertEquals("Layer 9 dataset path should be " + layer9DatasetPath, layer9DatasetPath, nonBasemapLayers[5].getDatasetPath());
+        Assert.assertFalse("Layer 9 should not be a BasemapLayerInfo", nonBasemapLayers[5] instanceof BasemapLayerInfo);
+        
+        final String layer10Name = "Image Service";
+        final boolean layer10Visible = false;
+        final LayerType layer10Type = LayerType.IMAGE_SERVICE;
+        final String layer10DatasetPath = "http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/CaliforniaDEM/ImageServer";
+        Assert.assertEquals("Layer 10 name should be " + layer10Name, layer10Name, basemapLayers[4].getName());
+        Assert.assertEquals("Layer 10 visible should be " + layer10Visible, layer10Visible, basemapLayers[4].isVisible());
+        Assert.assertEquals("Layer 10 type should be " + layer10Type, layer10Type, basemapLayers[4].getLayerType());
+        Assert.assertEquals("Layer 10 dataset path should be " + layer10DatasetPath, layer10DatasetPath, basemapLayers[4].getDatasetPath());
+        Assert.assertTrue("Layer 10 should be a BasemapLayerInfo", basemapLayers[4] instanceof BasemapLayerInfo);
         
         //The easiest way to test the thumbnail is like this:
         final String thumbnailFilename = "ThumbnailTest.png";
