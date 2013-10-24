@@ -99,11 +99,22 @@ public class Location implements Comparable<Location> {
      * @param location the other Location.
      * @return a negative number if this Location's timestamp is earlier than
      *         the other point's timestamp; 0 if the timestamps are the same; and
-     *         a positive number otherwise.
+     *         a positive number otherwise. A null timestamp is considered to be
+     *         later than a non-null timestamp.
      */
     @Override
     public int compareTo(Location location) {
-        return this.timestamp.compareTo(location.getTimestamp());
+        if (null == this.timestamp) {
+            if (null == location.getTimestamp()) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (null == location.getTimestamp()) {
+            return 1;
+        } else {
+            return this.timestamp.compareTo(location.getTimestamp());
+        }
     }
 
     /**
