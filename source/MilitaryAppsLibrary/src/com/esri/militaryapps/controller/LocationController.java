@@ -67,6 +67,10 @@ public abstract class LocationController {
         return mode;
     }
     
+    /**
+     * Sets the GPX file to use. Set this to null in order to use the built-in GPX file.
+     * @param gpxFile the GPX file to use.
+     */
     public void setGpxFile(File gpxFile) {
         this.gpxFile = gpxFile;
     }
