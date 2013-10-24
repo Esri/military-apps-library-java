@@ -265,9 +265,16 @@ public class LocationSimulator extends LocationProvider {
                     previousIndex = locations.size() - 1;
                 }
             }
-            long theDelay = getTrackPoint(currentIndex, true).getTimestamp().getTimeInMillis()
-                        - getTrackPoint(previousIndex, true).getTimestamp().getTimeInMillis();
-            theDelay = (long) Math.round(((double) theDelay) / speedMultiplier);
+            long theDelay = 0;
+            Location currentLocation = getTrackPoint(currentIndex, true);
+            Location previousLocation = getTrackPoint(previousIndex, true);
+            if (null == currentLocation.getTimestamp() || null == previousLocation.getTimestamp()) {
+                theDelay = 0;
+            } else {
+                theDelay = currentLocation.getTimestamp().getTimeInMillis()
+                        - previousLocation.getTimestamp().getTimeInMillis();
+                theDelay = (long) Math.round(((double) theDelay) / speedMultiplier);
+            }
             if (0 > theDelay) {
                 theDelay = 1000;
             }
