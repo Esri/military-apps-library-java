@@ -275,7 +275,7 @@ public class LocationSimulator extends LocationProvider {
                         - previousLocation.getTimestamp().getTimeInMillis();
                 theDelay = (long) Math.round(((double) theDelay) / speedMultiplier);
             }
-            if (0 > theDelay) {
+            if (0 >= theDelay) {
                 theDelay = 1000;
             }
             return theDelay;
