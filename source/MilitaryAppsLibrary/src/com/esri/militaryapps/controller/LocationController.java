@@ -17,6 +17,7 @@ package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.LocationSimulator;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -48,6 +49,7 @@ public abstract class LocationController {
     
     private LocationMode mode = LocationMode.LOCATION_SERVICE;
     private LocationProvider provider = null;
+    private File gpxFile = null;
     
     /**
      * Creates a new LocationController.
@@ -63,6 +65,10 @@ public abstract class LocationController {
      */
     public LocationMode getMode() {
         return mode;
+    }
+    
+    public void setGpxFile(File gpxFile) {
+        this.gpxFile = gpxFile;
     }
 
     /**
@@ -95,7 +101,11 @@ public abstract class LocationController {
             }
             case SIMULATOR:
             default: {
-                provider = new LocationSimulator();
+                if (null == gpxFile) {
+                    provider = new LocationSimulator();
+                } else {
+                    provider = new LocationSimulator(gpxFile);
+                }
             }
         }
         for (LocationListener listener : listeners) {
