@@ -77,7 +77,7 @@ public class LocationControllerTest {
         };
         LocationController instance = new LocationControllerImpl();
         instance.addListener(listener);
-        instance.startLocationProvider();
+        instance.start();
         try {
             Thread.sleep(3000);
         } catch (InterruptedException ex) {

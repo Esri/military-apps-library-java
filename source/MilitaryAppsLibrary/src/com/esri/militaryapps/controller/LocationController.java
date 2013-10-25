@@ -16,6 +16,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.LocationProvider;
+import com.esri.militaryapps.model.LocationProvider.LocationProviderState;
 import com.esri.militaryapps.model.LocationSimulator;
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public abstract class LocationController {
     public final void setMode(LocationMode mode, boolean startImmediately) throws ParserConfigurationException, SAXException, IOException {
         this.mode = mode;
         if (startImmediately) {
-            startLocationProvider();
+            start();
         }
     }
     
@@ -102,7 +103,7 @@ public abstract class LocationController {
      * @throws SAXException
      * @throws IOException 
      */
-    public void startLocationProvider() throws ParserConfigurationException, SAXException, IOException {
+    public void start() throws ParserConfigurationException, SAXException, IOException {
         if (null != provider) {
             provider.stop();
         }
@@ -124,6 +125,36 @@ public abstract class LocationController {
             provider.addListener(listener);
         }
         provider.start();
+    }
+    
+    /**
+     * Pauses the controller's LocationProvider.
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException 
+     */
+    public void pause() {
+        if (null != provider) {
+            provider.pause();
+        }
+    }
+    
+    /**
+     * Unpauses the controller's LocationProvider. If the provider is currently
+     * running, this method has no effect. If the provider is currently stopped,
+     * this method is the equivalent of calling start().
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException 
+     */
+    public void unpause() throws ParserConfigurationException, SAXException, IOException {
+        if (null != provider) {
+            if (LocationProviderState.STARTED != provider.getState()) {
+                provider.start();
+            }
+        } else {
+            start();
+        }
     }
     
     /**
