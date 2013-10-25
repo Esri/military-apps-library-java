@@ -30,14 +30,20 @@
         <layer name="Topo" visible="false" type="TiledCacheLayer" basemap="true">
             <datasetpath>/data/JbadBasemaps/Topographic.tpk</datasetpath>
         </layer>
-		<layer name="Imagery" visible="true" type="TiledCacheLayer" basemap="true">
+        <layer name="Imagery" visible="true" type="TiledCacheLayer" basemap="true">
             <datasetpath>C:/Example/basemaps/Imagery</datasetpath>
         </layer>
         <layer name="National Geographic" visible="false" type="TiledMapServiceLayer" basemap="true">
               <url>http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer</url>
         </layer>
+        <layer name="National Geographic Slash" visible="false" type="TiledMapServiceLayer" basemap="true">
+              <url>http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/</url>
+        </layer>
         <layer name="USA" visible="false" type="DynamicMapServiceLayer" basemap="true">
             <datasetpath>http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer</datasetpath>
+        </layer>
+        <layer name="USA Slash" visible="false" type="DynamicMapServiceLayer" basemap="true">
+            <datasetpath>http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Specialty/ESRI_StateCityHighway_USA/MapServer/</datasetpath>
         </layer>
         <layer name="Bihsud Bridge and Environs" visible="true" type="LocalDynamicMapLayer" basemap="false">
             <datasetpath>../../BihsudBridgeVCP.mpk</datasetpath>
@@ -48,11 +54,20 @@
         <layer name="Entire Feature Service" visible="true" type="FeatureServiceLayer" basemap="false">
             <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer</url>
         </layer>
+        <layer name="Entire Feature Service Slash" visible="true" type="FeatureServiceLayer" basemap="false">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/</url>
+        </layer>
         <layer name="Single Feature Layer" visible="true" type="FeatureServiceLayer" basemap="false">
             <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/1</url>
         </layer>
+        <layer name="Single Feature Layer Slash" visible="true" type="FeatureServiceLayer" basemap="false">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/HomelandSecurity/operations/FeatureServer/1/</url>
+        </layer>
         <layer name="Image Service" visible="false" type="ImageServiceLayer" basemap="true">
             <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/CaliforniaDEM/ImageServer</url>
+        </layer>
+        <layer name="Image Service Slash" visible="false" type="ImageServiceLayer" basemap="true">
+            <url>http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Earthquakes/CaliforniaDEM/ImageServer/</url>
         </layer>
     </layers>
     <initialextent>

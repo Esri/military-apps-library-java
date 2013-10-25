@@ -61,7 +61,12 @@ public class RestServiceReader {
                 try {
                     JSONObject layerJson = layersArray.getJSONObject(i);
                     LayerInfo thisLayerInfo = useAsBasemap ? new BasemapLayerInfo((String) null) : new LayerInfo();
-                    thisLayerInfo.setDatasetPath(urlString + "/" + layerJson.getInt("id"));
+                    StringBuilder datasetPath = new StringBuilder(urlString);
+                    if (!urlString.endsWith("/")) {
+                        datasetPath.append("/");
+                    }
+                    datasetPath.append(layerJson.getInt("id"));
+                    thisLayerInfo.setDatasetPath(datasetPath.toString());
                     thisLayerInfo.setName(layerJson.getString("name"));
                     thisLayerInfo.setVisible(true);
                     thisLayerInfo.setLayerType(LayerType.FEATURE_SERVICE);
