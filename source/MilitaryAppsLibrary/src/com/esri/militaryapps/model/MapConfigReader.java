@@ -145,7 +145,7 @@ public class MapConfigReader {
 
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
-            String string = new String(ch, start, length);            
+            String string = new String(ch, start, length).trim();            
             if (readingDatasetpath) {
                 List<LayerInfo> layerInfos = new ArrayList<LayerInfo>();
                 layerInfos.add(currentLayerBasemap ? new BasemapLayerInfo(currentLayerThumbnail) : new LayerInfo());
@@ -163,7 +163,7 @@ public class MapConfigReader {
                 } else if ("ImageServiceLayer".equals(currentLayerType)) {
                     layerInfos.get(0).setLayerType(LayerType.IMAGE_SERVICE);
                 } else if ("FeatureServiceLayer".equals(currentLayerType)) {
-                    if (string.endsWith(("/FeatureServer"))) {
+                    if (string.endsWith("/FeatureServer") || string.endsWith(("/FeatureServer/"))) {
                         try {
                             layerInfos = Arrays.asList(RestServiceReader.readService(new URL(string), currentLayerBasemap));
                         } catch (Exception ex) {
