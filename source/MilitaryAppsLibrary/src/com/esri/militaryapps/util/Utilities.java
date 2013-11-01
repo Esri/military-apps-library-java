@@ -400,4 +400,31 @@ public class Utilities {
         return cal;
     }
     
+    /**
+     * Returns the abbreviation for the angular unit with the specified WKID. ArcGIS
+     * SDKs typically have an AngularUnit class with a getAbbreviation method, but
+     * sometimes getAbbreviation doesn't return the abbreviation you might expect.
+     * For example, it might return "deg" for degrees instead of returning the degrees
+     * symbol. This method offers better abbreviations for some angular units. You could
+     * call it this way:<br/>
+     * <pre>String abbr = getAngularUnitAbbreviation(
+     *     myAngularUnit.getID(),
+     *     myAngularUnit.getAbbreviation());</pre>
+     * @param wkid the angular unit's WKID.
+     * @param defaultValue the value to be returned if this method does not know about
+     *                     an abbreviation for the angular unit with the specified WKID.
+     * @return the angular unit's abbreviation, or <code>defaultValue</code> if this
+     *         method does not know about an abbreviation for the angular unit with
+     *         the specified WKID.
+     */
+    public static String getAngularUnitAbbreviation(int wkid, String defaultValue) {
+        if (9102 == wkid) { //degrees
+            return "\u00B0";
+        } else if (9114 == wkid) {// mils
+            return "\u20A5";
+        } else {
+            return defaultValue;
+        }
+    }
+    
 }
