@@ -66,10 +66,11 @@ public abstract class LocationController {
      * this method and should call super.reset().
      */
     public void reset() throws ParserConfigurationException, SAXException, IOException {
+        LocationProviderState state = provider.getState();
         gpxFile = null;
         provider.stop();
         provider = null;
-        setMode(mode, LocationProviderState.STARTED == provider.getState());
+        setMode(mode, LocationProviderState.STARTED == state);
     }
     
     /**
