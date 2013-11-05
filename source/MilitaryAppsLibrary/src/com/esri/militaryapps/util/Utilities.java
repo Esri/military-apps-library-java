@@ -31,6 +31,11 @@ import java.util.regex.Pattern;
  * Utilities that don't belong in a specific class. This class is a necessary evil. :-)
  */
 public class Utilities {
+    
+    /**
+     * The number of meters in a mile.
+     */
+    public static final double METERS_PER_MILE = (254.0 / 10000.0) * 12.0 * 5280.0;
 
     private static final double FIVE_PI_OVER_TWO = 5.0 * Math.PI / 2.0;
     private static final double TWO_PI = 2.0 * Math.PI;
