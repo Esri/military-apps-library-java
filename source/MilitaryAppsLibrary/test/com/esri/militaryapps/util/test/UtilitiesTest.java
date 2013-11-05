@@ -19,8 +19,6 @@ import com.esri.militaryapps.util.Utilities;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -41,7 +41,7 @@ public class Location implements Comparable<Location> {
      * @param longitude the longitude.
      * @param latitude the latitude.
      * @param timestamp the timestamp.
-     * @param speed the speed.
+     * @param speed the speed in meters per second.
      * @param heading the heading in degrees.
      */
     public Location(double longitude, double latitude, Calendar timestamp,
@@ -58,7 +58,7 @@ public class Location implements Comparable<Location> {
      * @param longitude the longitude.
      * @param latitude the latitude.
      * @param timestamp the timestamp.
-     * @param speed the speed.
+     * @param speed the speed in meters per second.
      * @param previousLocation the previous location, used for calculating heading.
      *                         If previousLocation is null, the heading will be zero.
      */
@@ -118,17 +118,39 @@ public class Location implements Comparable<Location> {
     }
 
     /**
-     * @return the speed
+     * @return the speed in meters per second.
      */
     public double getSpeed() {
         return speed;
     }
+    
+    /**
+     * @return the speed in miles per hour.
+     */
+    public double getSpeedMph() {
+        return metersPerSecondToMph(speed);
+    }
 
     /**
-     * @param speed the speed to set
+     * @param speed the speed in meters per second.
      */
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+    
+    /**
+     * @param speedMph the speed in miles per hour.
+     */
+    public void setSpeedMph(double speedMph) {
+        this.speed = mphToMetersPerSecond(speedMph);
+    }
+    
+    private static double metersPerSecondToMph(double mps) {
+        return mps / Utilities.METERS_PER_MILE * (60 * 60);
+    }
+    
+    private static double mphToMetersPerSecond(double mph) {
+        return mph * Utilities.METERS_PER_MILE / (double) (60 * 60);
     }
 
     /**
