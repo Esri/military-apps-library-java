@@ -62,6 +62,17 @@ public abstract class LocationController {
     }
     
     /**
+     * Resets this controller and any controllers created by it. Subclasses may override
+     * this method and should call super.reset().
+     */
+    public void reset() throws ParserConfigurationException, SAXException, IOException {
+        gpxFile = null;
+        provider.stop();
+        provider = null;
+        setMode(mode, LocationProviderState.STARTED == provider.getState());
+    }
+    
+    /**
      * @return the location mode in use.
      */
     public LocationMode getMode() {

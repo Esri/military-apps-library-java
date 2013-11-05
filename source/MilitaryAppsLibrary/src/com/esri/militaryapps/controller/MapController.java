@@ -16,8 +16,11 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.util.Utilities;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  * A class for interacting with the map control, for convenience and abstraction.
@@ -94,6 +97,15 @@ public abstract class MapController implements LocationListener {
         for (MapControllerListener listener : listeners) {
             listener.mapReady();
         }
+    }
+    
+    /**
+     * Resets the map and any controllers created by the map. Subclasses may override
+     * this method, calling super.reset() in the overriding method.
+     */
+    public void reset() throws ParserConfigurationException, SAXException, IOException {
+        mapReady = false;
+        locationController.reset();
     }
     
     /**
