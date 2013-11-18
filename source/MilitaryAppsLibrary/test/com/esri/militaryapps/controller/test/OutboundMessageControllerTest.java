@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller.test;
 
-import com.esri.militaryapps.controller.UDPBroadcastController;
+import com.esri.militaryapps.controller.OutboundMessageController;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class UDPBroadcastControllerTest {
+public class OutboundMessageControllerTest {
     
     private class Result {
         String message = null;
@@ -33,11 +33,36 @@ public class UDPBroadcastControllerTest {
 
     private static final int TEST_PORT = 59849;
     
-    private UDPBroadcastController controller = null;
+    private OutboundMessageController controller = null;
     
     @Before
     public void setUp() {
-        controller = UDPBroadcastController.getInstance(TEST_PORT);
+        controller = new OutboundMessageController(TEST_PORT) {
+            @Override
+            public String getTypePropertyName() {
+                return null;
+            }
+            
+            @Override
+            public String getIdPropertyName() {
+                return null;
+            }
+            
+            @Override
+            public String getWkidPropertyName() {
+                return null;
+            }
+            
+            @Override
+            public String getControlPointsPropertyName() {
+                return null;
+            }
+            
+            @Override
+            public String getActionPropertyName() {
+                return null;
+            }
+        };
     }
     
     @After
@@ -45,7 +70,7 @@ public class UDPBroadcastControllerTest {
     }
     
     /**
-     * Test of sendUDPMessage method, of class UDPBroadcastController.
+     * Test of sendMessage method, of class OutboundMessageController.
      */
     @Test
     public void testSendUDPMessage() throws Exception {
@@ -67,7 +92,7 @@ public class UDPBroadcastControllerTest {
                         result.message = msgString;
                     }
                 } catch (Throwable t) {
-                    Logger.getLogger(UDPBroadcastControllerTest.class.getName()).log(Level.SEVERE, null, t);
+                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
                 }
             }
             
@@ -76,7 +101,7 @@ public class UDPBroadcastControllerTest {
         String expected = "Test message " + System.currentTimeMillis();
         byte[] bytes = expected.getBytes();
         Thread.sleep(100);
-        controller.sendUDPMessage(bytes);
+        controller.sendMessage(bytes);
         Thread.sleep(100);
         assertEquals(expected, result.message);
     }

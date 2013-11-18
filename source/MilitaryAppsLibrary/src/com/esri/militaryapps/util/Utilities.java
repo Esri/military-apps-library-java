@@ -26,6 +26,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Utilities that don't belong in a specific class. This class is a necessary evil. :-)
@@ -210,7 +213,16 @@ public class Utilities {
      * GeoEvent Processor schema.
      * @param color the color RGB.
      * @return a color string used by the ArcGIS for the Military GeoEvent Processor
-     *         schema.
+     *         schema.  ArcGIS Runtime supports the following colors:<br/>
+     *         <br/>
+     *         <ul>
+     *             <li>0xFFFF0000 (Color.RED) returns "1"</li>
+     *             <li>0xFF00FF00 (Color.GREEN) returns "2"</li>
+     *             <li>0xFF0000FF (Color.BLUE) returns "3"</li>
+     *             <li>0xFFFFFF00 (Color.YELLOW) returns "4"</li>
+     *         </ul>
+     *         For other colors, this method returns a hex string of the form #AARRGGBB
+     *         (alpha byte, red byte, green byte, and blue byte).
      */
     public static String getAFMGeoEventColorString(int colorRgb) {
         if (-65536 == colorRgb) {//red
@@ -430,6 +442,28 @@ public class Utilities {
         } else {
             return defaultValue;
         }
+    }
+    
+    /**
+     * Convenience method for adding an XML text element. For example, if you call
+     * the method like this:<br/>
+     * <br/>
+     * <code>Utilities.addTextElement(parent, "lastName", "Lockwood");</code><br/>
+     * <br/>
+     * The new node, when rendered as a string, will look like this:<br/>
+     * <br/>
+     * <code>&lt;lastName&gt;Lockwood&lt;/lastName&gt;
+     * @param document the document where the parent resides, and where the new text
+     *                 element will reside. The document may or may not be the parent
+     *                 node itself.
+     * @param parentNode the parent node of the new text element.
+     * @param key the name of the element.
+     * @param value the string within the element.
+     */
+    public static void addTextElement(Document document, Node parentNode, String elementName, String elementText) {
+        Element textElement = document.createElement(elementName);
+        textElement.appendChild(document.createTextNode(elementText));
+        parentNode.appendChild(textElement);
     }
     
 }
