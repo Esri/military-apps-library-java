@@ -58,7 +58,7 @@ public class ChemLightController {
      *              light colors in ArcGIS Runtime.
      * @throws ParserConfigurationException if a DocumentBuilder cannot be created
      *         for rendering the message's XML.
-     * @see com.esri.militaryapps.controller.ChemLightController.sendChemLight(double, double, int, int)
+     * @see com.esri.militaryapps.controller.ChemLightController#sendChemLight(double, double, int, int)
      */
     public void sendChemLight(double longitude, double latitude, int rgbColor) throws ParserConfigurationException {
         sendChemLight(longitude, latitude, 4326, rgbColor);
@@ -76,7 +76,7 @@ public class ChemLightController {
      *              light colors in ArcGIS Runtime.
      * @throws ParserConfigurationException if a DocumentBuilder cannot be created
      *         for rendering the message's XML.
-     * @see com.esri.militaryapps.util.Utilities.getAFMGeoEventColorString(int)
+     * @see com.esri.militaryapps.util.Utilities#getAFMGeoEventColorString(int)
      */
     public void sendChemLight(double x, double y, int spatialReferenceWkid, int rgbColor) {
         try {

@@ -34,6 +34,8 @@ public abstract class OutboundMessageController {
     /**
      * Creates an OutboundMessageController for the given UDP port.
      * @param messagingPort the UDP port through which messages will be sent.
+     * Usually you should use a port number between 1024 and 65535.
+     * @see #setPort(int)
      */
     protected OutboundMessageController(int messagingPort) {
         DatagramSocket theSocket = null;
@@ -48,6 +50,18 @@ public abstract class OutboundMessageController {
         packet = thePacket;
     }
 
+    /**
+     * Sets the UDP port used to send messages.
+     * @param messagingPort the UDP port through which messages will be sent.
+     * Usually you should use a port number between 1024 and 65535. Numbers less
+     * than 0 or greater than 65535 are not port numbers. Port number 0 is reserved.
+     * Port numbers 1 to 1023 cannot be used on some operating systems without root
+     * privileges.
+     */
+    public void setPort(int messagingPort) {
+        packet.setPort(messagingPort);
+    }
+    
     /**
      * Sends a UDP broadcast.
      * @param bytes the message.

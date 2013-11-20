@@ -32,6 +32,7 @@ public class OutboundMessageControllerTest {
     }
 
     private static final int TEST_PORT = 59849;
+    private static final int TEST_PORT_2 = 59850;
     
     private OutboundMessageController controller = null;
     
@@ -74,6 +75,10 @@ public class OutboundMessageControllerTest {
      */
     @Test
     public void testSendUDPMessage() throws Exception {
+        testSendUDPMessage(TEST_PORT);
+    }
+    
+    private void testSendUDPMessage(final int port) throws Exception {
         System.out.println("sendUDPMessage");
 
         final Result result = new Result();
@@ -85,7 +90,7 @@ public class OutboundMessageControllerTest {
                 DatagramPacket packet = new DatagramPacket(message, message.length);
                 DatagramSocket socket;
                 try {
-                    socket = new DatagramSocket(TEST_PORT);
+                    socket = new DatagramSocket(port);
                     socket.receive(packet);
                     String msgString = new String(packet.getData(), packet.getOffset(), packet.getLength());
                     synchronized (result) {
@@ -104,6 +109,12 @@ public class OutboundMessageControllerTest {
         controller.sendMessage(bytes);
         Thread.sleep(100);
         assertEquals(expected, result.message);
+    }
+    
+    @Test
+    public void testSetPort() throws Exception {
+        controller.setPort(TEST_PORT_2);
+        testSendUDPMessage(TEST_PORT_2);
     }
     
 }
