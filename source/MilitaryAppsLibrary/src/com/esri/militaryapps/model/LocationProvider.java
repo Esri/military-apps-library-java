@@ -36,7 +36,7 @@ public abstract class LocationProvider {
     protected final ArrayList<LocationListener> listeners = new ArrayList<LocationListener>();
     
     /**
-     * Adds a LocationListener to this LocationController.
+     * Adds a LocationListener to this LocationProvider.
      * @param listener the listener to add.
      */
     public void addListener(LocationListener listener) {
@@ -45,7 +45,7 @@ public abstract class LocationProvider {
     
     /**
      * Removes a LocationListener from this MapController. This method has
-     * no effect if this LocationController does not have a reference to the specified
+     * no effect if this LocationProvider does not have a reference to the specified
      * listener.
      * @param listener the listener to remove.
      */
