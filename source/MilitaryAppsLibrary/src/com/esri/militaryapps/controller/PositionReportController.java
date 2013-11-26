@@ -51,6 +51,7 @@ public class PositionReportController implements LocationListener {
     private String username = null;
     private String vehicleType = null;
     private String uniqueId = null;
+    private String symbolIdCode = null;
     private TimerTask periodTimerTask = null;
     
     /**
@@ -66,11 +67,13 @@ public class PositionReportController implements LocationListener {
             OutboundMessageController outboundMessageController,
             String username,
             String vehicleType,
-            String uniqueId) {
+            String uniqueId,
+            String symbolIdCode) {
         this.outboundMessageController = outboundMessageController;
         this.username = username;
         this.vehicleType = vehicleType;
         this.uniqueId = uniqueId;
+        this.symbolIdCode = symbolIdCode;
         
         locationController.addListener(this);
     }
@@ -86,7 +89,7 @@ public class PositionReportController implements LocationListener {
         }
     }
     
-    private void startTimer() {
+    private synchronized void startTimer() {
         if (null != periodTimerTask) {
             periodTimerTask.cancel();
         }
@@ -118,6 +121,9 @@ public class PositionReportController implements LocationListener {
                         Utilities.addTextElement(doc, geomessageElement,
                                 outboundMessageController.getIdPropertyName(), uniqueId);
                         Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getSymbolIdCodePropertyName(), symbolIdCode);
+                        Utilities.addTextElement(doc, geomessageElement, "type", vehicleType);
+                        Utilities.addTextElement(doc, geomessageElement,
                                 outboundMessageController.getWkidPropertyName(), WKID_WGS1984);
                         Utilities.addTextElement(doc, geomessageElement,
                                 outboundMessageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
@@ -127,6 +133,7 @@ public class PositionReportController implements LocationListener {
                         String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
                         Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
                         Utilities.addTextElement(doc, geomessageElement, "datetimevalid", Utilities.DATE_FORMAT_GEOMESSAGE.format(lastLocation.getTimestamp().getTime()));
+                        Utilities.addTextElement(doc, geomessageElement, "direction", Long.toString(Math.round(lastLocation.getHeading())));
 
                         StringWriter xmlStringWriter = new StringWriter();
                         TransformerFactory.newInstance().newTransformer().transform(
@@ -135,8 +142,6 @@ public class PositionReportController implements LocationListener {
                         outboundMessageController.sendMessage(messageText.getBytes());
                     } catch (Throwable t) {
                         logger.log(Level.SEVERE, "Could not send position report", t);
-                    } finally {
-                        lastLocation = null;
                     }
                 }
             }
@@ -242,6 +247,20 @@ public class PositionReportController implements LocationListener {
      */
     public OutboundMessageController getOutboundMessageController() {
         return outboundMessageController;
+    }
+
+    /**
+     * @return the symbol ID code (SIC or SIDC) for this controller's position reports.
+     */
+    public String getSymbolIdCode() {
+        return symbolIdCode;
+    }
+
+    /**
+     * @param symbolIdCode the symbol ID code (SIC or SIDC) for this controller's position reports.
+     */
+    public void setSymbolIdCode(String symbolIdCode) {
+        this.symbolIdCode = symbolIdCode;
     }
     
 }

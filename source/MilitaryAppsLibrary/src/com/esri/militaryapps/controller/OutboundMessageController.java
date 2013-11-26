@@ -50,6 +50,14 @@ public abstract class OutboundMessageController {
         packet = thePacket;
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        if (null != udpSocket) {
+            udpSocket.close();
+        }
+        super.finalize();
+    }
+    
     /**
      * Sets the UDP port used to send messages.
      * @param messagingPort the UDP port through which messages will be sent.
@@ -59,7 +67,9 @@ public abstract class OutboundMessageController {
      * privileges.
      */
     public void setPort(int messagingPort) {
-        packet.setPort(messagingPort);
+        if (null != packet) {
+            packet.setPort(messagingPort);
+        }
     }
     
     /**
@@ -80,5 +90,6 @@ public abstract class OutboundMessageController {
     public abstract String getWkidPropertyName();
     public abstract String getControlPointsPropertyName();
     public abstract String getActionPropertyName();
+    public abstract String getSymbolIdCodePropertyName();
     
 }
