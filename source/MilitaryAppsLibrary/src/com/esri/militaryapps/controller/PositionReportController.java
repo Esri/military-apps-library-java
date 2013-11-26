@@ -177,7 +177,7 @@ public class PositionReportController implements LocationListener {
      * @param period the minimum number of milliseconds between position reports.
      */
     public void setPeriod(int period) {
-        if (period < 0) {
+        if (period <= 0) {
             period = DEFAULT_PERIOD;
         }
         boolean changed = this.period != period;
