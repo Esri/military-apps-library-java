@@ -101,41 +101,43 @@ public class PositionReportController implements LocationListener {
     }
 
     private void sendPositionReport() {
-        synchronized (lastLocationLock) {
-            if (null != lastLocation) {
-                try {
-                    DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                    Document doc = docBuilder.newDocument();
-                    Element geomessagesElement = doc.createElement("geomessages");
-                    doc.appendChild(geomessagesElement);
-                    Element geomessageElement = doc.createElement("geomessage");
-                    geomessageElement.setAttribute("version", "1.0");
-                    geomessagesElement.appendChild(geomessageElement);        
+        if (enabled) {
+            synchronized (lastLocationLock) {
+                if (null != lastLocation) {
+                    try {
+                        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                        Document doc = docBuilder.newDocument();
+                        Element geomessagesElement = doc.createElement("geomessages");
+                        doc.appendChild(geomessagesElement);
+                        Element geomessageElement = doc.createElement("geomessage");
+                        geomessageElement.setAttribute("version", "1.0");
+                        geomessagesElement.appendChild(geomessageElement);        
 
-                    Utilities.addTextElement(doc, geomessageElement,
-                            outboundMessageController.getTypePropertyName(), "position_report");
-                    Utilities.addTextElement(doc, geomessageElement,
-                            outboundMessageController.getIdPropertyName(), uniqueId);
-                    Utilities.addTextElement(doc, geomessageElement,
-                            outboundMessageController.getWkidPropertyName(), WKID_WGS1984);
-                    Utilities.addTextElement(doc, geomessageElement,
-                            outboundMessageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
-                    Utilities.addTextElement(doc, geomessageElement,
-                            outboundMessageController.getActionPropertyName(), "UPDATE");
-                    Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", username);
-                    String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
-                    Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
-                    Utilities.addTextElement(doc, geomessageElement, "datetimevalid", Utilities.DATE_FORMAT_GEOMESSAGE.format(lastLocation.getTimestamp().getTime()));
+                        Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getTypePropertyName(), "position_report");
+                        Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getIdPropertyName(), uniqueId);
+                        Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getWkidPropertyName(), WKID_WGS1984);
+                        Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
+                        Utilities.addTextElement(doc, geomessageElement,
+                                outboundMessageController.getActionPropertyName(), "UPDATE");
+                        Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", username);
+                        String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
+                        Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
+                        Utilities.addTextElement(doc, geomessageElement, "datetimevalid", Utilities.DATE_FORMAT_GEOMESSAGE.format(lastLocation.getTimestamp().getTime()));
 
-                    StringWriter xmlStringWriter = new StringWriter();
-                    TransformerFactory.newInstance().newTransformer().transform(
-                            new DOMSource(doc), new StreamResult(xmlStringWriter));
-                    String messageText = xmlStringWriter.toString();
-                    outboundMessageController.sendMessage(messageText.getBytes());
-                } catch (Throwable t) {
-                    logger.log(Level.SEVERE, "Could not send chem light", t);
-                } finally {
-                    lastLocation = null;
+                        StringWriter xmlStringWriter = new StringWriter();
+                        TransformerFactory.newInstance().newTransformer().transform(
+                                new DOMSource(doc), new StreamResult(xmlStringWriter));
+                        String messageText = xmlStringWriter.toString();
+                        outboundMessageController.sendMessage(messageText.getBytes());
+                    } catch (Throwable t) {
+                        logger.log(Level.SEVERE, "Could not send position report", t);
+                    } finally {
+                        lastLocation = null;
+                    }
                 }
             }
         }
