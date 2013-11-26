@@ -34,36 +34,41 @@ public class OutboundMessageControllerTest {
     private static final int TEST_PORT = 59849;
     private static final int TEST_PORT_2 = 59850;
     
-    private OutboundMessageController controller = null;
+    private static final OutboundMessageController controller = new OutboundMessageController(TEST_PORT) {
+        @Override
+        public String getTypePropertyName() {
+            return null;
+        }
+
+        @Override
+        public String getIdPropertyName() {
+            return null;
+        }
+
+        @Override
+        public String getWkidPropertyName() {
+            return null;
+        }
+
+        @Override
+        public String getControlPointsPropertyName() {
+            return null;
+        }
+
+        @Override
+        public String getActionPropertyName() {
+            return null;
+        }
+
+        @Override
+        public String getSymbolIdCodePropertyName() {
+            return null;
+        }
+    };
     
     @Before
     public void setUp() {
-        controller = new OutboundMessageController(TEST_PORT) {
-            @Override
-            public String getTypePropertyName() {
-                return null;
-            }
-            
-            @Override
-            public String getIdPropertyName() {
-                return null;
-            }
-            
-            @Override
-            public String getWkidPropertyName() {
-                return null;
-            }
-            
-            @Override
-            public String getControlPointsPropertyName() {
-                return null;
-            }
-            
-            @Override
-            public String getActionPropertyName() {
-                return null;
-            }
-        };
+        
     }
     
     @After

@@ -20,20 +20,17 @@ import com.esri.militaryapps.controller.LocationController.LocationMode;
 import com.esri.militaryapps.controller.OutboundMessageController;
 import com.esri.militaryapps.controller.PositionReportController;
 import com.esri.militaryapps.model.LocationProvider;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.xml.sax.SAXException;
 
 public class PositionReportControllerTest {
     
@@ -45,50 +42,60 @@ public class PositionReportControllerTest {
     private static final String USERNAME = "Honey Badgers 42G";
     private static final String VEHICLE_TYPE = "HMMWV";
     private static final String UID = UUID.randomUUID().toString();
+    private static final String SIC = "SFGPEVCAH------";
     private static final String PROPNAME_TYPE = "type";
     private static final String PROPNAME_ID = "id";
     private static final String PROPNAME_WKID = "wkid";
     private static final String PROPNAME_CONTROL_POINTS = "control_points";
     private static final String PROPNAME_ACTION = "action";
+    private static final String PROPNAME_SIC = "sic";
     
-    private final PositionReportController controller;
-    
-    public PositionReportControllerTest() throws ParserConfigurationException, SAXException, IOException {
-        LocationController locController = new LocationController(LocationMode.SIMULATOR, false) {
+    private static PositionReportController controller;
+    static {
+        try {
+            LocationController locController = new LocationController(LocationMode.SIMULATOR, false) {
 
-            @Override
-            protected LocationProvider createLocationServiceProvider() {
-                return null;
-            }
-        };
-        locController.start();
-        OutboundMessageController messageController = new OutboundMessageController(PORT) {
-            @Override
-            public String getTypePropertyName() {
-                return PROPNAME_TYPE;
-            }
-            
-            @Override
-            public String getIdPropertyName() {
-                return PROPNAME_ID;
-            }
-            
-            @Override
-            public String getWkidPropertyName() {
-                return PROPNAME_WKID;
-            }
-            
-            @Override
-            public String getControlPointsPropertyName() {
-                return PROPNAME_CONTROL_POINTS;
-            }
-            
-            @Override
-            public String getActionPropertyName() {
-                return PROPNAME_ACTION;
-            }
-        };
-        controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID);
+                @Override
+                protected LocationProvider createLocationServiceProvider() {
+                    return null;
+                }
+            };
+            locController.start();
+            OutboundMessageController messageController = new OutboundMessageController(PORT) {
+                @Override
+                public String getTypePropertyName() {
+                    return PROPNAME_TYPE;
+                }
+
+                @Override
+                public String getIdPropertyName() {
+                    return PROPNAME_ID;
+                }
+
+                @Override
+                public String getWkidPropertyName() {
+                    return PROPNAME_WKID;
+                }
+
+                @Override
+                public String getControlPointsPropertyName() {
+                    return PROPNAME_CONTROL_POINTS;
+                }
+
+                @Override
+                public String getActionPropertyName() {
+                    return PROPNAME_ACTION;
+                }
+
+                @Override
+                public String getSymbolIdCodePropertyName() {
+                    return PROPNAME_SIC;
+                }
+            };
+            controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID, SIC);
+        } catch (Throwable t) {
+            fail("Couldn't set up test: " + t.getMessage());
+        }
     }
     
     @BeforeClass
@@ -105,6 +112,7 @@ public class PositionReportControllerTest {
     
     @After
     public void tearDown() {
+        controller.setEnabled(false);
     }
 
     @Test
