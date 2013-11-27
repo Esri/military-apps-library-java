@@ -307,4 +307,15 @@ public abstract class MapController implements LocationListener {
      */
     public abstract boolean isAutoPan();
     
+    /**
+     * Converts an X/Y point to a Military Grid Reference System (MGRS) string.
+     * @param x the point's X-coordinate.
+     * @param y the point's Y-coordinate.
+     * @param wkid the WKID for the point's spatial reference. Some of the most
+     *             common WKIDs are 4326 (WGS 1984, the most common longitude/latitude
+     *             spatial reference) and 3857 (Web Mercator).
+     * @return the MGRS string for the specified point.
+     */
+    public abstract String pointToMgrs(double x, double y, int wkid);
+    
 }

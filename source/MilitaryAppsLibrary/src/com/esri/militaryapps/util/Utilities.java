@@ -15,7 +15,9 @@
  ******************************************************************************/
 package com.esri.militaryapps.util;
 
+import com.esri.militaryapps.model.DomNodeAndDocument;
 import java.io.File;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,6 +28,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,6 +52,9 @@ public class Utilities {
 
     private static final double FIVE_PI_OVER_TWO = 5.0 * Math.PI / 2.0;
     private static final double TWO_PI = 2.0 * Math.PI;
+    
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    private static final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 
     /**
      * A DateFormat object for datetimevalid timestamps.
@@ -445,6 +458,25 @@ public class Utilities {
     }
     
     /**
+     * A convenience method for creating the following structure:
+     * &lt;geomessages&gt;
+     *     &lt;geomessage /&gt;
+     * &lt;/geomessages&gt;
+     * @return
+     * @throws ParserConfigurationException 
+     */
+    public static DomNodeAndDocument createGeomessageDocument() throws ParserConfigurationException {
+        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument();
+        Element geomessagesElement = doc.createElement("geomessages");
+        doc.appendChild(geomessagesElement);
+        Element geomessageElement = doc.createElement("geomessage");
+        geomessageElement.setAttribute("v", "1.0");
+        geomessagesElement.appendChild(geomessageElement);
+        return new DomNodeAndDocument(geomessageElement, doc);
+    }
+    
+    /**
      * Convenience method for adding an XML text element. For example, if you call
      * the method like this:<br/>
      * <br/>
@@ -464,6 +496,20 @@ public class Utilities {
         Element textElement = document.createElement(elementName);
         textElement.appendChild(document.createTextNode(elementText));
         parentNode.appendChild(textElement);
+    }
+    
+    /**
+     * Converts a DOM Document to a string.
+     * @param doc the DOM Document.
+     * @return the string representation.
+     * @throws TransformerConfigurationException
+     * @throws TransformerException 
+     */
+    public static String documentToString(Document doc) throws TransformerException {
+        StringWriter xmlStringWriter = new StringWriter();
+        transformerFactory.newTransformer().transform(
+                new DOMSource(doc), new StreamResult(xmlStringWriter));
+        return xmlStringWriter.toString();
     }
     
 }
