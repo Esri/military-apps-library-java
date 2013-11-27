@@ -86,7 +86,7 @@ public class ChemLightController {
             Element geomessagesElement = doc.createElement("geomessages");
             doc.appendChild(geomessagesElement);
             Element geomessageElement = doc.createElement("geomessage");
-            geomessageElement.setAttribute("version", "1.0");
+            geomessageElement.setAttribute("v", "1.0");
             geomessagesElement.appendChild(geomessageElement);        
             
             Utilities.addTextElement(doc, geomessageElement,
