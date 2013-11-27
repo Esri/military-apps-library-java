@@ -15,21 +15,16 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.model.DomNodeAndDocument;
 import com.esri.militaryapps.model.Location;
 import com.esri.militaryapps.util.Utilities;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A controller that broadcasts position reports including current location.
@@ -108,13 +103,9 @@ public class PositionReportController implements LocationListener {
             synchronized (lastLocationLock) {
                 if (null != lastLocation) {
                     try {
-                        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                        Document doc = docBuilder.newDocument();
-                        Element geomessagesElement = doc.createElement("geomessages");
-                        doc.appendChild(geomessagesElement);
-                        Element geomessageElement = doc.createElement("geomessage");
-                        geomessageElement.setAttribute("version", "1.0");
-                        geomessagesElement.appendChild(geomessageElement);        
+                        DomNodeAndDocument nodeAndDocument = Utilities.createGeomessageDocument();
+                        Document doc = nodeAndDocument.getDocument();
+                        Node geomessageElement = nodeAndDocument.getNode();
 
                         Utilities.addTextElement(doc, geomessageElement,
                                 outboundMessageController.getTypePropertyName(), "position_report");
@@ -135,11 +126,7 @@ public class PositionReportController implements LocationListener {
                         Utilities.addTextElement(doc, geomessageElement, "datetimevalid", Utilities.DATE_FORMAT_GEOMESSAGE.format(lastLocation.getTimestamp().getTime()));
                         Utilities.addTextElement(doc, geomessageElement, "direction", Long.toString(Math.round(lastLocation.getHeading())));
 
-                        StringWriter xmlStringWriter = new StringWriter();
-                        TransformerFactory.newInstance().newTransformer().transform(
-                                new DOMSource(doc), new StreamResult(xmlStringWriter));
-                        String messageText = xmlStringWriter.toString();
-                        outboundMessageController.sendMessage(messageText.getBytes());
+                        outboundMessageController.sendMessage(doc);
                     } catch (Throwable t) {
                         logger.log(Level.SEVERE, "Could not send position report", t);
                     }

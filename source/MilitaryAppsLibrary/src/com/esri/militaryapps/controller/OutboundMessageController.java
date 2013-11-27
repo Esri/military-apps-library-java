@@ -15,12 +15,15 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.transform.TransformerException;
+import org.w3c.dom.Document;
 
 /**
  * A controller that sends messages to listening clients. This implementation sends
@@ -70,6 +73,14 @@ public abstract class OutboundMessageController {
         if (null != packet) {
             packet.setPort(messagingPort);
         }
+    }
+    
+    /**
+     * Sends a UDP broadcast.
+     * @param doc the DOM document to be converted to a string and broadcast.
+     */
+    public void sendMessage(Document doc) throws TransformerException, IOException {
+        sendMessage(Utilities.documentToString(doc).getBytes());
     }
     
     /**

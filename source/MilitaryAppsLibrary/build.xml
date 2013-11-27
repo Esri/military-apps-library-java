@@ -110,6 +110,7 @@
           <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
           <test name="com.esri.militaryapps.controller.test.OutboundMessageControllerTest" />
           <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
           <test name="com.esri.militaryapps.model.test.LocationTest" />
       </junit>
   </target>
@@ -143,6 +144,7 @@
           <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
           <test name="com.esri.militaryapps.controller.test.OutboundMessageControllerTest" />
           <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
           <test name="com.esri.militaryapps.model.test.LocationTest" />
       </junit>
   </target>

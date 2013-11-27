@@ -15,20 +15,15 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.model.DomNodeAndDocument;
 import com.esri.militaryapps.util.Utilities;
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Sends chem light messages to listening clients.
@@ -81,13 +76,9 @@ public class ChemLightController {
     public void sendChemLight(double x, double y, int spatialReferenceWkid, int rgbColor) {
         try {
             String id = UUID.randomUUID().toString();
-            DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = docBuilder.newDocument();
-            Element geomessagesElement = doc.createElement("geomessages");
-            doc.appendChild(geomessagesElement);
-            Element geomessageElement = doc.createElement("geomessage");
-            geomessageElement.setAttribute("version", "1.0");
-            geomessagesElement.appendChild(geomessageElement);        
+            DomNodeAndDocument nodeAndDocument = Utilities.createGeomessageDocument();
+            Document doc = nodeAndDocument.getDocument();
+            Node geomessageElement = nodeAndDocument.getNode();
             
             Utilities.addTextElement(doc, geomessageElement,
                     outboundMessageController.getTypePropertyName(), "chemlight");
@@ -105,11 +96,7 @@ public class ChemLightController {
             Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
             Utilities.addTextElement(doc, geomessageElement, "datetimemodified", dateString);
             
-            StringWriter xmlStringWriter = new StringWriter();
-            TransformerFactory.newInstance().newTransformer().transform(
-                    new DOMSource(doc), new StreamResult(xmlStringWriter));
-            String messageText = xmlStringWriter.toString();
-            outboundMessageController.sendMessage(messageText.getBytes());
+            outboundMessageController.sendMessage(doc);
         } catch (Throwable t) {
             logger.log(Level.SEVERE, "Could not send chem light", t);
         }
