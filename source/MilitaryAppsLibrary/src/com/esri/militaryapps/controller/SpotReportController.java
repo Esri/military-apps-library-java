@@ -52,12 +52,12 @@ public class SpotReportController {
     /**
      * Sends a new spot report out to UDP clients. This method simply calls
      * submitSpotReport(spotReport, false).
-     *
      * @param spotReport the spot report to send.
      * @throws IOException
      */
-    public void sendSpotReport(SpotReport spotReport) throws IOException {
-        sendSpotReport(spotReport, false);
+    public void sendSpotReport(SpotReport spotReport, String uniqueDesignation)
+            throws IOException, ParserConfigurationException, TransformerException {
+        sendSpotReport(spotReport, uniqueDesignation, false);
     }
 
     /**
@@ -67,12 +67,13 @@ public class SpotReportController {
      * to be a new unique spot report; true otherwise.
      * @throws IOException
      */
-    public void sendSpotReport(SpotReport spotReport, boolean isUpdate) throws IOException {
+    public void sendSpotReport(SpotReport spotReport, String uniqueDesignation, boolean isUpdate)
+            throws IOException, ParserConfigurationException, TransformerException {
         if (null != spotReport) {
             if (!isUpdate) {
                 spotReport.regenerateMessageId();
             }
-            outboundMessageController.sendMessage(spotReport.toString().getBytes());
+            outboundMessageController.sendMessage(getSpotReportAsString(spotReport, uniqueDesignation).getBytes());
         }
     }
 

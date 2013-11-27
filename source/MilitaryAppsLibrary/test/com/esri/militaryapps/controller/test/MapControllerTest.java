@@ -216,6 +216,11 @@ public class MapControllerTest {
         public boolean isAutoPan() {
             return false;
         }
+
+        @Override
+        public String pointToMgrs(double x, double y, int wkid) {
+            return "test MGRS";
+        }
         
     }
     
