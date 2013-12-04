@@ -17,7 +17,7 @@ package com.esri.militaryapps.controller.test;
 
 import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.LocationController.LocationMode;
-import com.esri.militaryapps.controller.OutboundMessageController;
+import com.esri.militaryapps.controller.MessageController;
 import com.esri.militaryapps.controller.PositionReportController;
 import com.esri.militaryapps.model.LocationProvider;
 import java.net.DatagramPacket;
@@ -61,7 +61,7 @@ public class PositionReportControllerTest {
                 }
             };
             locController.start();
-            OutboundMessageController messageController = new OutboundMessageController(PORT) {
+            MessageController messageController = new MessageController(PORT) {
                 @Override
                 public String getTypePropertyName() {
                     return PROPNAME_TYPE;
@@ -185,13 +185,13 @@ public class PositionReportControllerTest {
                         result.message = msgString;
                     }
                 } catch (Throwable t) {
-                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
+                    Logger.getLogger(MessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
                 }
             }
             
         }.start();
         
-        controller.getOutboundMessageController().setPort(PORT);
+        controller.getMessageController().setPort(PORT);
         controller.setEnabled(true);
         Thread.sleep(2000);
         synchronized (result) {

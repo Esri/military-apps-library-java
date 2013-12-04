@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller.test;
 
-import com.esri.militaryapps.controller.OutboundMessageController;
+import com.esri.militaryapps.controller.MessageController;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.logging.Level;
@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class OutboundMessageControllerTest {
+public class MessageControllerTest {
     
     private class Result {
         String message = null;
@@ -34,7 +34,7 @@ public class OutboundMessageControllerTest {
     private static final int TEST_PORT = 59849;
     private static final int TEST_PORT_2 = 59850;
     
-    private static final OutboundMessageController controller = new OutboundMessageController(TEST_PORT) {
+    private static final MessageController controller = new MessageController(TEST_PORT) {
         @Override
         public String getTypePropertyName() {
             return null;
@@ -76,7 +76,7 @@ public class OutboundMessageControllerTest {
     }
     
     /**
-     * Test of sendMessage method, of class OutboundMessageController.
+     * Test of sendMessage method, of class MessageController.
      */
     @Test
     public void testSendUDPMessage() throws Exception {
@@ -102,7 +102,7 @@ public class OutboundMessageControllerTest {
                         result.message = msgString;
                     }
                 } catch (Throwable t) {
-                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
+                    Logger.getLogger(MessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
                 }
             }
             

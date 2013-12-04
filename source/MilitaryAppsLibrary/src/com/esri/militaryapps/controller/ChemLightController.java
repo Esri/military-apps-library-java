@@ -32,15 +32,15 @@ public class ChemLightController {
     
     private static final Logger logger = Logger.getLogger(ChemLightController.class.getName());
 
-    private final OutboundMessageController outboundMessageController;
+    private final MessageController messageController;
 
     /**
      * Creates a new ChemLightController for the application.
-     * @param outboundMessageController the controller that this controller will
+     * @param messageController the controller that this controller will
      *                                  use to send the message.
      */
-    public ChemLightController(OutboundMessageController outboundMessageController) {
-        this.outboundMessageController = outboundMessageController;
+    public ChemLightController(MessageController messageController) {
+        this.messageController = messageController;
     }
 
     /**
@@ -81,22 +81,22 @@ public class ChemLightController {
             Node geomessageElement = nodeAndDocument.getNode();
             
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getTypePropertyName(), "chemlight");
+                    messageController.getTypePropertyName(), "chemlight");
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getIdPropertyName(), id);
+                    messageController.getIdPropertyName(), id);
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getWkidPropertyName(), Integer.toString(spatialReferenceWkid));
+                    messageController.getWkidPropertyName(), Integer.toString(spatialReferenceWkid));
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getControlPointsPropertyName(), x + "," + y);
+                    messageController.getControlPointsPropertyName(), x + "," + y);
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getActionPropertyName(), "UPDATE");
+                    messageController.getActionPropertyName(), "UPDATE");
             Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", id);
             Utilities.addTextElement(doc, geomessageElement, "color", Utilities.getAFMGeoEventColorString(rgbColor));
             String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
             Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
             Utilities.addTextElement(doc, geomessageElement, "datetimemodified", dateString);
             
-            outboundMessageController.sendMessage(doc);
+            messageController.sendMessage(doc);
         } catch (Throwable t) {
             logger.log(Level.SEVERE, "Could not send chem light", t);
         }

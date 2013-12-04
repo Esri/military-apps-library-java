@@ -17,7 +17,7 @@ package com.esri.militaryapps.controller.test;
 
 import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.MapController;
-import com.esri.militaryapps.controller.OutboundMessageController;
+import com.esri.militaryapps.controller.MessageController;
 import com.esri.militaryapps.controller.SpotReportController;
 import com.esri.militaryapps.model.Location;
 import com.esri.militaryapps.model.LocationProvider;
@@ -161,7 +161,7 @@ public class SpotReportControllerTest {
     static {
         try {
             MapController mapController = new MapControllerImpl();
-            OutboundMessageController messageController = new OutboundMessageController(PORT) {
+            MessageController messageController = new MessageController(PORT) {
                 @Override
                 public String getTypePropertyName() {
                     return PROPNAME_TYPE;
@@ -232,7 +232,7 @@ public class SpotReportControllerTest {
                         result.message = msgString;
                     }
                 } catch (Throwable t) {
-                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
+                    Logger.getLogger(MessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
                 }
             }
             

@@ -47,7 +47,7 @@ public abstract class MessageController {
             theSocket = new DatagramSocket();
             thePacket = new DatagramPacket(new byte[0], 0, InetAddress.getByName("255.255.255.255"), messagingPort);
         } catch (IOException ex) {
-            Logger.getLogger(OutboundMessageController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MessageController.class.getName()).log(Level.SEVERE, null, ex);
         }
         udpSocket = theSocket;
         packet = thePacket;

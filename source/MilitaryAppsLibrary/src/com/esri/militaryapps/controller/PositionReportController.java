@@ -36,7 +36,7 @@ public class PositionReportController implements LocationListener {
     private static final Logger logger = Logger.getLogger(PositionReportController.class.getName());
     private static final String WKID_WGS1984 = "4326";
     
-    private final OutboundMessageController outboundMessageController;
+    private final MessageController messageController;
     private final Object lastLocationLock = new Object();
     private final Timer periodTimer = new Timer(true);
 
@@ -54,18 +54,18 @@ public class PositionReportController implements LocationListener {
      * Instantiates a PositionReportController, which will start sending position
      * reports after setEnabled(true) has been called and a location is available.
      * @param locationController the LocationController that provides positions.
-     * @param outboundMessageController the transmitter of position report messages.
+     * @param messageController the transmitter of position report messages.
      *                                  Other objects may use this controller at
      *                                  the same time.
      */
     public PositionReportController(
             LocationController locationController,
-            OutboundMessageController outboundMessageController,
+            MessageController messageController,
             String username,
             String vehicleType,
             String uniqueId,
             String symbolIdCode) {
-        this.outboundMessageController = outboundMessageController;
+        this.messageController = messageController;
         this.username = username;
         this.vehicleType = vehicleType;
         this.uniqueId = uniqueId;
@@ -109,18 +109,18 @@ public class PositionReportController implements LocationListener {
                         Node geomessageElement = nodeAndDocument.getNode();
 
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getTypePropertyName(), "position_report");
+                                messageController.getTypePropertyName(), "position_report");
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getIdPropertyName(), uniqueId);
+                                messageController.getIdPropertyName(), uniqueId);
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getSymbolIdCodePropertyName(), symbolIdCode);
+                                messageController.getSymbolIdCodePropertyName(), symbolIdCode);
                         Utilities.addTextElement(doc, geomessageElement, "type", vehicleType);
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getWkidPropertyName(), WKID_WGS1984);
+                                messageController.getWkidPropertyName(), WKID_WGS1984);
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
+                                messageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
                         Utilities.addTextElement(doc, geomessageElement,
-                                outboundMessageController.getActionPropertyName(), "UPDATE");
+                                messageController.getActionPropertyName(), "UPDATE");
                         Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", username);
                         String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
                         Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
@@ -128,7 +128,7 @@ public class PositionReportController implements LocationListener {
                         Utilities.addTextElement(doc, geomessageElement, "direction", Long.toString(Math.round(lastLocation.getHeading())));
                         Utilities.addTextElement(doc, geomessageElement, "status911", status911 ? "1" : "0");
 
-                        outboundMessageController.sendMessage(doc);
+                        messageController.sendMessage(doc);
                     } catch (Throwable t) {
                         logger.log(Level.SEVERE, "Could not send position report", t);
                     }
@@ -231,11 +231,11 @@ public class PositionReportController implements LocationListener {
     }
     
     /**
-     * Returns the OutboundMessageController used by this controller.
-     * @return the OutboundMessageController used by this controller.
+     * Returns the MessageController used by this controller.
+     * @return the MessageController used by this controller.
      */
-    public OutboundMessageController getOutboundMessageController() {
-        return outboundMessageController;
+    public MessageController getMessageController() {
+        return messageController;
     }
 
     /**
