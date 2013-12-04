@@ -16,6 +16,7 @@
 package com.esri.militaryapps.model;
 
 import com.esri.militaryapps.util.Utilities;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ import java.util.UUID;
  *   <li>Equipment</li>
  * </ul>
  */
-public class SpotReport {
+public class SpotReport implements Serializable {
 
     public enum Size {
         TEAM(0, "Team"),
