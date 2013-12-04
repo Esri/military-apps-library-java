@@ -262,8 +262,12 @@ public class PositionReportController implements LocationListener {
     /**
      * @param status911 true to activate 911 (emergency) status.
      */
-    public void setStatus911(boolean status911) {
+    public void setStatus911(final boolean status911) {
+        boolean changed = status911 != this.status911;
         this.status911 = status911;
+        if (changed) {
+            startTimer();
+        }
     }
     
 }
