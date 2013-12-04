@@ -47,6 +47,7 @@ public class PositionReportController implements LocationListener {
     private String vehicleType = null;
     private String uniqueId = null;
     private String symbolIdCode = null;
+    private boolean status911 = false;
     private TimerTask periodTimerTask = null;
     
     /**
@@ -125,6 +126,7 @@ public class PositionReportController implements LocationListener {
                         Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
                         Utilities.addTextElement(doc, geomessageElement, "datetimevalid", Utilities.DATE_FORMAT_GEOMESSAGE.format(lastLocation.getTimestamp().getTime()));
                         Utilities.addTextElement(doc, geomessageElement, "direction", Long.toString(Math.round(lastLocation.getHeading())));
+                        Utilities.addTextElement(doc, geomessageElement, "status911", status911 ? "1" : "0");
 
                         outboundMessageController.sendMessage(doc);
                     } catch (Throwable t) {
@@ -248,6 +250,20 @@ public class PositionReportController implements LocationListener {
      */
     public void setSymbolIdCode(String symbolIdCode) {
         this.symbolIdCode = symbolIdCode;
+    }
+
+    /**
+     * @return true if 911 (emergency) status is active.
+     */
+    public boolean isStatus911() {
+        return status911;
+    }
+
+    /**
+     * @param status911 true to activate 911 (emergency) status.
+     */
+    public void setStatus911(boolean status911) {
+        this.status911 = status911;
     }
     
 }
