@@ -19,7 +19,6 @@ import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.MapController;
 import com.esri.militaryapps.controller.OutboundMessageController;
 import com.esri.militaryapps.controller.SpotReportController;
-import com.esri.militaryapps.controller.test.OutboundMessageControllerTest;
 import com.esri.militaryapps.model.Location;
 import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.SpotReport;
