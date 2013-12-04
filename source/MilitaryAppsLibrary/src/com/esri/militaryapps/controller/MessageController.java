@@ -26,21 +26,21 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 
 /**
- * A controller that sends messages to listening clients. This implementation sends
+ * A controller that sends and receives messages to and from listening clients. This implementation sends
  * UDP broadcasts.
  */
-public abstract class OutboundMessageController {
+public abstract class MessageController {
 
     private final DatagramSocket udpSocket;
     private final DatagramPacket packet;
 
     /**
-     * Creates an OutboundMessageController for the given UDP port.
-     * @param messagingPort the UDP port through which messages will be sent.
+     * Creates a MessageController for the given UDP port.
+     * @param messagingPort the UDP port through which messages will be sent and received.
      * Usually you should use a port number between 1024 and 65535.
      * @see #setPort(int)
      */
-    protected OutboundMessageController(int messagingPort) {
+    protected MessageController(int messagingPort) {
         DatagramSocket theSocket = null;
         DatagramPacket thePacket = null;
         try {
@@ -62,8 +62,8 @@ public abstract class OutboundMessageController {
     }
     
     /**
-     * Sets the UDP port used to send messages.
-     * @param messagingPort the UDP port through which messages will be sent.
+     * Sets the UDP port used to send and receive messages.
+     * @param messagingPort the UDP port through which messages will be sent and received.
      * Usually you should use a port number between 1024 and 65535. Numbers less
      * than 0 or greater than 65535 are not port numbers. Port number 0 is reserved.
      * Port numbers 1 to 1023 cannot be used on some operating systems without root
