@@ -15,24 +15,46 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.model.Geomessage;
+import com.esri.militaryapps.model.GeomessagesReader;
 import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
- * A controller that sends and receives messages to and from listening clients. This implementation sends
- * UDP broadcasts.
+ * A controller that sends messages to listening clients and receives inbound messages.
+ * This implementation sends and receives UDP broadcasts.
  */
-public abstract class MessageController {
+public class MessageController {
+    
+    private static final int MAX_MESSAGE_LENGTH = 6000;
+    private static final Logger logger = Logger.getLogger(MessageController.class.getName());
+    private static final HashMap<Integer, MessageController> portToController
+            = new HashMap<Integer, MessageController>();
 
-    private final DatagramSocket udpSocket;
-    private final DatagramPacket packet;
+    private final DatagramSocket outboundUdpSocket;
+    private final DatagramPacket outboundPacket;
+    private final DatagramPacket inboundPacket;  
+    private final Set<MessageControllerListener> listeners = new HashSet<MessageControllerListener>();
+    private final GeomessagesReader reader;
+    private final int port;
+    
+    private Thread inboundThread;
+    private Boolean receiving = false;
+    private final Object receivingLock = new Object();
 
     /**
      * Creates a MessageController for the given UDP port.
@@ -40,38 +62,74 @@ public abstract class MessageController {
      * Usually you should use a port number between 1024 and 65535.
      * @see #setPort(int)
      */
-    protected MessageController(int messagingPort) {
+    private MessageController(int messagingPort) {
+        port = messagingPort;
         DatagramSocket theSocket = null;
         DatagramPacket thePacket = null;
         try {
             theSocket = new DatagramSocket();
             thePacket = new DatagramPacket(new byte[0], 0, InetAddress.getByName("255.255.255.255"), messagingPort);
         } catch (IOException ex) {
-            Logger.getLogger(MessageController.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
-        udpSocket = theSocket;
-        packet = thePacket;
+        outboundUdpSocket = theSocket;
+        outboundPacket = thePacket;
+        
+        theSocket = null;
+        byte[] byteArray = new byte[MAX_MESSAGE_LENGTH];
+        inboundPacket = new DatagramPacket(byteArray, MAX_MESSAGE_LENGTH);
+        
+        GeomessagesReader theReader = null;
+        try {
+            theReader = new GeomessagesReader();
+        } catch (ParserConfigurationException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (SAXException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+        reader = theReader;
     }
 
     @Override
     protected void finalize() throws Throwable {
-        if (null != udpSocket) {
-            udpSocket.close();
+        if (null != outboundUdpSocket) {
+            outboundUdpSocket.close();
         }
         super.finalize();
     }
     
+    public static MessageController getInstance(int port) {
+        synchronized (portToController) {
+            MessageController controller = portToController.get(port);
+            if (null == controller) {
+                controller = new MessageController(port);
+                portToController.put(port, controller);
+            }
+            return controller;
+        }
+    }
+    
     /**
-     * Sets the UDP port used to send and receive messages.
-     * @param messagingPort the UDP port through which messages will be sent and received.
-     * Usually you should use a port number between 1024 and 65535. Numbers less
-     * than 0 or greater than 65535 are not port numbers. Port number 0 is reserved.
-     * Port numbers 1 to 1023 cannot be used on some operating systems without root
-     * privileges.
+     * Adds a listener to this controller.
+     * @param listener the listener to add. If this controller already has this listener,
+     *                 this method has no effect.
+     * @return true if this controller did not already have this listener.
      */
-    public void setPort(int messagingPort) {
-        if (null != packet) {
-            packet.setPort(messagingPort);
+    public boolean addListener(MessageControllerListener listener) {
+        synchronized (listeners) {
+            return listeners.add(listener);
+        }
+    }
+    
+    /**
+     * Removes a listener from this controller.
+     * @param listener the listener to remove. If this controller did not have this
+     *                 listener, this method has no effect.
+     * @return true if this controller had this listener.
+     */
+    public boolean removeListener(MessageControllerListener listener) {
+        synchronized (listeners) {
+            return listeners.remove(listener);
         }
     }
     
@@ -89,18 +147,74 @@ public abstract class MessageController {
      * @throws IOException if the message cannot be sent.
      */
     public void sendMessage(byte[] bytes) throws IOException {
-        synchronized (packet) {
-            packet.setData(bytes);
-            packet.setLength(bytes.length);
-            udpSocket.send(packet);
+        synchronized (outboundPacket) {
+            outboundPacket.setData(bytes);
+            outboundPacket.setLength(bytes.length);
+            outboundUdpSocket.send(outboundPacket);
         }
     }
     
-    public abstract String getTypePropertyName();
-    public abstract String getIdPropertyName();
-    public abstract String getWkidPropertyName();
-    public abstract String getControlPointsPropertyName();
-    public abstract String getActionPropertyName();
-    public abstract String getSymbolIdCodePropertyName();
+    public void startReceiving() {
+        synchronized (receivingLock) {
+            if (receiving) {
+                return;
+            } else {
+                receiving = true;
+            }
+        }
+        inboundThread = new Thread() {
+            
+            private DatagramSocket inboundUdpSocket = null;
+
+            @Override
+            public void run() {
+                try {
+                    inboundUdpSocket = new DatagramSocket(port);
+                    while (true) {
+                        inboundUdpSocket.receive(inboundPacket);
+                        final String msgString = new String(inboundPacket.getData(), inboundPacket.getOffset(), inboundPacket.getLength());
+                        synchronized (listeners) {
+                            for (final MessageControllerListener listener : listeners) {
+                                new Thread() {
+
+                                    @Override
+                                    public void run() {
+                                        listener.datagramReceived(msgString);
+                                    }
+
+                                }.start();
+                            }
+                        }
+                        try {
+                            List<Geomessage> messages = reader.parseMessages(msgString);
+                            for (final Geomessage message : messages) {
+                                synchronized (listeners) {
+                                    for (final MessageControllerListener listener : listeners) {
+                                        new Thread() {
+
+                                            @Override
+                                            public void run() {
+                                                listener.geomessageReceived(message);
+                                            }
+
+                                        }.start();                                    
+                                    }
+                                }
+                            }
+                        } catch (SAXException ex) {
+                            logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                        } catch (IOException ex) {
+                            logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                        }
+                    }
+                } catch (SocketException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    logger.log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        inboundThread.start();
+    }
     
 }

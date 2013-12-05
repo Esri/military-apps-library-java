@@ -161,37 +161,7 @@ public class SpotReportControllerTest {
     static {
         try {
             MapController mapController = new MapControllerImpl();
-            MessageController messageController = new MessageController(PORT) {
-                @Override
-                public String getTypePropertyName() {
-                    return PROPNAME_TYPE;
-                }
-
-                @Override
-                public String getIdPropertyName() {
-                    return PROPNAME_ID;
-                }
-
-                @Override
-                public String getWkidPropertyName() {
-                    return PROPNAME_WKID;
-                }
-
-                @Override
-                public String getControlPointsPropertyName() {
-                    return PROPNAME_CONTROL_POINTS;
-                }
-
-                @Override
-                public String getActionPropertyName() {
-                    return PROPNAME_ACTION;
-                }
-
-                @Override
-                public String getSymbolIdCodePropertyName() {
-                    return PROPNAME_SIC;
-                }
-            };
+            MessageController messageController = MessageController.getInstance(PORT);
             controller = new SpotReportController(mapController, messageController);
         } catch (Throwable t) {
             fail("Couldn't set up test: " + t.getMessage());

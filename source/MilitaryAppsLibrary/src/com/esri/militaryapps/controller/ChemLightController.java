@@ -16,6 +16,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.DomNodeAndDocument;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.util.Utilities;
 import java.util.Date;
 import java.util.UUID;
@@ -81,15 +82,15 @@ public class ChemLightController {
             Node geomessageElement = nodeAndDocument.getNode();
             
             Utilities.addTextElement(doc, geomessageElement,
-                    messageController.getTypePropertyName(), "chemlight");
+                    Geomessage.TYPE_FIELD_NAME, "chemlight");
             Utilities.addTextElement(doc, geomessageElement,
-                    messageController.getIdPropertyName(), id);
+                    Geomessage.ID_FIELD_NAME, id);
             Utilities.addTextElement(doc, geomessageElement,
-                    messageController.getWkidPropertyName(), Integer.toString(spatialReferenceWkid));
+                    Geomessage.WKID_FIELD_NAME, Integer.toString(spatialReferenceWkid));
             Utilities.addTextElement(doc, geomessageElement,
-                    messageController.getControlPointsPropertyName(), x + "," + y);
+                    Geomessage.CONTROL_POINTS_FIELD_NAME, x + "," + y);
             Utilities.addTextElement(doc, geomessageElement,
-                    messageController.getActionPropertyName(), "UPDATE");
+                    Geomessage.ACTION_FIELD_NAME, "UPDATE");
             Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", id);
             Utilities.addTextElement(doc, geomessageElement, "color", Utilities.getAFMGeoEventColorString(rgbColor));
             String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());

@@ -16,6 +16,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.DomNodeAndDocument;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.model.Location;
 import com.esri.militaryapps.util.Utilities;
 import java.util.Date;
@@ -109,18 +110,18 @@ public class PositionReportController implements LocationListener {
                         Node geomessageElement = nodeAndDocument.getNode();
 
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getTypePropertyName(), "position_report");
+                                Geomessage.TYPE_FIELD_NAME, "position_report");
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getIdPropertyName(), uniqueId);
+                                Geomessage.ID_FIELD_NAME, uniqueId);
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getSymbolIdCodePropertyName(), symbolIdCode);
+                                Geomessage.SIC_FIELD_NAME, symbolIdCode);
                         Utilities.addTextElement(doc, geomessageElement, "type", vehicleType);
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getWkidPropertyName(), WKID_WGS1984);
+                                Geomessage.WKID_FIELD_NAME, WKID_WGS1984);
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getControlPointsPropertyName(), lastLocation.getLongitude() + "," + lastLocation.getLatitude());
+                                Geomessage.CONTROL_POINTS_FIELD_NAME, lastLocation.getLongitude() + "," + lastLocation.getLatitude());
                         Utilities.addTextElement(doc, geomessageElement,
-                                messageController.getActionPropertyName(), "UPDATE");
+                                Geomessage.ACTION_FIELD_NAME, "UPDATE");
                         Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", username);
                         String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
                         Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);

@@ -18,6 +18,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.DomNodeAndDocument;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.model.SpotReport;
 import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
@@ -101,17 +102,17 @@ public class SpotReportController {
         Node geomessageElement = nodeAndDocument.getNode();
         
         Utilities.addTextElement(doc, geomessageElement,
-                messageController.getTypePropertyName(), "spotrep");
+                Geomessage.TYPE_FIELD_NAME, "spotrep");
         Utilities.addTextElement(doc, geomessageElement,
-                messageController.getIdPropertyName(), spotReport.getMessageId());
+                Geomessage.ID_FIELD_NAME, spotReport.getMessageId());
         Utilities.addTextElement(doc, geomessageElement,
-                messageController.getWkidPropertyName(),
+                Geomessage.WKID_FIELD_NAME,
                 Integer.toString(spotReport.getLocationWkid()));
         Utilities.addTextElement(doc, geomessageElement,
-                messageController.getControlPointsPropertyName(),
+                Geomessage.CONTROL_POINTS_FIELD_NAME,
                 spotReport.getLocationX() + "," + spotReport.getLocationY());
         Utilities.addTextElement(doc, geomessageElement,
-                messageController.getActionPropertyName(), "update");
+                Geomessage.ACTION_FIELD_NAME, "update");
         if (null != senderUniqueDesignation) {
             Utilities.addTextElement(doc, geomessageElement, "uniquedesignation",
                     senderUniqueDesignation);

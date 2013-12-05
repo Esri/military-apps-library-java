@@ -115,7 +115,7 @@
       </junit>
   </target>
   
-  <target name="debug-tests" description="Run Ant tests">
+  <target name="debug-tests" description="Run Ant tests in debug mode">
       <property name="debug" value="true" />
       <antcall target="clean" />
       <antcall target="jar" />

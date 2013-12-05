@@ -16,110 +16,107 @@
 package com.esri.militaryapps.controller.test;
 
 import com.esri.militaryapps.controller.MessageController;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.esri.militaryapps.controller.MessageControllerListener;
+import com.esri.militaryapps.model.Geomessage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.xml.sax.SAXException;
 
 public class MessageControllerTest {
     
     private class Result {
         String message = null;
+        HashMap<String, Geomessage> geomessages = new HashMap<String, Geomessage>();
     }
 
     private static final int TEST_PORT = 59849;
-    private static final int TEST_PORT_2 = 59850;
-    
-    private static final MessageController controller = new MessageController(TEST_PORT) {
-        @Override
-        public String getTypePropertyName() {
-            return null;
-        }
-
-        @Override
-        public String getIdPropertyName() {
-            return null;
-        }
-
-        @Override
-        public String getWkidPropertyName() {
-            return null;
-        }
-
-        @Override
-        public String getControlPointsPropertyName() {
-            return null;
-        }
-
-        @Override
-        public String getActionPropertyName() {
-            return null;
-        }
-
-        @Override
-        public String getSymbolIdCodePropertyName() {
-            return null;
-        }
-    };
     
     @Before
-    public void setUp() {
-        
+    public void setUp() throws ParserConfigurationException, SAXException {
     }
     
     @After
     public void tearDown() {
     }
     
-    /**
-     * Test of sendMessage method, of class MessageController.
-     */
     @Test
     public void testSendUDPMessage() throws Exception {
-        testSendUDPMessage(TEST_PORT);
-    }
-    
-    private void testSendUDPMessage(final int port) throws Exception {
         System.out.println("sendUDPMessage");
 
+        MessageController controller = MessageController.getInstance(TEST_PORT);
+        controller.startReceiving();
+        
         final Result result = new Result();
-        new Thread() {
+        MessageControllerListener listener = new MessageControllerListener() {
 
             @Override
-            public void run() {
-                byte[] message = new byte[1500];
-                DatagramPacket packet = new DatagramPacket(message, message.length);
-                DatagramSocket socket;
-                try {
-                    socket = new DatagramSocket(port);
-                    socket.receive(packet);
-                    String msgString = new String(packet.getData(), packet.getOffset(), packet.getLength());
-                    synchronized (result) {
-                        result.message = msgString;
-                    }
-                } catch (Throwable t) {
-                    Logger.getLogger(MessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
-                }
+            public void geomessageReceived(Geomessage geomessage) {
+                fail("That text had no Geomessages!");
+            }
+
+            @Override
+            public void datagramReceived(String contents) {
+                result.message = contents;
             }
             
-        }.start();
+        };
+        
+        controller.addListener(listener);
+        controller.startReceiving();
         
         String expected = "Test message " + System.currentTimeMillis();
         byte[] bytes = expected.getBytes();
         Thread.sleep(100);
         controller.sendMessage(bytes);
         Thread.sleep(100);
+        controller.removeListener(listener);
         assertEquals(expected, result.message);
     }
     
     @Test
-    public void testSetPort() throws Exception {
-        controller.setPort(TEST_PORT_2);
-        testSendUDPMessage(TEST_PORT_2);
+    public void testSendGeomessage() throws IOException, InterruptedException {
+        System.out.println("sendGeomessage");
+        StringBuilder sb = new StringBuilder();
+        InputStream in = getClass().getResource("/geomessages.xml").openStream();
+        int next = -1;
+        while (-1 != (next = in.read())) {
+            sb.append((char) next);
+        }
+        in.close();
+        
+        final Result result = new Result();
+        MessageController controller = MessageController.getInstance(TEST_PORT);
+        MessageControllerListener listener = new MessageControllerListener() {
+
+            @Override
+            public void geomessageReceived(Geomessage geomessage) {
+                result.geomessages.put(geomessage.getId(), geomessage);
+            }
+
+            @Override
+            public void datagramReceived(String contents) {
+                result.message = contents;
+            }
+            
+        };
+        controller.addListener(listener);
+        controller.startReceiving();
+        
+        String expected = sb.toString();
+        byte[] bytes = expected.getBytes();
+        controller.sendMessage(bytes);
+        Thread.sleep(100);
+        controller.removeListener(listener);
+        assertEquals(expected, result.message);
+        assertEquals(2, result.geomessages.size());
+        assertEquals("3A1-001", result.geomessages.get("{3a752ef3-b085-41e8-993a-3ec39098fde2}").getProperty("uniquedesignation"));
+        assertEquals("3A2-002", result.geomessages.get("{48f54ca2-ae19-4de0-9fda-f8dd9b17adac}").getProperty("uniquedesignation"));
     }
     
 }
