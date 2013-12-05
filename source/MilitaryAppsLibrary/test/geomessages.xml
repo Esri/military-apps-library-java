@@ -1,0 +1,38 @@
+<geomessages>
+	<geomessage v="1.0">
+		<_type>position_report</_type>
+		<_action>UPDATE</_action>
+		<_id>{3a752ef3-b085-41e8-993a-3ec39098fde2}</_id>
+		<_wkid>4326</_wkid>
+		<sic>SFGPEVAL-------</sic>
+		<_control_points>70.4565000013,34.4345000014</_control_points>
+		<uniquedesignation>3A1-001</uniquedesignation>
+		<quantity>1</quantity>
+		<direction>359</direction>
+		<type>M1126</type>
+		<datetimevalid>2012-07-26 00:00:00</datetimevalid>
+		<speed>100</speed>
+		<owningunit>2/3/A/1</owningunit>
+		<status911>0</status911>
+		<fuel_state>100</fuel_state>
+		<rel_info>0</rel_info>
+	</geomessage>
+	<geomessage v="1.0">
+		<_type>position_report</_type>
+		<_action>UPDATE</_action>
+		<_id>{48f54ca2-ae19-4de0-9fda-f8dd9b17adac}</_id>
+		<_wkid>4326</_wkid>
+		<sic>SFGPEVAL-------</sic>
+		<_control_points>70.4571999982,34.4274999984</_control_points>
+		<uniquedesignation>3A2-002</uniquedesignation>
+		<quantity>1</quantity>
+		<direction>359</direction>
+		<type>M1126</type>
+		<datetimevalid>2012-07-26 00:00:00</datetimevalid>
+		<speed>100</speed>
+		<owningunit>2/3/A/2</owningunit>
+		<status911>0</status911>
+		<fuel_state>100</fuel_state>
+		<rel_info>0</rel_info>
+	</geomessage>
+</geomessages>

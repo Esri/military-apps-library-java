@@ -17,7 +17,7 @@ package com.esri.militaryapps.controller.test;
 
 import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.MapController;
-import com.esri.militaryapps.controller.OutboundMessageController;
+import com.esri.militaryapps.controller.MessageController;
 import com.esri.militaryapps.controller.SpotReportController;
 import com.esri.militaryapps.model.Location;
 import com.esri.militaryapps.model.LocationProvider;
@@ -161,37 +161,7 @@ public class SpotReportControllerTest {
     static {
         try {
             MapController mapController = new MapControllerImpl();
-            OutboundMessageController messageController = new OutboundMessageController(PORT) {
-                @Override
-                public String getTypePropertyName() {
-                    return PROPNAME_TYPE;
-                }
-
-                @Override
-                public String getIdPropertyName() {
-                    return PROPNAME_ID;
-                }
-
-                @Override
-                public String getWkidPropertyName() {
-                    return PROPNAME_WKID;
-                }
-
-                @Override
-                public String getControlPointsPropertyName() {
-                    return PROPNAME_CONTROL_POINTS;
-                }
-
-                @Override
-                public String getActionPropertyName() {
-                    return PROPNAME_ACTION;
-                }
-
-                @Override
-                public String getSymbolIdCodePropertyName() {
-                    return PROPNAME_SIC;
-                }
-            };
+            MessageController messageController = MessageController.getInstance(PORT);
             controller = new SpotReportController(mapController, messageController);
         } catch (Throwable t) {
             fail("Couldn't set up test: " + t.getMessage());
@@ -232,7 +202,7 @@ public class SpotReportControllerTest {
                         result.message = msgString;
                     }
                 } catch (Throwable t) {
-                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
+                    Logger.getLogger(MessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
                 }
             }
             

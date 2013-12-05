@@ -17,14 +17,12 @@ package com.esri.militaryapps.controller.test;
 
 import com.esri.militaryapps.controller.LocationController;
 import com.esri.militaryapps.controller.LocationController.LocationMode;
-import com.esri.militaryapps.controller.OutboundMessageController;
+import com.esri.militaryapps.controller.MessageController;
+import com.esri.militaryapps.controller.MessageControllerListener;
 import com.esri.militaryapps.controller.PositionReportController;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.model.LocationProvider;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,6 +34,7 @@ public class PositionReportControllerTest {
     
     private class Result {
         String message = null;
+        Geomessage geomessage = null;
     }
     
     private static final int PORT = 48965;
@@ -43,12 +42,6 @@ public class PositionReportControllerTest {
     private static final String VEHICLE_TYPE = "HMMWV";
     private static final String UID = UUID.randomUUID().toString();
     private static final String SIC = "SFGPEVCAH------";
-    private static final String PROPNAME_TYPE = "type";
-    private static final String PROPNAME_ID = "id";
-    private static final String PROPNAME_WKID = "wkid";
-    private static final String PROPNAME_CONTROL_POINTS = "control_points";
-    private static final String PROPNAME_ACTION = "action";
-    private static final String PROPNAME_SIC = "sic";
     
     private static PositionReportController controller;
     static {
@@ -61,37 +54,8 @@ public class PositionReportControllerTest {
                 }
             };
             locController.start();
-            OutboundMessageController messageController = new OutboundMessageController(PORT) {
-                @Override
-                public String getTypePropertyName() {
-                    return PROPNAME_TYPE;
-                }
-
-                @Override
-                public String getIdPropertyName() {
-                    return PROPNAME_ID;
-                }
-
-                @Override
-                public String getWkidPropertyName() {
-                    return PROPNAME_WKID;
-                }
-
-                @Override
-                public String getControlPointsPropertyName() {
-                    return PROPNAME_CONTROL_POINTS;
-                }
-
-                @Override
-                public String getActionPropertyName() {
-                    return PROPNAME_ACTION;
-                }
-
-                @Override
-                public String getSymbolIdCodePropertyName() {
-                    return PROPNAME_SIC;
-                }
-            };
+            MessageController messageController = MessageController.getInstance(PORT);
+            messageController.startReceiving();
             controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID, SIC);
         } catch (Throwable t) {
             fail("Couldn't set up test: " + t.getMessage());
@@ -170,28 +134,20 @@ public class PositionReportControllerTest {
     @Test
     public void testMessage() throws Exception {
         final Result result = new Result();
-        new Thread() {
+        MessageControllerListener listener = new MessageControllerListener() {
 
             @Override
-            public void run() {
-                byte[] message = new byte[1500];
-                DatagramPacket packet = new DatagramPacket(message, message.length);
-                DatagramSocket socket;
-                try {
-                    socket = new DatagramSocket(PORT);
-                    socket.receive(packet);
-                    String msgString = new String(packet.getData(), packet.getOffset(), packet.getLength());
-                    synchronized (result) {
-                        result.message = msgString;
-                    }
-                } catch (Throwable t) {
-                    Logger.getLogger(OutboundMessageControllerTest.class.getName()).log(Level.SEVERE, null, t);
-                }
+            public void geomessageReceived(Geomessage geomessage) {
+                result.geomessage = geomessage;
             }
-            
-        }.start();
+
+            @Override
+            public void datagramReceived(String contents) {
+                result.message = contents;
+            }
+        };
+        controller.getMessageController().addListener(listener);
         
-        controller.getOutboundMessageController().setPort(PORT);
         controller.setEnabled(true);
         Thread.sleep(2000);
         synchronized (result) {
@@ -203,6 +159,7 @@ public class PositionReportControllerTest {
             assertNotNull(result.message);
             assertTrue(0 < result.message.indexOf(">" + USERNAME + "<"));
         }
+        controller.getMessageController().removeListener(listener);
     }
     
 }

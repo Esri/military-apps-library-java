@@ -18,6 +18,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.DomNodeAndDocument;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.model.SpotReport;
 import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
@@ -35,18 +36,18 @@ public class SpotReportController {
 
     private static final Logger logger = Logger.getLogger(SpotReportController.class.getName());
     private final MapController mapController;
-    private final OutboundMessageController outboundMessageController;
+    private final MessageController messageController;
 
     /**
      * Creates a new SpotReportController.
      * @param mapController the application's map controller, for converting coordinates.
-     * @param outboundMessageController the controller that sends messages to listening clients.
+     * @param messageController the controller that sends messages to listening clients.
      */
     public SpotReportController(
             MapController mapController,
-            OutboundMessageController outboundMessageController) {
+            MessageController messageController) {
         this.mapController = mapController;
-        this.outboundMessageController = outboundMessageController;
+        this.messageController = messageController;
     }
 
     /**
@@ -73,7 +74,7 @@ public class SpotReportController {
             if (!isUpdate) {
                 spotReport.regenerateMessageId();
             }
-            outboundMessageController.sendMessage(getSpotReportAsString(spotReport, uniqueDesignation).getBytes());
+            messageController.sendMessage(getSpotReportAsString(spotReport, uniqueDesignation).getBytes());
         }
     }
 
@@ -101,17 +102,17 @@ public class SpotReportController {
         Node geomessageElement = nodeAndDocument.getNode();
         
         Utilities.addTextElement(doc, geomessageElement,
-                outboundMessageController.getTypePropertyName(), "spotrep");
+                Geomessage.TYPE_FIELD_NAME, "spotrep");
         Utilities.addTextElement(doc, geomessageElement,
-                outboundMessageController.getIdPropertyName(), spotReport.getMessageId());
+                Geomessage.ID_FIELD_NAME, spotReport.getMessageId());
         Utilities.addTextElement(doc, geomessageElement,
-                outboundMessageController.getWkidPropertyName(),
+                Geomessage.WKID_FIELD_NAME,
                 Integer.toString(spotReport.getLocationWkid()));
         Utilities.addTextElement(doc, geomessageElement,
-                outboundMessageController.getControlPointsPropertyName(),
+                Geomessage.CONTROL_POINTS_FIELD_NAME,
                 spotReport.getLocationX() + "," + spotReport.getLocationY());
         Utilities.addTextElement(doc, geomessageElement,
-                outboundMessageController.getActionPropertyName(), "update");
+                Geomessage.ACTION_FIELD_NAME, "update");
         if (null != senderUniqueDesignation) {
             Utilities.addTextElement(doc, geomessageElement, "uniquedesignation",
                     senderUniqueDesignation);

@@ -16,6 +16,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.DomNodeAndDocument;
+import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.util.Utilities;
 import java.util.Date;
 import java.util.UUID;
@@ -32,15 +33,15 @@ public class ChemLightController {
     
     private static final Logger logger = Logger.getLogger(ChemLightController.class.getName());
 
-    private final OutboundMessageController outboundMessageController;
+    private final MessageController messageController;
 
     /**
      * Creates a new ChemLightController for the application.
-     * @param outboundMessageController the controller that this controller will
+     * @param messageController the controller that this controller will
      *                                  use to send the message.
      */
-    public ChemLightController(OutboundMessageController outboundMessageController) {
-        this.outboundMessageController = outboundMessageController;
+    public ChemLightController(MessageController messageController) {
+        this.messageController = messageController;
     }
 
     /**
@@ -81,22 +82,22 @@ public class ChemLightController {
             Node geomessageElement = nodeAndDocument.getNode();
             
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getTypePropertyName(), "chemlight");
+                    Geomessage.TYPE_FIELD_NAME, "chemlight");
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getIdPropertyName(), id);
+                    Geomessage.ID_FIELD_NAME, id);
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getWkidPropertyName(), Integer.toString(spatialReferenceWkid));
+                    Geomessage.WKID_FIELD_NAME, Integer.toString(spatialReferenceWkid));
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getControlPointsPropertyName(), x + "," + y);
+                    Geomessage.CONTROL_POINTS_FIELD_NAME, x + "," + y);
             Utilities.addTextElement(doc, geomessageElement,
-                    outboundMessageController.getActionPropertyName(), "UPDATE");
+                    Geomessage.ACTION_FIELD_NAME, "UPDATE");
             Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", id);
             Utilities.addTextElement(doc, geomessageElement, "color", Utilities.getAFMGeoEventColorString(rgbColor));
             String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
             Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
             Utilities.addTextElement(doc, geomessageElement, "datetimemodified", dateString);
             
-            outboundMessageController.sendMessage(doc);
+            messageController.sendMessage(doc);
         } catch (Throwable t) {
             logger.log(Level.SEVERE, "Could not send chem light", t);
         }

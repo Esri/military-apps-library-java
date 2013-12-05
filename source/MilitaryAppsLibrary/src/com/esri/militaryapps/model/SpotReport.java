@@ -165,8 +165,6 @@ public class SpotReport implements Serializable {
 
     /**
      * Creates a new SpotReport object.
-     * @param mapController the MapController, used for converting coordinates.
-     * @param outboundMessageController the OutboundMessageController, used for
      */
     public SpotReport() {
         regenerateMessageId();

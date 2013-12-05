@@ -108,14 +108,14 @@
           <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
           <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
           <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.OutboundMessageControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.MessageControllerTest" />
           <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
           <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
           <test name="com.esri.militaryapps.model.test.LocationTest" />
       </junit>
   </target>
   
-  <target name="debug-tests" description="Run Ant tests">
+  <target name="debug-tests" description="Run Ant tests in debug mode">
       <property name="debug" value="true" />
       <antcall target="clean" />
       <antcall target="jar" />
@@ -142,7 +142,7 @@
           <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
           <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
           <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.OutboundMessageControllerTest" />
+          <test name="com.esri.militaryapps.controller.test.MessageControllerTest" />
           <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
           <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
           <test name="com.esri.militaryapps.model.test.LocationTest" />
