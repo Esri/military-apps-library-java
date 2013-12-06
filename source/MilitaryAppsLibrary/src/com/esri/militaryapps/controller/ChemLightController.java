@@ -31,6 +31,11 @@ import org.w3c.dom.Node;
  */
 public class ChemLightController {
     
+    /**
+     * The type string for this controller's Geomessages.
+     */
+    public static final String REPORT_TYPE = "chemlight";
+    
     private static final Logger logger = Logger.getLogger(ChemLightController.class.getName());
 
     private final MessageController messageController;
@@ -82,7 +87,7 @@ public class ChemLightController {
             Node geomessageElement = nodeAndDocument.getNode();
             
             Utilities.addTextElement(doc, geomessageElement,
-                    Geomessage.TYPE_FIELD_NAME, "chemlight");
+                    Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
             Utilities.addTextElement(doc, geomessageElement,
                     Geomessage.ID_FIELD_NAME, id);
             Utilities.addTextElement(doc, geomessageElement,

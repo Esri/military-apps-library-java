@@ -33,6 +33,11 @@ import org.w3c.dom.Node;
  * A controller that broadcasts spot reports.
  */
 public class SpotReportController {
+    
+    /**
+     * The type string for this controller's Geomessages.
+     */
+    public static final String REPORT_TYPE = "spotrep";
 
     private static final Logger logger = Logger.getLogger(SpotReportController.class.getName());
     private final MapController mapController;
@@ -102,7 +107,7 @@ public class SpotReportController {
         Node geomessageElement = nodeAndDocument.getNode();
         
         Utilities.addTextElement(doc, geomessageElement,
-                Geomessage.TYPE_FIELD_NAME, "spotrep");
+                Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
         Utilities.addTextElement(doc, geomessageElement,
                 Geomessage.ID_FIELD_NAME, spotReport.getMessageId());
         Utilities.addTextElement(doc, geomessageElement,
