@@ -88,6 +88,7 @@ public class LocationControllerTest {
             assertEquals(70.426874211, locations.get(0).getLongitude(), 0.000001);
             assertEquals(34.440280645, locations.get(0).getLatitude(), 0.000001);
         }
+        instance.pause();
     }
 
     public class LocationControllerImpl extends LocationController {
