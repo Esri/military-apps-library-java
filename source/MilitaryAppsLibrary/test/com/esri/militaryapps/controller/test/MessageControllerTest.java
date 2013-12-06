@@ -36,6 +36,7 @@ public class MessageControllerTest {
     }
 
     private static final int TEST_PORT = 59849;
+    private static final int TEST_PORT_2 = 16346;
     
     @Before
     public void setUp() throws ParserConfigurationException, SAXException {
@@ -82,6 +83,15 @@ public class MessageControllerTest {
     @Test
     public void testSendGeomessage() throws IOException, InterruptedException {
         System.out.println("sendGeomessage");
+        MessageController controller = new MessageController(TEST_PORT);
+        doGeomessageTesting(controller);
+        
+        controller.setPort(TEST_PORT_2);
+        Thread.sleep(2000);
+        doGeomessageTesting(controller);
+    }
+    
+    private void doGeomessageTesting(MessageController controller) throws IOException, InterruptedException {
         StringBuilder sb = new StringBuilder();
         InputStream in = getClass().getResource("/geomessages.xml").openStream();
         int next = -1;
@@ -91,7 +101,6 @@ public class MessageControllerTest {
         in.close();
         
         final Result result = new Result();
-        MessageController controller = new MessageController(TEST_PORT);
         controller.startReceiving();
         MessageControllerListener listener;
         listener = new MessageControllerListener() {
@@ -110,6 +119,7 @@ public class MessageControllerTest {
         
         String expected = sb.toString();
         byte[] bytes = expected.getBytes();
+        Thread.sleep(100);
         controller.sendMessage(bytes);
         Thread.sleep(100);
         controller.removeListener(listener);

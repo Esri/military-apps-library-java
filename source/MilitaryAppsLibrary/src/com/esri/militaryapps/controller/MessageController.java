@@ -49,7 +49,7 @@ public class MessageController {
     private final GeomessagesReader reader;
     private final Object inboundLock = new Object();
     
-    private Thread inboundThread;
+    private Thread inboundThread = null;
     private DatagramSocket inboundUdpSocket = null;
     private int port;
 
@@ -213,7 +213,42 @@ public class MessageController {
      * Tells this controller to stop receiving messages, closing the socket in use.
      */
     public void stopReceiving() {
-        inboundThread.interrupt();
+        if (null != inboundThread) {
+            inboundThread.interrupt();
+        }
+    }
+    
+    /**
+     * Returns this controller's UDP port.
+     * @return this controller's UDP port.
+     */
+    public int getPort() {
+        return port;
+    }
+    
+    /**
+     * Sets this controller's UDP port. If the controller is currently receiving
+     * messages and the new port is different, the controller releases the old port
+     * and binds to the new port.
+     * @param port 
+     */
+    public void setPort(int port) {
+        synchronized (inboundLock) {
+            boolean changed = this.port != port;
+            this.port = port;
+            outboundPacket.setPort(port);
+            if (changed && inboundThread.isAlive()) {
+                new Thread() {
+
+                    @Override
+                    public void run() {
+                        stopReceiving();
+                        startReceiving();
+                    }
+
+                }.start();
+            }
+        }
     }
     
 }
