@@ -16,6 +16,7 @@
 package com.esri.militaryapps.model;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Geomessage bean.
@@ -88,6 +89,13 @@ public class Geomessage {
      */
     public void setProperty(String name, Object value) {
         properties.put(name, value);
+    }
+    
+    /**
+     * Gets all properties (other than unique ID) of this Geomessage.
+     */
+    public Map<String, Object> getProperties() {
+        return properties;
     }
     
 }
