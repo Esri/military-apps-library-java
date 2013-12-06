@@ -425,7 +425,8 @@ public class Utilities {
             timeZone = TimeZone.getTimeZone("UTC");
         }
         Calendar cal = Calendar.getInstance(timeZone);
-        cal.set(year, month, day, hour, minute, wholeSeconds);
+        //In Java Calendar, month is zero-based, so subtract one
+        cal.set(year, month - 1, day, hour, minute, wholeSeconds);
         cal.set(Calendar.MILLISECOND, Math.round(fractionalSeconds * 1000f));
         return cal;
     }

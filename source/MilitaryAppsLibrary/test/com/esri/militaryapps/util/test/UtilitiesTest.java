@@ -309,7 +309,8 @@ public class UtilitiesTest {
         try {
             output = Utilities.parseXmlDateTime(input);
             assertEquals(2013, output.get(Calendar.YEAR));
-            assertEquals(10, output.get(Calendar.MONTH));
+            //In Java Calendar, month is zero-based, so subtract one
+            assertEquals(10 - 1, output.get(Calendar.MONTH));
             assertEquals(11, output.get(Calendar.DAY_OF_MONTH));
             assertEquals(13, output.get(Calendar.HOUR_OF_DAY));
             assertEquals(34, output.get(Calendar.MINUTE));
