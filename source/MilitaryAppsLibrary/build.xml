@@ -93,11 +93,12 @@
   </target>
   
   <target name="run-tests" depends="jar" description="Run Ant tests">
+      <property name="debug" value="false" />
       <javac srcdir="${dir.src}/test" classpathref="test.classpath" destdir="${dir.build}/test/classes" includeantruntime="true" debug="${debug}" />
       <copy todir="${dir.build}/test/classes">
           <fileset file="${dir.src}/test/*" />
       </copy>
-      <junit printsummary="no">
+      <junit printsummary="no"  fork="yes" forkmode="once">
           <classpath>
               <path refid="test.classpath" />
               <path location="${dir.build}/test/classes" />
