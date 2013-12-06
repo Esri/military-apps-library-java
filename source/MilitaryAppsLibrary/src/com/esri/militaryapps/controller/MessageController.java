@@ -237,7 +237,7 @@ public class MessageController {
             boolean changed = this.port != port;
             this.port = port;
             outboundPacket.setPort(port);
-            if (changed && inboundThread.isAlive()) {
+            if (changed && null != inboundThread && inboundThread.isAlive()) {
                 new Thread() {
 
                     @Override
