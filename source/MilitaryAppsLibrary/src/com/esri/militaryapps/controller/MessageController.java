@@ -23,7 +23,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,19 +41,17 @@ public class MessageController {
     
     private static final int MAX_MESSAGE_LENGTH = 6000;
     private static final Logger logger = Logger.getLogger(MessageController.class.getName());
-    private static final HashMap<Integer, MessageController> portToController
-            = new HashMap<Integer, MessageController>();
 
     private final DatagramSocket outboundUdpSocket;
     private final DatagramPacket outboundPacket;
     private final DatagramPacket inboundPacket;  
     private final Set<MessageControllerListener> listeners = new HashSet<MessageControllerListener>();
     private final GeomessagesReader reader;
-    private final int port;
+    private final Object inboundLock = new Object();
     
     private Thread inboundThread;
-    private Boolean receiving = false;
-    private final Object receivingLock = new Object();
+    private DatagramSocket inboundUdpSocket = null;
+    private int port;
 
     /**
      * Creates a MessageController for the given UDP port.
@@ -62,7 +59,7 @@ public class MessageController {
      * Usually you should use a port number between 1024 and 65535.
      * @see #setPort(int)
      */
-    private MessageController(int messagingPort) {
+    public MessageController(int messagingPort) {
         port = messagingPort;
         DatagramSocket theSocket = null;
         DatagramPacket thePacket = null;
@@ -75,7 +72,6 @@ public class MessageController {
         outboundUdpSocket = theSocket;
         outboundPacket = thePacket;
         
-        theSocket = null;
         byte[] byteArray = new byte[MAX_MESSAGE_LENGTH];
         inboundPacket = new DatagramPacket(byteArray, MAX_MESSAGE_LENGTH);
         
@@ -92,21 +88,8 @@ public class MessageController {
 
     @Override
     protected void finalize() throws Throwable {
-        if (null != outboundUdpSocket) {
-            outboundUdpSocket.close();
-        }
+        stopReceiving();
         super.finalize();
-    }
-    
-    public static MessageController getInstance(int port) {
-        synchronized (portToController) {
-            MessageController controller = portToController.get(port);
-            if (null == controller) {
-                controller = new MessageController(port);
-                portToController.put(port, controller);
-            }
-            return controller;
-        }
     }
     
     /**
@@ -154,67 +137,83 @@ public class MessageController {
         }
     }
     
+    /**
+     * Tells this controller to bind a socket to the specified port and start
+     * receiving messages, notifying this controller's listeners as appropriate.
+     */
     public void startReceiving() {
-        synchronized (receivingLock) {
-            if (receiving) {
-                return;
-            } else {
-                receiving = true;
-            }
-        }
-        inboundThread = new Thread() {
-            
-            private DatagramSocket inboundUdpSocket = null;
+        synchronized (inboundLock) {
+            inboundThread = new Thread() {
 
-            @Override
-            public void run() {
-                try {
-                    inboundUdpSocket = new DatagramSocket(port);
-                    while (true) {
-                        inboundUdpSocket.receive(inboundPacket);
-                        final String msgString = new String(inboundPacket.getData(), inboundPacket.getOffset(), inboundPacket.getLength());
-                        synchronized (listeners) {
-                            for (final MessageControllerListener listener : listeners) {
-                                new Thread() {
-
-                                    @Override
-                                    public void run() {
-                                        listener.datagramReceived(msgString);
-                                    }
-
-                                }.start();
+                @Override
+                public void run() {
+                    try {
+                        inboundUdpSocket = new DatagramSocket(port);
+                        while (true) {
+                            try {
+                                inboundUdpSocket.receive(inboundPacket);
+                            } catch (SocketException se) {
+                                //This probably means the socket was closed and it's time to stop receiving.
+                                break;
                             }
-                        }
-                        try {
-                            List<Geomessage> messages = reader.parseMessages(msgString);
-                            for (final Geomessage message : messages) {
-                                synchronized (listeners) {
-                                    for (final MessageControllerListener listener : listeners) {
-                                        new Thread() {
+                            final String msgString = new String(inboundPacket.getData(), inboundPacket.getOffset(), inboundPacket.getLength());
+                            synchronized (listeners) {
+                                for (final MessageControllerListener listener : listeners) {
+                                    new Thread() {
 
-                                            @Override
-                                            public void run() {
-                                                listener.geomessageReceived(message);
-                                            }
+                                        @Override
+                                        public void run() {
+                                            listener.datagramReceived(msgString);
+                                        }
 
-                                        }.start();                                    
-                                    }
+                                    }.start();
                                 }
                             }
-                        } catch (SAXException ex) {
-                            logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
-                        } catch (IOException ex) {
-                            logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                            try {
+                                List<Geomessage> messages = reader.parseMessages(msgString);
+                                for (final Geomessage message : messages) {
+                                    synchronized (listeners) {
+                                        for (final MessageControllerListener listener : listeners) {
+                                            new Thread() {
+
+                                                @Override
+                                                public void run() {
+                                                    listener.geomessageReceived(message);
+                                                }
+
+                                            }.start();                                    
+                                        }
+                                    }
+                                }
+                            } catch (SAXException ex) {
+                                logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                            } catch (IOException ex) {
+                                logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                            }
                         }
+                    } catch (IOException ex) {
+                        logger.log(Level.SEVERE, null, ex);
                     }
-                } catch (SocketException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    logger.log(Level.SEVERE, null, ex);
                 }
-            }
-        };
-        inboundThread.start();
+
+                @Override
+                public void interrupt() {
+                    synchronized (inboundLock) {
+                        inboundUdpSocket.close();
+                    }
+                    super.interrupt();
+                }
+                
+            };
+            inboundThread.start();
+        }
+    }
+    
+    /**
+     * Tells this controller to stop receiving messages, closing the socket in use.
+     */
+    public void stopReceiving() {
+        inboundThread.interrupt();
     }
     
 }

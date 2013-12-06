@@ -44,9 +44,10 @@ public class PositionReportControllerTest {
     private static final String SIC = "SFGPEVCAH------";
     
     private static PositionReportController controller;
+    private static LocationController locController;
     static {
         try {
-            LocationController locController = new LocationController(LocationMode.SIMULATOR, false) {
+            locController = new LocationController(LocationMode.SIMULATOR, false) {
 
                 @Override
                 protected LocationProvider createLocationServiceProvider() {
@@ -54,7 +55,7 @@ public class PositionReportControllerTest {
                 }
             };
             locController.start();
-            MessageController messageController = MessageController.getInstance(PORT);
+            MessageController messageController = new MessageController(PORT);
             messageController.startReceiving();
             controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID, SIC);
         } catch (Throwable t) {
@@ -68,6 +69,7 @@ public class PositionReportControllerTest {
     
     @AfterClass
     public static void tearDownClass() {
+        locController.pause();
     }
     
     @Before
@@ -81,7 +83,7 @@ public class PositionReportControllerTest {
 
     @Test
     public void testEnabled() {
-        System.out.println("enabled");
+        System.out.println("testEnabled");
         assertFalse(controller.isEnabled());
         controller.setEnabled(true);
         assertTrue(controller.isEnabled());
@@ -91,7 +93,7 @@ public class PositionReportControllerTest {
 
     @Test
     public void testPeriod() {
-        System.out.println("period");
+        System.out.println("testPeriod");
         assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
         controller.setPeriod(3456);
         assertEquals(3456, controller.getPeriod());
@@ -103,7 +105,7 @@ public class PositionReportControllerTest {
     
     @Test
     public void testUsername() {
-        System.out.println("username");
+        System.out.println("testUsername");
         assertEquals(USERNAME, controller.getUsername());
         controller.setUsername("Woody");
         assertEquals("Woody", controller.getUsername());
@@ -113,7 +115,7 @@ public class PositionReportControllerTest {
     
     @Test
     public void testVehicleType() {
-        System.out.println("vehicleType");
+        System.out.println("testVehicleType");
         assertEquals(VEHICLE_TYPE, controller.getVehicleType());
         controller.setVehicleType("SR-71");
         assertEquals("SR-71", controller.getVehicleType());
@@ -123,7 +125,7 @@ public class PositionReportControllerTest {
     
     @Test
     public void testUniqueId() {
-        System.out.println("uniqueId");
+        System.out.println("testUniqueId");
         assertEquals(UID, controller.getUniqueId());
         controller.setUniqueId("Percy");
         assertEquals("Percy", controller.getUniqueId());
@@ -133,6 +135,7 @@ public class PositionReportControllerTest {
     
     @Test
     public void testMessage() throws Exception {
+        System.out.println("testMessage");
         final Result result = new Result();
         MessageControllerListener listener = new MessageControllerListener() {
 

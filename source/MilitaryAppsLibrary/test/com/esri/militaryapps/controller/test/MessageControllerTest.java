@@ -49,7 +49,7 @@ public class MessageControllerTest {
     public void testSendUDPMessage() throws Exception {
         System.out.println("sendUDPMessage");
 
-        MessageController controller = MessageController.getInstance(TEST_PORT);
+        MessageController controller = new MessageController(TEST_PORT);
         controller.startReceiving();
         
         final Result result = new Result();
@@ -68,7 +68,6 @@ public class MessageControllerTest {
         };
         
         controller.addListener(listener);
-        controller.startReceiving();
         
         String expected = "Test message " + System.currentTimeMillis();
         byte[] bytes = expected.getBytes();
@@ -76,6 +75,7 @@ public class MessageControllerTest {
         controller.sendMessage(bytes);
         Thread.sleep(100);
         controller.removeListener(listener);
+        controller.stopReceiving();
         assertEquals(expected, result.message);
     }
     
@@ -91,9 +91,10 @@ public class MessageControllerTest {
         in.close();
         
         final Result result = new Result();
-        MessageController controller = MessageController.getInstance(TEST_PORT);
-        MessageControllerListener listener = new MessageControllerListener() {
-
+        MessageController controller = new MessageController(TEST_PORT);
+        controller.startReceiving();
+        MessageControllerListener listener;
+        listener = new MessageControllerListener() {
             @Override
             public void geomessageReceived(Geomessage geomessage) {
                 result.geomessages.put(geomessage.getId(), geomessage);
@@ -106,13 +107,13 @@ public class MessageControllerTest {
             
         };
         controller.addListener(listener);
-        controller.startReceiving();
         
         String expected = sb.toString();
         byte[] bytes = expected.getBytes();
         controller.sendMessage(bytes);
         Thread.sleep(100);
         controller.removeListener(listener);
+        controller.stopReceiving();
         assertEquals(expected, result.message);
         assertEquals(2, result.geomessages.size());
         assertEquals("3A1-001", result.geomessages.get("{3a752ef3-b085-41e8-993a-3ec39098fde2}").getProperty("uniquedesignation"));

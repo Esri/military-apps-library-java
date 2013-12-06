@@ -161,7 +161,7 @@ public class SpotReportControllerTest {
     static {
         try {
             MapController mapController = new MapControllerImpl();
-            MessageController messageController = MessageController.getInstance(PORT);
+            MessageController messageController = new MessageController(PORT);
             controller = new SpotReportController(mapController, messageController);
         } catch (Throwable t) {
             fail("Couldn't set up test: " + t.getMessage());
