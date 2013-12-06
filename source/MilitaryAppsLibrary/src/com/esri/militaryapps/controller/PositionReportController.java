@@ -32,7 +32,15 @@ import org.w3c.dom.Node;
  */
 public class PositionReportController implements LocationListener {
     
+    /**
+     * The default report period, in milliseconds.
+     */
     public static final int DEFAULT_PERIOD = 1000;
+    
+    /**
+     * The type string for this controller's Geomessages.
+     */
+    public static final String REPORT_TYPE = "position_report";
     
     private static final Logger logger = Logger.getLogger(PositionReportController.class.getName());
     private static final String WKID_WGS1984 = "4326";
@@ -110,7 +118,7 @@ public class PositionReportController implements LocationListener {
                         Node geomessageElement = nodeAndDocument.getNode();
 
                         Utilities.addTextElement(doc, geomessageElement,
-                                Geomessage.TYPE_FIELD_NAME, "position_report");
+                                Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
                         Utilities.addTextElement(doc, geomessageElement,
                                 Geomessage.ID_FIELD_NAME, uniqueId);
                         Utilities.addTextElement(doc, geomessageElement,
