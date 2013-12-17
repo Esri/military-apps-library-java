@@ -19,6 +19,8 @@ import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
@@ -32,6 +34,8 @@ import org.xml.sax.SAXException;
  * on the map control in your constructor.
  */
 public abstract class MapController implements LocationListener {
+    
+    private static final Logger logger = Logger.getLogger(MapController.class.getName());
     
     /**
      * Directions used when panning with MapController.pan(PanDirection).
@@ -241,7 +245,13 @@ public abstract class MapController implements LocationListener {
                 }
             }
             double[] mapCoordinates = toMapPoint(newScreenX, newScreenY);
-            panTo(mapCoordinates[0], mapCoordinates[1]);
+            if (null != mapCoordinates && 2 <= mapCoordinates.length) {
+                panTo(mapCoordinates[0], mapCoordinates[1]);
+            } else {
+                logger.log(Level.INFO,
+                        "Could not pan because toMapPoint could not handle screen point ({0}, {1})",
+                        new Object[]{newScreenX, newScreenY});
+            }
         }
     }
     
@@ -278,6 +288,10 @@ public abstract class MapController implements LocationListener {
      * @param screenY the Y coordinate of the screen point, in pixels.
      * @return an array in which element 0 is the X coordinate of the map point
      *         and element 1 is the Y coordinate of the map point, in map coordinates.
+     *         The method returns null if the screen coordinates cannot be converted
+     *         to map coordinates; this can happen when the MapController or its
+     *         underlying map is not initialized or when bogus screen coordinates
+     *         are provided.
      */
     public abstract double[] toMapPoint(int screenX, int screenY);
     
