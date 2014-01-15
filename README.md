@@ -33,7 +33,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Licensing
 
-Copyright 2013 Esri
+Copyright 2013-2014 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
@@ -43,7 +43,11 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 A copy of the license is available in the repository's [license.txt](license.txt) file.
 
-Note: Portions of this code use the JSON Java library provided by JSON.org, which is governed by its own license. See [license-ThirdParty.txt](license-ThirdParty.txt) for the details of this license or visit [JSON.org](http://www.json.org) for more details.
+Portions of this code use third-party libraries:
+- Use of the JSON Java library available at http://www.json.org/java/index.html is governed by the JSON License.
+- Use of the JUnit library is governed by the Eclipse Public License.
+
+See [license-ThirdParty.txt](license-ThirdParty.txt) for the details of these licenses.
 
 [](Esri Tags: ArcGIS Defense and Intelligence Situational Awareness ArcGIS Runtime Android 10.2)
 [](Esri Language: Java)
