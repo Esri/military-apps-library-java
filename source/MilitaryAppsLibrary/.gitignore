@@ -1,2 +1,9 @@
+#ignore ant build folders
 build/
 dist/
+
+# Ignore Eclipse files/folders
+/bin
+
+.classpath
+.project

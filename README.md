@@ -3,7 +3,19 @@ military-apps-library-java
 
 A common, SDK-agnostic Java library for building military-oriented geospatial apps, especially for ArcGIS for the Military.
 
-## Example capabilities
+![Image of Library used in Squad Leader](Screenshot.png)
+
+## Sections
+
+* [Features](#features)
+* [Requirements](#requirements)
+* [Instructions](#instructions)
+* [Resources](#resources)
+* [Issues](#issues)
+* [Contributing](#contributing)
+* [Licensing](#licensing)
+
+## Features
 
 - Use MapController to access basic map-related functionality. Your implementation will fill in the details based on the SDK you're using.
 - Read a map configuration XML file and return a MapConfig object for the layers in the map configuration.
@@ -11,7 +23,18 @@ A common, SDK-agnostic Java library for building military-oriented geospatial ap
 - Interface with the device's location provider, and/or run a location simulator.
 - Send and receive Geomessages over UDP, including spot reports, position reports, and chem lights. Note that your firewall must allow the Java Runtime Environment (JRE) to operate on the UDP port that you use for messaging, or the message sending and receiving will not happen (see the section on unit tests below).
 
-## Usage
+## Requirements
+
+* Build Requirements
+    * Java compiler
+        * Java SE Development Kit (JDK) 6 or higher
+        * Android Development Kit
+* Optional
+    * Apache Ant - only needed if building and running the provided automated unit tests with ant
+
+## Instructions
+
+### Usage
 
 You can reference this library's source code and .jar files in the lib directory in your project. If your project uses GitHub, you could create a submodule in your project that references this repository, though that is not required. If you prefer to work with binaries rather than source, you can build this library as a .jar; just remember to include the .jar files in this library's lib directory too.
 
@@ -45,9 +68,7 @@ A copy of the license is available in the repository's [license.txt](license.txt
 
 Portions of this code use third-party libraries:
 - Use of the JSON Java library available at http://www.json.org/java/index.html is governed by the JSON License.
-- Use of the JUnit library is governed by the Eclipse Public License.
+- Use of the JUnit library available at https://github.com/junit-team/junit is governed by the [Eclipse Public License](https://github.com/junit-team/junit/blob/master/LICENSE.txt).
 
-See [license-ThirdParty.txt](license-ThirdParty.txt) for the details of these licenses.
-
-[](Esri Tags: ArcGIS Defense and Intelligence Situational Awareness ArcGIS Runtime Android 10.2)
+[](Esri Tags: ArcGIS Defense and Intelligence Situational Awareness ArcGIS Runtime Android Military)
 [](Esri Language: Java)
