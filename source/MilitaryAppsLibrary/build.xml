@@ -6,7 +6,6 @@
   <property name="dir.build" value="build"/>
   <property name="dir.dist" value="dist"/>
   <property name="dir.lib3rdParty" value="lib"/>
-  <property name="dir.deploy" value="../../application/MilitaryAppsLibrary"/>
   <!--property name="main.class" value="com.esri.militaryapps.util.Version" /-->
   <property name="jar.name" value="MilitaryAppsLibrary.jar" />
 
@@ -25,9 +24,9 @@
 
   <target name="dist-files" depends="jar">
     <!-- copy any additional dependent files here -->
-    <!--copy todir="${dir.dist}/lib">
+    <copy todir="${dir.dist}/lib">
       <fileset dir="${dir.lib3rdParty}" />
-    </copy-->
+    </copy>
     <!--copy todir="${dir.dist}">
       <fileset file="${dir.src}/mapconfig.xml" />
     </copy-->
@@ -68,13 +67,6 @@
     </java>
   </target-->
 
-  <target name="deploy" depends="dist-files">
-    <delete dir="${dir.deploy}" />
-    <copy todir="${dir.deploy}">
-      <fileset dir="${dir.dist}"/>
-    </copy>
-  </target>
-
   <target name="clean">
     <delete dir="${dir.build}" />
     <delete dir="${dir.dist}" />
@@ -86,10 +78,8 @@
     <mkdir dir="${dir.build}/classes"/>
     <mkdir dir="${dir.build}/test/classes"/>
     <mkdir dir="${dir.dist}"/>
-    <mkdir dir="${dir.deploy}"/>
     <echo message="Creating: ${dir.build}" />
     <echo message="Creating: ${dir.dist}" />
-    <echo message="Creating: ${dir.deploy}" />
   </target>
   
   <target name="run-tests" depends="jar" description="Run Ant tests">
