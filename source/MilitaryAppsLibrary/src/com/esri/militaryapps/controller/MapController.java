@@ -332,4 +332,16 @@ public abstract class MapController implements LocationListener {
      */
     public abstract String pointToMgrs(double x, double y, int wkid);
     
+    /**
+     * Projects a point from one spatial reference to another.
+     * @param x the original X-value.
+     * @param y the original Y-value.
+     * @param fromWkid the WKID for the original spatial reference.
+     * @param toWkid the WKID for the destination spatial reference.
+     * @return a two-element array, where element 0 is the X-value in the destination
+     *         spatial reference, and element 1 is the Y-value in the destination
+     *         spatial reference.
+     */
+    public abstract double[] projectPoint(double x, double y, int fromWkid, int toWkid);
+    
 }

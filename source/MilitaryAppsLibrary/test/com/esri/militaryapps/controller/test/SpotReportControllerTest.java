@@ -154,6 +154,14 @@ public class SpotReportControllerTest {
         public String pointToMgrs(double x, double y, int wkid) {
             return "test MGRS";
         }
+
+        /**
+         * This mock projectPoint method always returns [ -111.9, 41.5 ].
+         */
+        @Override
+        public double[] projectPoint(double x, double y, int fromWkid, int toWkid) {
+            return new double[] { -111.9, 41.5 };
+        }
         
     }
     
