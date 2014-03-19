@@ -23,6 +23,8 @@ A common, SDK-agnostic Java library for building military-oriented geospatial ap
 - Interface with the device's location provider, and/or run a location simulator.
 - Send and receive Geomessages over UDP, including spot reports, position reports, and chem lights. Note that your firewall must allow the Java Runtime Environment (JRE) to operate on the UDP port that you use for messaging, or the message sending and receiving will not happen (see the section on unit tests below).
 
+To see this library in use, visit the [squad-leader-android repository](https://github.com/Esri/squad-leader-android).
+
 ## Requirements
 
 * Build Requirements
@@ -45,6 +47,7 @@ The library comes with a number of unit tests for quality assurance. It is advis
 ## Resources
 
 * Learn more about Esri's [ArcGIS for the Military solution](http://solutions.arcgis.com/military/).
+* [squad-leader-android repository](https://github.com/Esri/squad-leader-android)
 
 ## Issues
 
