@@ -231,8 +231,9 @@ public abstract class AdvancedSymbolController {
      * Creates a "remove" Geomessage with the specified ID and processes it, effectively
      * removing it from the map.
      * @param geomessageId the ID for the Geomessage to be removed from the map.
+     * @param messageType the message type.
      */
-    protected abstract void processRemoveGeomessage(String geomessageId);
+    protected abstract void processRemoveGeomessage(String geomessageId, String messageType);
 
     /**
      * Handles a Geomessage, taking the appropriate actions to display, update, remove,
@@ -242,7 +243,7 @@ public abstract class AdvancedSymbolController {
     public void handleGeomessage(Geomessage geomessage) {
         if (!"remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
             if (geomessages.containsKey(geomessage.getId())) {
-                processRemoveGeomessage(geomessage.getId());
+                processRemoveGeomessage(geomessage.getId(), (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME));
             }
             geomessages.put(geomessage.getId(), geomessage);
         }
