@@ -4,6 +4,7 @@ import com.esri.militaryapps.model.Geomessage;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -118,6 +119,11 @@ public abstract class AdvancedSymbolController {
                     }
                 }
             }
+            if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
+                synchronized (spotReportIdToGraphicId) {
+                    spotReportIdToGraphicId.remove(geomessage.getId());
+                }
+            }
         } else {
             //Let the MessageProcessor handle other types of reports
 
@@ -179,9 +185,13 @@ public abstract class AdvancedSymbolController {
                 geomessage.setProperty("uniquedesignation", "");
                 geomessage.setProperty("speed", "");
                 geomessage.setProperty("type", "");//vehicle type
+                geomessage.setProperty("x", "");
+                geomessage.setProperty("y", "");
+                geomessage.setProperty("z", "");
+                geomessage.setProperty("datetimevalid", "");
             }
             
-            boolean success = processMessage(geomessage);
+            processMessage(geomessage);
             
             boolean needToHighlight = false;
             boolean needToUnhighlight = false;
@@ -202,6 +212,12 @@ public abstract class AdvancedSymbolController {
                 } else {
                     highlightedIds.remove(geomessage.getId());
                 }
+            }
+        }
+        
+        if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
+            synchronized (geomessages) {
+                geomessages.remove(geomessage.getId());
             }
         }
     }
@@ -242,10 +258,9 @@ public abstract class AdvancedSymbolController {
      */
     public void handleGeomessage(Geomessage geomessage) {
         if (!"remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
-            if (geomessages.containsKey(geomessage.getId())) {
-                processRemoveGeomessage(geomessage.getId(), (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME));
+            synchronized (geomessages) {
+                geomessages.put(geomessage.getId(), geomessage);
             }
-            geomessages.put(geomessage.getId(), geomessage);
         }
         processGeomessage(geomessage);
     }
@@ -263,7 +278,23 @@ public abstract class AdvancedSymbolController {
      * @param showLabels true if labels should display on advanced symbology.
      */
     public void setShowLabels(boolean showLabels) {
-        this.showLabels = showLabels;
+        if (this.showLabels != showLabels) {
+            synchronized (geomessages) {
+                Iterator<Geomessage> iter = geomessages.values().iterator();
+                while (iter.hasNext()) {
+                    Geomessage mess = iter.next();
+                    processRemoveGeomessage(mess.getId(), (String) mess.getProperty(Geomessage.TYPE_FIELD_NAME));
+                }
+                
+                this.showLabels = showLabels;
+
+                iter = geomessages.values().iterator();
+                while (iter.hasNext()) {
+                    Geomessage mess = iter.next();
+                    processGeomessage(mess);
+                }
+            }
+        }
     }
     
 }
