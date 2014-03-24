@@ -113,7 +113,7 @@ public abstract class AdvancedSymbolController {
                     int wkid = Integer.parseInt((String) geomessage.getProperty(Geomessage.WKID_FIELD_NAME));
                     Integer currentGraphicId = spotReportIdToGraphicId.get(geomessage.getId());
                     int newGraphicId = displaySpotReport(x, y, wkid, currentGraphicId, geomessage);
-                    if (currentGraphicId != newGraphicId) {
+                    if (null == currentGraphicId || currentGraphicId != newGraphicId) {
                         spotReportIdToGraphicId.put(geomessage.getId(), newGraphicId);
                     }
                 }
