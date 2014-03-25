@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * A Geomessage bean.
  */
-public class Geomessage {
+public class Geomessage implements Cloneable {
     
     /**
      * The Geomessage ID field name.
@@ -56,7 +56,15 @@ public class Geomessage {
     private final HashMap<String, Object> properties = new HashMap<String, Object>();
     
     private String id;
-
+    
+    @Override
+    public Geomessage clone() {
+        Geomessage clone = new Geomessage();
+        clone.setId(id);
+        clone.properties.putAll(properties);
+        return clone;
+    }
+    
     /**
      * Gets the Geomessage's unique ID.
      * @return the id
