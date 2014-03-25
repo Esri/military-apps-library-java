@@ -181,14 +181,7 @@ public abstract class AdvancedSymbolController {
             
 
             if (!isShowLabels()) {
-                geomessage.setProperty("additionalinformation", "");
-                geomessage.setProperty("uniquedesignation", "");
-                geomessage.setProperty("speed", "");
-                geomessage.setProperty("type", "");//vehicle type
-                geomessage.setProperty("x", "");
-                geomessage.setProperty("y", "");
-                geomessage.setProperty("z", "");
-                geomessage.setProperty("datetimevalid", "");
+                geomessage = getGeomessageWithoutLabels(geomessage);
             }
             
             processMessage(geomessage);
@@ -284,6 +277,7 @@ public abstract class AdvancedSymbolController {
                 while (iter.hasNext()) {
                     Geomessage mess = iter.next();
                     processRemoveGeomessage(mess.getId(), (String) mess.getProperty(Geomessage.TYPE_FIELD_NAME));
+                    highlightedIds.remove(mess.getId());
                 }
                 
                 this.showLabels = showLabels;
@@ -295,6 +289,25 @@ public abstract class AdvancedSymbolController {
                 }
             }
         }
+    }
+    
+    /**
+     * Clones the Geomessage, removes the label properties from the clone, and returns
+     * the clone.
+     * @param geomessage a clone of the Geomessage, without the properties that are
+     *                   used for labeling.
+     */
+    public static Geomessage getGeomessageWithoutLabels(Geomessage geomessage) {
+        Geomessage clone = geomessage.clone();
+        clone.setProperty("additionalinformation", "");
+        clone.setProperty("uniquedesignation", "");
+        clone.setProperty("speed", "");
+        clone.setProperty("type", "");//vehicle type
+        clone.setProperty("x", "");
+        clone.setProperty("y", "");
+        clone.setProperty("z", "");
+        clone.setProperty("datetimevalid", "");
+        return clone;
     }
     
 }
