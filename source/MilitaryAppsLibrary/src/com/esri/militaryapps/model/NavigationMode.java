@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2012-2014 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,27 +13,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  ******************************************************************************/
-package com.esri.militaryapps.controller;
-
-import com.esri.militaryapps.model.Geomessage;
+package com.esri.militaryapps.model;
 
 /**
- * Interface for classes that listen for MessageController events, such as receiving
- * new messages.
+ * An enum that distinguishes between various navigation modes.
  */
-public interface MessageControllerListener {
+public enum NavigationMode {
+    /**
+     * Rotate the map so that north is up.
+     */
+    NORTH_UP,
     
     /**
-     * Called when a Geomessage is received. One datagram contains zero or more Geomessages.
-     * @param geomessage the Geomessage received.
+     * Rotate the map so that the current heading is up.
      */
-    void geomessageReceived(Geomessage geomessage);
+    TRACK_UP,
     
     /**
-     * Called when a datagram is received. Ideally the datagram contains Geomessages
-     * in XML, but the datagram may contain any text, which may or may not be in XML
-     * and may or may not be meaningful.
-     * @param contents the datagram contents.
+     * Rotate the map so that the direction from the current location to the
+     * selected waypoint is up.
      */
-    void datagramReceived(String contents);
+    WAYPOINT_UP
 }
