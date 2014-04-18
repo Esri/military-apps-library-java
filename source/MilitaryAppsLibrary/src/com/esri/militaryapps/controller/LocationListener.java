@@ -16,6 +16,7 @@
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.Location;
+import com.esri.militaryapps.model.LocationProvider;
 
 /**
  * Interface for a class that receives locations from a LocationController.
@@ -27,5 +28,11 @@ public interface LocationListener {
      * @param the updated location.
      */
     public void onLocationChanged(Location location);
+    
+    /**
+     * Called when the LocationProvider's state has changed.
+     * @param state the updated state.
+     */
+    public void onStateChanged(LocationProvider.LocationProviderState state);
     
 }

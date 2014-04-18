@@ -18,6 +18,7 @@ package com.esri.militaryapps.controller;
 import com.esri.militaryapps.model.DomNodeAndDocument;
 import com.esri.militaryapps.model.Geomessage;
 import com.esri.militaryapps.model.Location;
+import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.util.Utilities;
 import java.util.Date;
 import java.util.Timer;
@@ -92,6 +93,11 @@ public class PositionReportController implements LocationListener {
                 startTimer();
             }
         }
+    }
+
+    @Override
+    public void onStateChanged(LocationProvider.LocationProviderState state) {
+        
     }
     
     private synchronized void startTimer() {

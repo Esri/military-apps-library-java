@@ -208,6 +208,11 @@ public class MapControllerTest {
         }
 
         @Override
+        public void onStateChanged(LocationProvider.LocationProviderState state) {
+            
+        }
+
+        @Override
         public void setAutoPan(boolean autoPan) {
             
         }

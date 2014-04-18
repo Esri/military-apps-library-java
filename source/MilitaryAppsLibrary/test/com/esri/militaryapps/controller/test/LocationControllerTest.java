@@ -74,6 +74,12 @@ public class LocationControllerTest {
                     }
                 }
             }
+
+            @Override
+            public void onStateChanged(LocationProvider.LocationProviderState state) {
+                
+            }
+            
         };
         LocationController instance = new LocationControllerImpl();
         instance.addListener(listener);
