@@ -30,6 +30,8 @@ import org.xml.sax.SAXException;
  * or other systems.
  */
 public abstract class LocationController {
+    
+    private double speedMultiplier = 0;
 
     /**
      * Location modes.
@@ -126,11 +128,16 @@ public abstract class LocationController {
             }
             case SIMULATOR:
             default: {
+                LocationSimulator simulator;
                 if (null == gpxFile) {
-                    provider = new LocationSimulator();
+                    simulator = new LocationSimulator();
                 } else {
-                    provider = new LocationSimulator(gpxFile);
+                    simulator = new LocationSimulator(gpxFile);
                 }
+                if (0 < speedMultiplier) {
+                    simulator.setSpeedMultiplier(speedMultiplier);
+                }
+                provider = simulator;
             }
         }
         for (LocationListener listener : listeners) {
@@ -191,6 +198,20 @@ public abstract class LocationController {
      */
     protected String getProperty(String key) {
         return properties.getProperty(key);
+    }
+    
+    /**
+     * Sets a speed multiplier, which increases or decreases the speed of location
+     * updates compared to the actual speed specified in the simulation file. This
+     * property has no effect when using a non-simulated LocationProvider (e.g.
+     * real GPS).
+     * @param speedMultiplier the speed multiplier to set.
+     */
+    public void setSpeedMultiplier(double speedMultiplier) {
+        this.speedMultiplier = speedMultiplier;
+        if (provider instanceof LocationSimulator) {
+            ((LocationSimulator) provider).setSpeedMultiplier(speedMultiplier);
+        }
     }
     
     /**
