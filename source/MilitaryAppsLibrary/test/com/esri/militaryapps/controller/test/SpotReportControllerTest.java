@@ -141,6 +141,11 @@ public class SpotReportControllerTest {
         }
 
         @Override
+        public void onStateChanged(LocationProvider.LocationProviderState state) {
+            
+        }
+
+        @Override
         public void setAutoPan(boolean autoPan) {
             
         }

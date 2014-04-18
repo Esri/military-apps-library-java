@@ -18,6 +18,7 @@ package com.esri.militaryapps.controller;
 import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.LocationProvider.LocationProviderState;
 import com.esri.militaryapps.model.LocationSimulator;
+import com.esri.militaryapps.model.NavigationMode;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public abstract class LocationController {
     private LocationMode mode = LocationMode.LOCATION_SERVICE;
     private LocationProvider provider = null;
     private File gpxFile = null;
+    private NavigationMode navigationMode = NavigationMode.NORTH_UP;
+    private final Object navigationModeLock = new Object();
     
     /**
      * Creates a new LocationController.
@@ -61,6 +64,14 @@ public abstract class LocationController {
      */
     public LocationController(LocationMode mode, boolean startImmediately) throws ParserConfigurationException, SAXException, IOException {
         setMode(mode, startImmediately);
+    }
+    
+    /**
+     * Returns the LocationProvider controlled by this LocationController.
+     * @return the LocationProvider controlled by this LocationController (could be null).
+     */
+    protected LocationProvider getLocationProvider() {
+        return provider;
     }
     
     /**
@@ -214,6 +225,26 @@ public abstract class LocationController {
         }
     }
     
+    /**
+     * Returns the current navigation mode.
+     * @return the current navigation mode.
+     */
+    public NavigationMode getNavigationMode() {
+        synchronized (navigationModeLock) {
+            return navigationMode;
+        }
+    }
+
+    /**
+     * Sets the navigation mode.
+     * @param navigationMode the new navigation mode.
+     */
+    public void setNavigationMode(NavigationMode navigationMode) {
+        synchronized (navigationModeLock) {
+            this.navigationMode = navigationMode;
+        }
+    }
+
     /**
      * Adds a LocationListener.
      * @param listener the LocationListener.
