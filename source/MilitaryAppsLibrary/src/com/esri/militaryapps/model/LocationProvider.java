@@ -104,9 +104,11 @@ public abstract class LocationProvider {
      * @param location the new location.
      */
     protected void sendLocation(Location location) {
-        synchronized (listeners) {
-            for (final LocationListener listener : listeners) {
-                listener.onLocationChanged(location);
+        if (null != location) {
+            synchronized (listeners) {
+                for (final LocationListener listener : listeners) {
+                    listener.onLocationChanged(location);
+                }
             }
         }
     }
