@@ -30,7 +30,7 @@ To see this library in use, visit the [squad-leader-android repository](https://
 * Build Requirements
     * Java compiler
         * Java SE Development Kit (JDK) 6 or higher
-        * Android Development Kit
+        * Android Development Kit, if including this library in an Android library or application
 * Optional
     * Apache Ant - only needed if building and running the provided automated unit tests with ant
 
