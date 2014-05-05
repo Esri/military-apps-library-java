@@ -139,12 +139,7 @@ public abstract class LocationController {
             }
             case SIMULATOR:
             default: {
-                LocationSimulator simulator;
-                if (null == gpxFile) {
-                    simulator = new LocationSimulator();
-                } else {
-                    simulator = new LocationSimulator(gpxFile);
-                }
+                LocationSimulator simulator = createLocationSimulator();
                 if (0 < speedMultiplier) {
                     simulator.setSpeedMultiplier(speedMultiplier);
                 }
@@ -192,6 +187,19 @@ public abstract class LocationController {
      * @return a new LocationProvider.
      */
     protected abstract LocationProvider createLocationServiceProvider();
+    
+    /**
+     * Creates a new LocationSimulator. <b>You must override this method if you have
+     * subclassed LocationSimulator.</b>
+     * @return 
+     */
+    protected LocationSimulator createLocationSimulator() throws ParserConfigurationException, SAXException, IOException {
+        if (null == gpxFile) {
+            return new LocationSimulator();
+        } else {
+            return new LocationSimulator(gpxFile);
+        }
+    }
     
     /**
      * Sets a property used to instantiate the LocationProvider.
