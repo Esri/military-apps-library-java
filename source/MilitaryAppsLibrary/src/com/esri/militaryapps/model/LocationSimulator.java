@@ -38,6 +38,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * A simulator that provides locations from a GPX file. The military-apps-library-java
  * library has a built-in GPX file of a simulated GPS feed in Jalalabad, Afghanistan,
  * that will be used if the constructor is called with no arguments.
+ * 
+ * Note that if you subclass LocationSimulator, you need to override LocationController.createLocationSimulator()
+ * so that your subclass, not this LocationSimulator class, will be instantiated.
  */
 public class LocationSimulator extends LocationProvider {
     
