@@ -4,8 +4,6 @@ import com.esri.militaryapps.model.Geomessage;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -20,7 +18,6 @@ public abstract class AdvancedSymbolController {
     private static final Logger logger = Logger.getLogger(AdvancedSymbolController.class.getName());
     
     private final MapController mapController;
-    private final Map<String, Geomessage> geomessages = new HashMap<String, Geomessage>();
     private final HashSet<String> highlightedIds = new HashSet<String>();
     private final HashMap<String, Integer> spotReportIdToGraphicId = new HashMap<String, Integer>();
     
@@ -179,11 +176,6 @@ public abstract class AdvancedSymbolController {
                 }
             }
             
-
-            if (!isShowLabels()) {
-                geomessage = getGeomessageWithoutLabels(geomessage);
-            }
-            
             processMessage(geomessage);
             
             boolean needToHighlight = false;
@@ -205,12 +197,6 @@ public abstract class AdvancedSymbolController {
                 } else {
                     highlightedIds.remove(geomessage.getId());
                 }
-            }
-        }
-        
-        if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
-            synchronized (geomessages) {
-                geomessages.remove(geomessage.getId());
             }
         }
     }
@@ -250,11 +236,6 @@ public abstract class AdvancedSymbolController {
      * @param geomessage the Geomessage to handle.
      */
     public void handleGeomessage(Geomessage geomessage) {
-        if (!"remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
-            synchronized (geomessages) {
-                geomessages.put(geomessage.getId(), geomessage);
-            }
-        }
         processGeomessage(geomessage);
     }
     
@@ -272,28 +253,30 @@ public abstract class AdvancedSymbolController {
      */
     public void setShowLabels(boolean showLabels) {
         if (this.showLabels != showLabels) {
-            synchronized (geomessages) {
-                Iterator<Geomessage> iter = geomessages.values().iterator();
-                while (iter.hasNext()) {
-                    Geomessage mess = iter.next();
-                    processRemoveGeomessage(mess.getId(), (String) mess.getProperty(Geomessage.TYPE_FIELD_NAME));
-                    highlightedIds.remove(mess.getId());
-                }
-                
-                this.showLabels = showLabels;
-
-                iter = geomessages.values().iterator();
-                while (iter.hasNext()) {
-                    Geomessage mess = iter.next();
-                    processGeomessage(mess);
-                }
-            }
+            this.showLabels = showLabels;
+            toggleLabels();
         }
     }
     
     /**
+     * Turns the labels on or off, according to the value of isShowLabels(). Implementers
+     * should do this in the way prescribed for their platform of choice. Examples:
+     * <ul>
+     * <li><a href="https://developers.arcgis.com/java/guide/display-military-messages.htm#ESRI_SECTION1_1B05557762EC4CFCB9B3BE6DB819DABC">ArcGIS Runtime SDK for Java</a>
+     */
+    protected abstract void toggleLabels();
+    
+    /**
      * Clones the Geomessage, removes the label properties from the clone, and returns
      * the clone.
+     * @deprecated Call DictionaryRenderer.setLabelsVisible(boolean) when you want
+     *           to turn off labels. As of
+     *           ArcGIS Runtime SDK 10.2.3 **for Android only**, you can't get
+     *           the DictionaryRenderer from a layer; it throws an exception. That
+     *           means you still need this method on Android, so you can get a label-free
+     *           copy of a Geomessage that you can process to hide the labels.
+     *           TODO adjust this comment when the issue is addressed in the Runtime
+     *           SDK for Android.
      * @param geomessage a clone of the Geomessage, without the properties that are
      *                   used for labeling.
      */
