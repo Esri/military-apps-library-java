@@ -166,7 +166,14 @@ public class LocationSimulator extends LocationProvider {
                 );
     }
 
-    private LocationSimulator(final InputStream gpxInputStream) throws ParserConfigurationException, SAXException, IOException {
+    /**
+     * Creates a new LocationSimulator based on an InputStream containing GPX-formatted data.
+     * @param gpxInputStream the GPX input.
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
+    public LocationSimulator(final InputStream gpxInputStream) throws ParserConfigurationException, SAXException, IOException {
         final GPXHandler handler = new GPXHandler();
         locations = new ArrayList<Location>();
         new Thread() {
