@@ -73,5 +73,5 @@ Portions of this code use third-party libraries:
 - Use of the JSON Java library available at http://www.json.org/java/index.html is governed by the JSON License.
 - Use of the JUnit library available at https://github.com/junit-team/junit is governed by the [Eclipse Public License](https://github.com/junit-team/junit/blob/master/LICENSE.txt).
 
-[](Esri Tags: ArcGIS Defense and Intelligence Situational Awareness ArcGIS Runtime Android Military)
+[](Esri Tags: ArcGIS Defense and Intelligence Situational Awareness ArcGIS Runtime Android Military ArcGISSolutions)
 [](Esri Language: Java)
