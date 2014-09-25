@@ -94,22 +94,14 @@
               <path location="${dir.build}/test/classes" />
           </classpath>
           <formatter type="plain" usefile="false" />
-          <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
-          <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
-          <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
-          <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
-
+          <batchtest>
+              <fileset dir="${dir.src}/test">
 <!-- NOTE: removing this test for now since it requires changing a firewall setting -->
 <!-- and will fail during the automated builds -->
-<!-- but feel free to uncomment if you need to manually test -->
-<!--
-         <test name="com.esri.militaryapps.controller.test.MessageControllerTest" />
-  -->
-
-          <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
-          <test name="com.esri.militaryapps.model.test.LocationTest" />
+<!-- but feel free to comment out the exclude tag if you need to manually test -->
+                  <exclude name="**/MessageControllerTest.java" />
+              </fileset>
+          </batchtest>
       </junit>
   </target>
   
@@ -135,15 +127,9 @@
               <path location="${dir.build}/test/classes" />
           </classpath>
           <formatter type="plain" usefile="false" />
-          <test name="com.esri.militaryapps.model.test.MapConfigReaderTest" />
-          <test name="com.esri.militaryapps.model.test.RestServiceReaderTest" />
-          <test name="com.esri.militaryapps.util.test.UtilitiesTest" />
-          <test name="com.esri.militaryapps.controller.test.MapControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.LocationControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.MessageControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.PositionReportControllerTest" />
-          <test name="com.esri.militaryapps.controller.test.SpotReportControllerTest" />
-          <test name="com.esri.militaryapps.model.test.LocationTest" />
+          <batchtest>
+              <fileset dir="${dir.src}/test" />
+          </batchtest>
       </junit>
   </target>
 
