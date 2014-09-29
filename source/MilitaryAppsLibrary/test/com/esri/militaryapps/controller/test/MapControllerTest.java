@@ -24,7 +24,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 /**
  * A test for the MapController class.
@@ -59,21 +59,21 @@ public class MapControllerTest {
         System.out.println("zoomOut");
         MapControllerImpl instance = new MapControllerImpl();
         instance.zoomToScale(15000, 0, 0);
-        assertEquals(15000, instance.getScale(), 0.0);
+        Assert.assertEquals(15000, instance.getScale(), 0.0);
         instance.zoomOut();
-        assertEquals(30000, instance.getScale(), 0.0);
+        Assert.assertEquals(30000, instance.getScale(), 0.0);
         instance.zoomOut();
-        assertEquals(60000, instance.getScale(), 0.0);
+        Assert.assertEquals(60000, instance.getScale(), 0.0);
         instance.zoomIn();
-        assertEquals(30000, instance.getScale(), 0.0);
+        Assert.assertEquals(30000, instance.getScale(), 0.0);
         for (int i = 0; i < 5; i++) {
             instance.zoomIn();
         }
-        assertEquals(937.5, instance.getScale(), 0.0);
+        Assert.assertEquals(937.5, instance.getScale(), 0.0);
         for (int i = 0; i < 6; i++) {
             instance.zoomOut();
         }
-        assertEquals(60000, instance.getScale(), 0.0);
+        Assert.assertEquals(60000, instance.getScale(), 0.0);
     }
 
     /**
@@ -83,17 +83,17 @@ public class MapControllerTest {
     public void testRotate() {
         MapController instance = new MapControllerImpl();
         instance.setRotation(0.0);
-        assertEquals(0, instance.getRotation(), 0.0);
+        Assert.assertEquals(0, instance.getRotation(), 0.0);
         instance.rotate(179);
-        assertEquals(179, instance.getRotation(), 0.0);
+        Assert.assertEquals(179, instance.getRotation(), 0.0);
         instance.rotate(2);
-        assertEquals(-179, instance.getRotation(), 0.0);
+        Assert.assertEquals(-179, instance.getRotation(), 0.0);
         instance.rotate(179);
-        assertEquals(0, instance.getRotation(), 0.0);
+        Assert.assertEquals(0, instance.getRotation(), 0.0);
         instance.rotate(-1);
-        assertEquals(-1, instance.getRotation(), 0.0);
+        Assert.assertEquals(-1, instance.getRotation(), 0.0);
         instance.rotate(-180);
-        assertEquals(179, instance.getRotation(), 0.0);
+        Assert.assertEquals(179, instance.getRotation(), 0.0);
     }
 
     /**
@@ -105,7 +105,7 @@ public class MapControllerTest {
         MapControllerImpl instance = new MapControllerImpl();
         instance.zoom(15000);
         instance.zoomToScale(30000, 0, 0);
-        assertEquals(30000, instance.getScale(), 0.0);
+        Assert.assertEquals(30000, instance.getScale(), 0.0);
     }
 
     /**
@@ -197,7 +197,7 @@ public class MapControllerTest {
 
                 };
             } catch (Exception e) {
-                fail("Couldn't create LocationController: " + e.getMessage());
+                Assert.fail("Couldn't create LocationController: " + e.getMessage());
                 return null;
             }
         }

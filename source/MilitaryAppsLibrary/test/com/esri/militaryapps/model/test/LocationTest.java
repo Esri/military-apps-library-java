@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 /**
  * A test for the Location class.
@@ -56,11 +56,11 @@ public class LocationTest {
         System.out.println("getSpeed");
         Location instance = new Location();
         instance.setSpeedMph(55);
-        assertEquals(24.587, instance.getSpeed(), 0.001);
-        assertEquals(55, instance.getSpeedMph(), 0);
+        Assert.assertEquals(24.587, instance.getSpeed(), 0.001);
+        Assert.assertEquals(55, instance.getSpeedMph(), 0);
         instance.setSpeed(55);
-        assertEquals(55, instance.getSpeed(), 0);
-        assertEquals(123.031, instance.getSpeedMph(), 0.001);
+        Assert.assertEquals(55, instance.getSpeed(), 0);
+        Assert.assertEquals(123.031, instance.getSpeedMph(), 0.001);
     }
     
 }

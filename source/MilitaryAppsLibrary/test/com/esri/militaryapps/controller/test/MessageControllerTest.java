@@ -25,7 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 import org.xml.sax.SAXException;
 
 public class MessageControllerTest {
@@ -58,7 +58,7 @@ public class MessageControllerTest {
 
             @Override
             public void geomessageReceived(Geomessage geomessage) {
-                fail("That text had no Geomessages!");
+                Assert.fail("That text had no Geomessages!");
             }
 
             @Override
@@ -77,7 +77,7 @@ public class MessageControllerTest {
         Thread.sleep(100);
         controller.removeListener(listener);
         controller.stopReceiving();
-        assertEquals(expected, result.message);
+        Assert.assertEquals(expected, result.message);
     }
     
     @Test
@@ -124,10 +124,10 @@ public class MessageControllerTest {
         Thread.sleep(100);
         controller.removeListener(listener);
         controller.stopReceiving();
-        assertEquals(expected, result.message);
-        assertEquals(2, result.geomessages.size());
-        assertEquals("3A1-001", result.geomessages.get("{3a752ef3-b085-41e8-993a-3ec39098fde2}").getProperty("uniquedesignation"));
-        assertEquals("3A2-002", result.geomessages.get("{48f54ca2-ae19-4de0-9fda-f8dd9b17adac}").getProperty("uniquedesignation"));
+        Assert.assertEquals(expected, result.message);
+        Assert.assertEquals(2, result.geomessages.size());
+        Assert.assertEquals("3A1-001", result.geomessages.get("{3a752ef3-b085-41e8-993a-3ec39098fde2}").getProperty("uniquedesignation"));
+        Assert.assertEquals("3A2-002", result.geomessages.get("{48f54ca2-ae19-4de0-9fda-f8dd9b17adac}").getProperty("uniquedesignation"));
     }
     
 }

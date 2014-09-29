@@ -32,7 +32,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SpotReportControllerTest {
@@ -130,7 +130,7 @@ public class SpotReportControllerTest {
 
                 };
             } catch (Exception e) {
-                fail("Couldn't create LocationController: " + e.getMessage());
+                Assert.fail("Couldn't create LocationController: " + e.getMessage());
                 return null;
             }
         }
@@ -177,7 +177,7 @@ public class SpotReportControllerTest {
             MessageController messageController = new MessageController(PORT);
             controller = new SpotReportController(mapController, messageController);
         } catch (Throwable t) {
-            fail("Couldn't set up test: " + t.getMessage());
+            Assert.fail("Couldn't set up test: " + t.getMessage());
         }
     }
     
@@ -239,8 +239,8 @@ public class SpotReportControllerTest {
              * the username. Someone could add code to do a more rigorous test, realizing
              * that elements won't be in any particular order in the XML message.
              */
-            assertNotNull(result.message);
-            assertTrue(0 < result.message.indexOf(">" + USERNAME + "<"));
+            Assert.assertNotNull(result.message);
+            Assert.assertTrue(0 < result.message.indexOf(">" + USERNAME + "<"));
         }
     }
         
