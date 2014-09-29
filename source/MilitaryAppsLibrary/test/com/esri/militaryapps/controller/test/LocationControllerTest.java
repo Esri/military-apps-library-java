@@ -29,7 +29,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 import org.xml.sax.SAXException;
 
 /**
@@ -90,9 +90,9 @@ public class LocationControllerTest {
             Logger.getLogger(LocationControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         synchronized (locations) {
-            assertTrue("LocationController should have provided a location", 0 < locations.size());
-            assertEquals(70.4085697998, locations.get(0).getLongitude(), 0.000001);
-            assertEquals(34.4188940003, locations.get(0).getLatitude(), 0.000001);
+            Assert.assertTrue("LocationController should have provided a location", 0 < locations.size());
+            Assert.assertEquals(70.4085697998, locations.get(0).getLongitude(), 0.000001);
+            Assert.assertEquals(34.4188940003, locations.get(0).getLatitude(), 0.000001);
         }
         instance.pause();
     }

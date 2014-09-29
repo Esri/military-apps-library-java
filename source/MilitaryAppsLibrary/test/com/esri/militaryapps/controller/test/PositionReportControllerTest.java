@@ -28,7 +28,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 public class PositionReportControllerTest {
     
@@ -59,7 +59,7 @@ public class PositionReportControllerTest {
             messageController.startReceiving();
             controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID, SIC);
         } catch (Throwable t) {
-            fail("Couldn't set up test: " + t.getMessage());
+            Assert.fail("Couldn't set up test: " + t.getMessage());
         }
     }
     
@@ -84,53 +84,53 @@ public class PositionReportControllerTest {
     @Test
     public void testEnabled() {
         System.out.println("testEnabled");
-        assertFalse(controller.isEnabled());
+        Assert.assertFalse(controller.isEnabled());
         controller.setEnabled(true);
-        assertTrue(controller.isEnabled());
+        Assert.assertTrue(controller.isEnabled());
         controller.setEnabled(false);
-        assertFalse(controller.isEnabled());
+        Assert.assertFalse(controller.isEnabled());
     }
 
     @Test
     public void testPeriod() {
         System.out.println("testPeriod");
-        assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
+        Assert.assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
         controller.setPeriod(3456);
-        assertEquals(3456, controller.getPeriod());
+        Assert.assertEquals(3456, controller.getPeriod());
         controller.setPeriod(-42);
-        assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
+        Assert.assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
         controller.setPeriod(PositionReportController.DEFAULT_PERIOD);
-        assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
+        Assert.assertEquals(PositionReportController.DEFAULT_PERIOD, controller.getPeriod());
     }
     
     @Test
     public void testUsername() {
         System.out.println("testUsername");
-        assertEquals(USERNAME, controller.getUsername());
+        Assert.assertEquals(USERNAME, controller.getUsername());
         controller.setUsername("Woody");
-        assertEquals("Woody", controller.getUsername());
+        Assert.assertEquals("Woody", controller.getUsername());
         controller.setUsername(USERNAME);
-        assertEquals(USERNAME, controller.getUsername());
+        Assert.assertEquals(USERNAME, controller.getUsername());
     }
     
     @Test
     public void testVehicleType() {
         System.out.println("testVehicleType");
-        assertEquals(VEHICLE_TYPE, controller.getVehicleType());
+        Assert.assertEquals(VEHICLE_TYPE, controller.getVehicleType());
         controller.setVehicleType("SR-71");
-        assertEquals("SR-71", controller.getVehicleType());
+        Assert.assertEquals("SR-71", controller.getVehicleType());
         controller.setVehicleType(VEHICLE_TYPE);
-        assertEquals(VEHICLE_TYPE, controller.getVehicleType());
+        Assert.assertEquals(VEHICLE_TYPE, controller.getVehicleType());
     }
     
     @Test
     public void testUniqueId() {
         System.out.println("testUniqueId");
-        assertEquals(UID, controller.getUniqueId());
+        Assert.assertEquals(UID, controller.getUniqueId());
         controller.setUniqueId("Percy");
-        assertEquals("Percy", controller.getUniqueId());
+        Assert.assertEquals("Percy", controller.getUniqueId());
         controller.setUniqueId(UID);
-        assertEquals(UID, controller.getUniqueId());
+        Assert.assertEquals(UID, controller.getUniqueId());
     }
     
     @Test
@@ -159,8 +159,8 @@ public class PositionReportControllerTest {
              * the username. Someone could add code to do a more rigorous test, realizing
              * that elements won't be in any particular order in the XML message.
              */
-            assertNotNull(result.message);
-            assertTrue(0 < result.message.indexOf(">" + USERNAME + "<"));
+            Assert.assertNotNull(result.message);
+            Assert.assertTrue(0 < result.message.indexOf(">" + USERNAME + "<"));
         }
         controller.getMessageController().removeListener(listener);
     }
