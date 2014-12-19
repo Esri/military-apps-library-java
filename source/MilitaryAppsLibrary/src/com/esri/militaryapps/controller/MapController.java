@@ -108,7 +108,6 @@ public abstract class MapController implements LocationListener {
      * this method, calling super.reset() in the overriding method.
      */
     public void reset() throws ParserConfigurationException, SAXException, IOException {
-        mapReady = false;
         locationController.reset();
     }
     
