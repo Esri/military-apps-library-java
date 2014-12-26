@@ -45,7 +45,7 @@ public class MessageController {
 
     private final DatagramSocket outboundUdpSocket;
     private final DatagramPacket outboundPacket;
-    private final DatagramPacket inboundPacket;  
+    private final DatagramPacket inboundPacket;
     private final Set<MessageControllerListener> listeners = new HashSet<MessageControllerListener>();
     private final GeomessagesReader reader;
     private final Object inboundLock = new Object();
