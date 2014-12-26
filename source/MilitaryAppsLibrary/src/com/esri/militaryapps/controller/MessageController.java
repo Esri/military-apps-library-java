@@ -52,15 +52,21 @@ public class MessageController {
     private Thread inboundThread = null;
     private DatagramSocket inboundUdpSocket = null;
     private int port;
+    private String senderUsername;
 
     /**
      * Creates a MessageController for the given UDP port.
      * @param messagingPort the UDP port through which messages will be sent and received.
      * Usually you should use a port number between 1024 and 65535.
+     * @param senderUsername a unique username for the user who is sending messages;
+     *                       this does not modify outbound messages but causes MessageController
+     *                       to treat the user's own messages properly when received.
      * @see #setPort(int)
      */
-    public MessageController(int messagingPort) {
+    public MessageController(int messagingPort, String senderUsername) {
         port = messagingPort;
+        this.senderUsername = senderUsername;
+        
         DatagramSocket theSocket = null;
         DatagramPacket thePacket = null;
         try {
@@ -135,6 +141,16 @@ public class MessageController {
             outboundPacket.setLength(bytes.length);
             outboundUdpSocket.send(outboundPacket);
         }
+        try {
+            List<Geomessage> messages = reader.parseMessages(new String(bytes));
+            for (Geomessage message : messages) {
+                for (MessageControllerListener listener : listeners) {
+                    listener.geomessageReceived(message);
+                }
+            }
+        } catch (SAXException ex) {
+            Logger.getLogger(MessageController.class.getName()).log(Level.INFO, "Couldn't parse messages; they might not be Geomessages (and that might be okay)", ex);
+        }
     }
     
     /**
@@ -178,7 +194,10 @@ public class MessageController {
 
                                                 @Override
                                                 public void run() {
-                                                    listener.geomessageReceived(message);
+                                                    if (null == senderUsername ||
+                                                            !senderUsername.equals(message.getProperty("uniquedesignation"))) {
+                                                        listener.geomessageReceived(message);
+                                                    }
                                                 }
 
                                             }.start();                                    
@@ -249,6 +268,20 @@ public class MessageController {
                 }.start();
             }
         }
+    }
+
+    /**
+     * @return the unique username for the user who is sending messages
+     */
+    public String getSenderUsername() {
+        return senderUsername;
+    }
+
+    /**
+     * @param senderUsername the unique username for the user who is sending messages.
+     */
+    public void setSenderUsername(String senderUsername) {
+        this.senderUsername = senderUsername;
     }
     
 }
