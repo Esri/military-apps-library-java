@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -144,7 +147,11 @@ public class MessageController {
         synchronized (outboundPacket) {
             outboundPacket.setData(bytes);
             outboundPacket.setLength(bytes.length);
-            outboundUdpSocket.send(outboundPacket);
+            Set<InetAddress> udpBroadcastAddresses = Utilities.getUdpBroadcastAddresses();
+            for (InetAddress addr : udpBroadcastAddresses) {
+                outboundPacket.setAddress(addr);
+                outboundUdpSocket.send(outboundPacket);
+            }
         }
         try {
             List<Geomessage> messages = reader.parseMessages(new String(bytes));
