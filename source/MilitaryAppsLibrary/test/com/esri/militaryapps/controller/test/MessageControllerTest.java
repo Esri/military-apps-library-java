@@ -125,8 +125,8 @@ public class MessageControllerTest {
         controller.removeListener(listener);
         controller.stopReceiving();
         Assert.assertEquals(expected, result.message);
-        Assert.assertEquals(2, result.geomessages.size());
-        Assert.assertEquals("3A1-001", result.geomessages.get("{3a752ef3-b085-41e8-993a-3ec39098fde2}").getProperty("uniquedesignation"));
+        //We should only get one message, because 3A1-001 is ignored
+        Assert.assertEquals(1, result.geomessages.size());
         Assert.assertEquals("3A2-002", result.geomessages.get("{48f54ca2-ae19-4de0-9fda-f8dd9b17adac}").getProperty("uniquedesignation"));
     }
     

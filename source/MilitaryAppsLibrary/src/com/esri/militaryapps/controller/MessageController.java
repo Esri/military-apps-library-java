@@ -23,6 +23,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,10 @@ public class MessageController {
     private DatagramSocket inboundUdpSocket = null;
     private int port;
     private String senderUsername;
+    private Set<String> ownMessageTypesToIgnore = new HashSet<String>(Arrays.asList(
+            "trackrep",
+            "position_report"
+            ));
 
     /**
      * Creates a MessageController for the given UDP port.
@@ -143,9 +148,18 @@ public class MessageController {
         }
         try {
             List<Geomessage> messages = reader.parseMessages(new String(bytes));
-            for (Geomessage message : messages) {
-                for (MessageControllerListener listener : listeners) {
-                    listener.geomessageReceived(message);
+            synchronized (messages) {
+                for (int i = 0; i < messages.size(); i++) {
+                    Geomessage message = messages.get(i);
+                    synchronized (listeners) {
+                        for (MessageControllerListener listener : listeners) {
+                            synchronized (ownMessageTypesToIgnore) {
+                                if (!ownMessageTypesToIgnore.contains(message.getProperty("_type"))) {
+                                    listener.geomessageReceived(message);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } catch (SAXException ex) {
@@ -187,20 +201,22 @@ public class MessageController {
                             }
                             try {
                                 List<Geomessage> messages = reader.parseMessages(msgString);
-                                for (final Geomessage message : messages) {
-                                    synchronized (listeners) {
-                                        for (final MessageControllerListener listener : listeners) {
-                                            new Thread() {
+                                synchronized (messages) {
+                                    for (final Geomessage message : messages) {
+                                        synchronized (listeners) {
+                                            for (final MessageControllerListener listener : listeners) {
+                                                new Thread() {
 
-                                                @Override
-                                                public void run() {
-                                                    if (null == senderUsername ||
-                                                            !senderUsername.equals(message.getProperty("uniquedesignation"))) {
-                                                        listener.geomessageReceived(message);
+                                                    @Override
+                                                    public void run() {
+                                                        if (null == senderUsername ||
+                                                                !senderUsername.equals(message.getProperty("uniquedesignation"))) {
+                                                            listener.geomessageReceived(message);
+                                                        }
                                                     }
-                                                }
 
-                                            }.start();                                    
+                                                }.start();                                    
+                                            }
                                         }
                                     }
                                 }
@@ -282,6 +298,23 @@ public class MessageController {
      */
     public void setSenderUsername(String senderUsername) {
         this.senderUsername = senderUsername;
+    }
+
+    /**
+     * @return the types of inbound messages being ignored when sent by the current
+     *         user. Default is ["trackrep", "position_report"].
+     */
+    public Set<String> getOwnMessageTypesToIgnore() {
+        return ownMessageTypesToIgnore;
+    }
+
+    /**
+     * @param ownMessageTypesToIgnore the types of inbound messages to ignore when
+     *                                sent by the current user. Default is
+     *                                ["trackrep", "position_report"].
+     */
+    public void setOwnMessageTypesToIgnore(Set<String> ownMessageTypesToIgnore) {
+        this.ownMessageTypesToIgnore = ownMessageTypesToIgnore;
     }
     
 }
