@@ -19,13 +19,23 @@ import com.esri.militaryapps.model.DomNodeAndDocument;
 import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -511,6 +521,42 @@ public class Utilities {
         transformerFactory.newTransformer().transform(
                 new DOMSource(doc), new StreamResult(xmlStringWriter));
         return xmlStringWriter.toString();
+    }
+    
+    /**
+     * Calculates a list of UDP broadcast addresses for the current network interface(s).
+     * Adapted from http://stackoverflow.com/questions/4887675/detecting-all-available-networks-broadcast-addresses-in-java .
+     * @return a list of UDP broadcast addresses for the current network interface(s).
+     */
+    public static Set<InetAddress> getUdpBroadcastAddresses() {
+        HashSet<InetAddress> listOfBroadcasts = new HashSet<InetAddress>();
+        Enumeration list;
+        try {
+            list = NetworkInterface.getNetworkInterfaces();
+
+            while(list.hasMoreElements()) {
+                NetworkInterface iface = (NetworkInterface) list.nextElement();
+                if (iface == null) {
+                    continue;
+                }
+                if (!iface.isLoopback() && iface.isUp()) {
+                    for (InterfaceAddress address : iface.getInterfaceAddresses()) {
+                        if (address == null) {
+                            continue;
+                        }
+                        InetAddress broadcast = address.getBroadcast();
+                        if (broadcast != null) {
+                            System.out.println("Found broadcast: " + broadcast);
+                            listOfBroadcasts.add(broadcast);
+                        }
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, "Error while getting network interfaces", ex);
+        }
+
+        return listOfBroadcasts;
     }
     
 }
