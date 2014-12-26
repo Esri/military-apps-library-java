@@ -55,7 +55,7 @@ public class PositionReportControllerTest {
                 }
             };
             locController.start();
-            MessageController messageController = new MessageController(PORT);
+            MessageController messageController = new MessageController(PORT, "3A1-001");
             messageController.startReceiving();
             controller = new PositionReportController(locController, messageController, USERNAME, VEHICLE_TYPE, UID, SIC);
         } catch (Throwable t) {

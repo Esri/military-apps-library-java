@@ -50,7 +50,7 @@ public class MessageControllerTest {
     public void testSendUDPMessage() throws Exception {
         System.out.println("sendUDPMessage");
 
-        MessageController controller = new MessageController(TEST_PORT);
+        MessageController controller = new MessageController(TEST_PORT, "3A1-001");
         controller.startReceiving();
         
         final Result result = new Result();
@@ -83,7 +83,7 @@ public class MessageControllerTest {
     @Test
     public void testSendGeomessage() throws IOException, InterruptedException {
         System.out.println("sendGeomessage");
-        MessageController controller = new MessageController(TEST_PORT);
+        MessageController controller = new MessageController(TEST_PORT, "3A1-001");
         doGeomessageTesting(controller);
         
         controller.setPort(TEST_PORT_2);
