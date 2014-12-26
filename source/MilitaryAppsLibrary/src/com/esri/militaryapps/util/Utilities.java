@@ -534,7 +534,7 @@ public class Utilities {
         try {
             list = NetworkInterface.getNetworkInterfaces();
 
-            while(list.hasMoreElements()) {
+            while (list.hasMoreElements()) {
                 NetworkInterface iface = (NetworkInterface) list.nextElement();
                 if (iface == null) {
                     continue;
@@ -546,7 +546,6 @@ public class Utilities {
                         }
                         InetAddress broadcast = address.getBroadcast();
                         if (broadcast != null) {
-                            System.out.println("Found broadcast: " + broadcast);
                             listOfBroadcasts.add(broadcast);
                         }
                     }
