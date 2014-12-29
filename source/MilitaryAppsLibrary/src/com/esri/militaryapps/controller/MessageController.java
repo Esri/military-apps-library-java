@@ -22,11 +22,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -185,7 +183,10 @@ public class MessageController {
                 @Override
                 public void run() {
                     try {
-                        inboundUdpSocket = new DatagramSocket(port);
+                        inboundUdpSocket = new DatagramSocket(null);
+                        inboundUdpSocket.setReuseAddress(true);
+                        inboundUdpSocket.setBroadcast(true);
+                        inboundUdpSocket.bind(new InetSocketAddress(port));
                         while (true) {
                             try {
                                 inboundUdpSocket.receive(inboundPacket);
