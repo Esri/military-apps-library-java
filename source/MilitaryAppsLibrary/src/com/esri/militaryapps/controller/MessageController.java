@@ -148,7 +148,11 @@ public class MessageController {
             Set<InetAddress> udpBroadcastAddresses = Utilities.getUdpBroadcastAddresses();
             for (InetAddress addr : udpBroadcastAddresses) {
                 outboundPacket.setAddress(addr);
-                outboundUdpSocket.send(outboundPacket);
+                try {
+                    outboundUdpSocket.send(outboundPacket);
+                } catch (Throwable t) {
+                    logger.log(Level.WARNING, "Could not send message to address " + addr, t);
+                }
             }
         }
         try {
