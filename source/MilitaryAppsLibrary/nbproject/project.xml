@@ -81,13 +81,13 @@
                 <package-root>src</package-root>
                 <classpath mode="compile">lib/json.jar</classpath>
                 <built-to>dist/MilitaryAppsLibrary.jar</built-to>
-                <source-level>1.6</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">lib/junit-4.10.jar;dist/MilitaryAppsLibrary.jar</classpath>
-                <source-level>1.6</source-level>
+                <source-level>1.7</source-level>
             </compilation-unit>
         </java-data>
     </configuration>
