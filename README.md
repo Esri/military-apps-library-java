@@ -33,6 +33,7 @@ To see this library in use, visit the [squad-leader-android repository](https://
         * Android Development Kit, if including this library in an Android library or application
 * Optional
     * Apache Ant - only needed if building and running the provided automated unit tests with ant
+        * Note: Java 8 requires Ant 1.9+, so you must use Ant 1.9 or higher when building for Java SE.
 
 ## Instructions
 
