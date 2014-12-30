@@ -147,7 +147,7 @@ public class MessageController {
             outboundPacket.setLength(bytes.length);
             Set<InetAddress> udpBroadcastAddresses = Utilities.getUdpBroadcastAddresses();
             for (InetAddress addr : udpBroadcastAddresses) {
-                if (!"0.0.0.0".equals(addr.getHostAddress())) {
+                if (null != addr) {
                     outboundPacket.setAddress(addr);
                     try {
                         outboundUdpSocket.send(outboundPacket);
