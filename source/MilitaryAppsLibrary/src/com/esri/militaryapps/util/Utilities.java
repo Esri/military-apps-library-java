@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -530,12 +529,11 @@ public class Utilities {
      */
     public static Set<InetAddress> getUdpBroadcastAddresses() {
         HashSet<InetAddress> listOfBroadcasts = new HashSet<InetAddress>();
-        Enumeration list;
         try {
-            list = NetworkInterface.getNetworkInterfaces();
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 
-            while (list.hasMoreElements()) {
-                NetworkInterface iface = (NetworkInterface) list.nextElement();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = (NetworkInterface) interfaces.nextElement();
                 if (iface == null) {
                     continue;
                 }
