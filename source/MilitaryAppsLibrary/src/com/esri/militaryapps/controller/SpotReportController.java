@@ -1,6 +1,6 @@
 /**
  * *****************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -37,7 +37,7 @@ public class SpotReportController {
     /**
      * The type string for this controller's Geomessages.
      */
-    public static final String REPORT_TYPE = "spotrep";
+    public static final String REPORT_TYPE = "spot_report";
 
     private static final Logger logger = Logger.getLogger(SpotReportController.class.getName());
     private final MapController mapController;
@@ -107,7 +107,7 @@ public class SpotReportController {
         Node geomessageElement = nodeAndDocument.getNode();
         
         Utilities.addTextElement(doc, geomessageElement,
-                Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
+                Geomessage.TYPE_FIELD_NAME, AdvancedSymbolController.getOutboundMessageTypeName(REPORT_TYPE));
         Utilities.addTextElement(doc, geomessageElement,
                 Geomessage.ID_FIELD_NAME, spotReport.getMessageId());
         Utilities.addTextElement(doc, geomessageElement,
