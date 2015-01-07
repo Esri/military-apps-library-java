@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ public class MessageController {
     private int port;
     private String senderUsername;
     private Set<String> ownMessageTypesToIgnore = new HashSet<String>(Arrays.asList(
-            "trackrep",
             "position_report"
             ));
 
@@ -162,10 +161,11 @@ public class MessageController {
             synchronized (messages) {
                 for (int i = 0; i < messages.size(); i++) {
                     Geomessage message = messages.get(i);
+                    String messageType = AdvancedSymbolController.getInboundMessageTypeName((String) message.getProperty("_type"));
                     synchronized (listeners) {
                         for (MessageControllerListener listener : listeners) {
                             synchronized (ownMessageTypesToIgnore) {
-                                if (!ownMessageTypesToIgnore.contains(message.getProperty("_type"))) {
+                                if (!ownMessageTypesToIgnore.contains(messageType)) {
                                     listener.geomessageReceived(message);
                                 }
                             }
@@ -316,7 +316,7 @@ public class MessageController {
 
     /**
      * @return the types of inbound messages being ignored when sent by the current
-     *         user. Default is ["trackrep", "position_report"].
+     *         user. Default is ["position_report"].
      */
     public Set<String> getOwnMessageTypesToIgnore() {
         return ownMessageTypesToIgnore;
@@ -325,7 +325,7 @@ public class MessageController {
     /**
      * @param ownMessageTypesToIgnore the types of inbound messages to ignore when
      *                                sent by the current user. Default is
-     *                                ["trackrep", "position_report"].
+     *                                ["position_report"].
      */
     public void setOwnMessageTypesToIgnore(Set<String> ownMessageTypesToIgnore) {
         this.ownMessageTypesToIgnore = ownMessageTypesToIgnore;

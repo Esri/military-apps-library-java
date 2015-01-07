@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2013-2015 Esri
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *  
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ ******************************************************************************/
 package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.Geomessage;
@@ -16,6 +31,17 @@ import java.util.logging.Logger;
 public abstract class AdvancedSymbolController {
     
     private static final Logger logger = Logger.getLogger(AdvancedSymbolController.class.getName());
+    
+    private static final HashMap<String, String> INBOUND_MESSAGE_TYPE_TRANSLATIONS = new HashMap<String, String>();
+    static {
+        INBOUND_MESSAGE_TYPE_TRANSLATIONS.put("trackrep", "position_report");
+        INBOUND_MESSAGE_TYPE_TRANSLATIONS.put("spotrep", "spot_report");
+    }
+    private static final HashMap<String, String> OUTBOUND_MESSAGE_TYPE_TRANSLATIONS = new HashMap<String, String>();
+    static {
+        OUTBOUND_MESSAGE_TYPE_TRANSLATIONS.put("position_report", "trackrep");
+        OUTBOUND_MESSAGE_TYPE_TRANSLATIONS.put("spot_report", "spotrep");
+    }
     
     private final MapController mapController;
     private final HashSet<String> highlightedIds = new HashSet<String>();
@@ -49,14 +75,31 @@ public abstract class AdvancedSymbolController {
     public abstract String getActionPropertyName();
     
     /**
-     * Returns your implementation's message type name for the given Geomessage
-     * type name.
+     * Returns the ArcGIS-standard message type name for the given Geomessage
+     * type name; in other words, the message type name that the ArcGIS Runtime
+     * message processor expects.
      * @param geomessageTypeName the Geomessage type name.
-     * @return your implementation's message type name for the given Geomessage
+     * @return the ArcGIS-standard message type name for the given Geomessage
      * type name.
      */
-    protected abstract String translateMessageTypeName(String geomessageTypeName);
-    
+    protected static String getInboundMessageTypeName(String geomessageTypeName) {
+        String translation = INBOUND_MESSAGE_TYPE_TRANSLATIONS.get(geomessageTypeName);
+        return (null == translation) ? geomessageTypeName : translation;
+    }    
+
+    /**
+     * Returns the ArcGIS for the Military message type name for the given Geomessage
+     * type name; in other words, the message type name that the ArcGIS for the
+     * Military GeoEvent adapter expects.
+     * @param geomessageTypeName the Geomessage type name.
+     * @return the ArcGIS for the Military message type name for the given Geomessage
+     * type name.
+     */
+    protected static String getOutboundMessageTypeName(String geomessageTypeName) {
+        String translation = OUTBOUND_MESSAGE_TYPE_TRANSLATIONS.get(geomessageTypeName);
+        return (null == translation) ? geomessageTypeName : translation;
+    }    
+
     private boolean messageTypeExists(String messageType) {
         if (null == messageTypesSupported) {
             messageTypesSupported = new HashSet<String>(Arrays.asList(getMessageTypesSupported()));
@@ -99,8 +142,10 @@ public abstract class AdvancedSymbolController {
      * @param geomessage the Geomessage to process.
      */
     protected void processGeomessage(Geomessage geomessage) {
-        if ("spotrep".equals(geomessage.getProperty(Geomessage.TYPE_FIELD_NAME))
-                || "spot_report".equals(geomessage.getProperty(Geomessage.TYPE_FIELD_NAME))) {
+        final String messageType = AdvancedSymbolController.getInboundMessageTypeName(
+                (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME));
+        geomessage.setProperty(Geomessage.TYPE_FIELD_NAME, messageType);
+        if ("spot_report".equals(messageType)) {
             //Use a single symbol for all spot reports
             String controlPointsString = (String) geomessage.getProperty(Geomessage.CONTROL_POINTS_FIELD_NAME);
             if (null != controlPointsString) {
@@ -123,15 +168,6 @@ public abstract class AdvancedSymbolController {
             }
         } else {
             //Let the MessageProcessor handle other types of reports
-
-            /**
-             * Translate from an AFM message type name to a message type name for
-             * your implementation.
-             */
-            String messageType = (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME);
-            if (!messageTypeExists(messageType)) {
-                geomessage.setProperty(Geomessage.TYPE_FIELD_NAME, translateMessageTypeName(messageType));
-            }
             
             /**
              * Translate from a Geomessage color string to a color string for your

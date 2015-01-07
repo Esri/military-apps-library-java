@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public class PositionReportController implements LocationListener {
                         Node geomessageElement = nodeAndDocument.getNode();
 
                         Utilities.addTextElement(doc, geomessageElement,
-                                Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
+                                Geomessage.TYPE_FIELD_NAME, AdvancedSymbolController.getOutboundMessageTypeName(REPORT_TYPE));
                         Utilities.addTextElement(doc, geomessageElement,
                                 Geomessage.ID_FIELD_NAME, uniqueId);
                         Utilities.addTextElement(doc, geomessageElement,
