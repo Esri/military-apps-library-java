@@ -68,6 +68,32 @@ public abstract class AdvancedSymbolController {
     public abstract String[] getMessageTypesSupported();
     
     /**
+     * Returns an array of message layer names for your implementation. In ArcGIS
+     * Runtime, you can loop through MessageGroupLayer.getLayers() to get the layers
+     * and then return their names.
+     * @return an array of message layer names.
+     */
+    public abstract String[] getMessageLayerNames();
+    
+    /**
+     * Clears all messages from the layer with the specified name. In ArcGIS Runtime,
+     * you can call GraphicsLayer.removeAll().
+     * @param layerName the name of the layer to clear (e.g. "chemlights")
+     */
+    public abstract void clearLayer(String layerName);
+    
+    /**
+     * Clears all messages. This is the same as calling clearLayer with each value
+     * in the array returned by getMessageLayerNames.
+     */
+    public void clearAllMessages() {
+        String[] layerNames = getMessageLayerNames();
+        for (String name : layerNames) {
+            clearLayer(name);
+        }
+    }
+    
+    /**
      * Returns the action property name for your implementation's message processor.
      * This value is usually "_Action" or "_action".
      * @return the action property name for your implementation's message processor.
@@ -307,7 +333,7 @@ public abstract class AdvancedSymbolController {
      * the clone.
      * @deprecated Call DictionaryRenderer.setLabelsVisible(boolean) when you want
      *           to turn off labels. As of
-     *           ArcGIS Runtime SDK 10.2.3 **for Android only**, you can't get
+     *           ArcGIS Runtime SDK 10.2.4 **for Android only**, you can't get
      *           the DictionaryRenderer from a layer; it throws an exception. That
      *           means you still need this method on Android, so you can get a label-free
      *           copy of a Geomessage that you can process to hide the labels.
