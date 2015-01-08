@@ -76,7 +76,8 @@ public class MessageController {
         DatagramPacket thePacket = null;
         try {
             theSocket = new DatagramSocket();
-            thePacket = new DatagramPacket(new byte[0], 0, InetAddress.getByName("255.255.255.255"), messagingPort);
+            thePacket = new DatagramPacket(new byte[0], 0);
+            thePacket.setPort(messagingPort);
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
