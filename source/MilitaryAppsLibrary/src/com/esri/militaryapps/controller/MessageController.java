@@ -37,7 +37,8 @@ import org.xml.sax.SAXException;
 
 /**
  * A controller that sends messages to listening clients and receives inbound messages.
- * This implementation sends and receives UDP broadcasts.
+ * This implementation sends and receives UDP broadcasts. You can use this controller
+ * in send-only mode by calling setBindAndListen(false).
  */
 public class MessageController {
     
@@ -58,6 +59,7 @@ public class MessageController {
     private Set<String> ownMessageTypesToIgnore = new HashSet<String>(Arrays.asList(
             "position_report"
             ));
+    private boolean bindAndListen = true;
 
     /**
      * Creates a MessageController for the given UDP port.
@@ -182,80 +184,84 @@ public class MessageController {
     /**
      * Tells this controller to bind a socket to the specified port and start
      * receiving messages, notifying this controller's listeners as appropriate.
+     * This method only has an effect if bindAndListen is currently true, which is
+     * the default (see setBindAndListen(boolean)).
      */
     public void startReceiving() {
-        synchronized (inboundLock) {
-            inboundThread = new Thread() {
+        if (bindAndListen) {
+            synchronized (inboundLock) {
+                inboundThread = new Thread() {
 
-                @Override
-                public void run() {
-                    try {
-                        inboundUdpSocket = new DatagramSocket(null);
-                        inboundUdpSocket.setReuseAddress(true);
-                        inboundUdpSocket.setBroadcast(true);
-                        inboundUdpSocket.bind(new InetSocketAddress(port));
-                        while (true) {
-                            try {
-                                inboundUdpSocket.receive(inboundPacket);
-                            } catch (SocketException se) {
-                                //This probably means the socket was closed and it's time to stop receiving.
-                                break;
-                            }
-                            final String msgString = new String(inboundPacket.getData(), inboundPacket.getOffset(), inboundPacket.getLength());
-                            synchronized (listeners) {
-                                for (final MessageControllerListener listener : listeners) {
-                                    new Thread() {
-
-                                        @Override
-                                        public void run() {
-                                            listener.datagramReceived(msgString);
-                                        }
-
-                                    }.start();
+                    @Override
+                    public void run() {
+                        try {
+                            inboundUdpSocket = new DatagramSocket(null);
+                            inboundUdpSocket.setReuseAddress(true);
+                            inboundUdpSocket.setBroadcast(true);
+                            inboundUdpSocket.bind(new InetSocketAddress(port));
+                            while (true) {
+                                try {
+                                    inboundUdpSocket.receive(inboundPacket);
+                                } catch (SocketException se) {
+                                    //This probably means the socket was closed and it's time to stop receiving.
+                                    break;
                                 }
-                            }
-                            try {
-                                List<Geomessage> messages = reader.parseMessages(msgString);
-                                synchronized (messages) {
-                                    for (final Geomessage message : messages) {
-                                        synchronized (listeners) {
-                                            for (final MessageControllerListener listener : listeners) {
-                                                new Thread() {
+                                final String msgString = new String(inboundPacket.getData(), inboundPacket.getOffset(), inboundPacket.getLength());
+                                synchronized (listeners) {
+                                    for (final MessageControllerListener listener : listeners) {
+                                        new Thread() {
 
-                                                    @Override
-                                                    public void run() {
-                                                        if (null == senderUsername ||
-                                                                !senderUsername.equals(message.getProperty("uniquedesignation"))) {
-                                                            listener.geomessageReceived(message);
+                                            @Override
+                                            public void run() {
+                                                listener.datagramReceived(msgString);
+                                            }
+
+                                        }.start();
+                                    }
+                                }
+                                try {
+                                    List<Geomessage> messages = reader.parseMessages(msgString);
+                                    synchronized (messages) {
+                                        for (final Geomessage message : messages) {
+                                            synchronized (listeners) {
+                                                for (final MessageControllerListener listener : listeners) {
+                                                    new Thread() {
+
+                                                        @Override
+                                                        public void run() {
+                                                            if (null == senderUsername ||
+                                                                    !senderUsername.equals(message.getProperty("uniquedesignation"))) {
+                                                                listener.geomessageReceived(message);
+                                                            }
                                                         }
-                                                    }
 
-                                                }.start();                                    
+                                                    }.start();                                    
+                                                }
                                             }
                                         }
                                     }
+                                } catch (SAXException ex) {
+                                    logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
+                                } catch (IOException ex) {
+                                    logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
                                 }
-                            } catch (SAXException ex) {
-                                logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
-                            } catch (IOException ex) {
-                                logger.log(Level.FINE, "Couldn't get Geomessages from string: '" + msgString + "'", ex);
                             }
+                        } catch (IOException ex) {
+                            logger.log(Level.SEVERE, null, ex);
                         }
-                    } catch (IOException ex) {
-                        logger.log(Level.SEVERE, null, ex);
                     }
-                }
 
-                @Override
-                public void interrupt() {
-                    synchronized (inboundLock) {
-                        inboundUdpSocket.close();
+                    @Override
+                    public void interrupt() {
+                        synchronized (inboundLock) {
+                            inboundUdpSocket.close();
+                        }
+                        super.interrupt();
                     }
-                    super.interrupt();
-                }
-                
-            };
-            inboundThread.start();
+
+                };
+                inboundThread.start();
+            }
         }
     }
     
@@ -330,6 +336,34 @@ public class MessageController {
      */
     public void setOwnMessageTypesToIgnore(Set<String> ownMessageTypesToIgnore) {
         this.ownMessageTypesToIgnore = ownMessageTypesToIgnore;
+    }
+
+    /**
+     * Returns true if the controller may bind and listen to messages and false if it may
+     * not. This is not a way of knowing whether the controller is currently listening.
+     * See setBindAndListen for details.
+     * @return true if the controller may bind and listen to messages, and false
+     *         if it may not.
+     */
+    public boolean isBindAndListen() {
+        return bindAndListen;
+    }
+
+    /**
+     * Tells the controller whether or not it may bind and listen for messages.
+     * Calling setBindAndListen(false) lets you have a controller that only sends
+     * messages and does not receive them.<br/>
+     * <br/>
+     * Note: this is not a way to start or stop listening for messages. For example, if
+     * you call setBindAndListen(true), then startReceiving(), then setBindAndListen(false),
+     * the controller will still receive messages until stopReceiving() is called.
+     * On the next call to startReceiving(), the controller will not bind and receive
+     * messages, because bindAndListen is false.
+     * @param listen true if the controller may bind and listen to messages, and false
+     *               if it may not. The default is true.
+     */
+    public void setBindAndListen(boolean listen) {
+        this.bindAndListen = listen;
     }
     
 }
