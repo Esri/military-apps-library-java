@@ -153,4 +153,29 @@ public class ChemLightController {
         }
     }
     
+    /**
+     * Sends a REMOVE message for a chem light with the specified unique ID.
+     * @param id the chem light's unique ID.
+     */
+    public void removeChemLight(String id) {
+        if (null != id) {
+            try {
+                DomNodeAndDocument nodeAndDocument = Utilities.createGeomessageDocument();
+                Document doc = nodeAndDocument.getDocument();
+                Node geomessageElement = nodeAndDocument.getNode();
+
+                Utilities.addTextElement(doc, geomessageElement,
+                        Geomessage.TYPE_FIELD_NAME, REPORT_TYPE);
+                Utilities.addTextElement(doc, geomessageElement,
+                        Geomessage.ID_FIELD_NAME, id);
+                Utilities.addTextElement(doc, geomessageElement,
+                        Geomessage.ACTION_FIELD_NAME, "REMOVE");
+
+                messageController.sendMessage(doc);
+            } catch (Throwable t) {
+                logger.log(Level.SEVERE, "Could not send chem light remove message", t);
+            }
+        }
+    }
+    
 }
