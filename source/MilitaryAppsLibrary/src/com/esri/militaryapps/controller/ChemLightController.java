@@ -51,7 +51,7 @@ public class ChemLightController {
 
     /**
      * Sends a chem light message to listening clients, using longitude and latitude.
-     * This is shorthand for <code>sendChemLight(longitude, latitude, 4326, rgbColor).
+     * This is shorthand for <code>sendChemLight(longitude, latitude, 4326, rgbColor)</code>.
      * @param longitude the chem light's longitude.
      * @param latitude the chem light's latitude.
      * @param color the chem light's color, represented as an aRGB integer. See
@@ -66,9 +66,30 @@ public class ChemLightController {
     }
     
     /**
+     * Sends a chem light message to listening clients, using longitude and latitude.
+     * If <code>id</code> is not null or empty and matches the ID of an existing chem light,
+     * this method updates the location and color of that chem light; otherwise,
+     * this method sends a new chem light.
+     * This is shorthand for <code>sendChemLight(longitude, latitude, 4326, rgbColor, id)</code>.
+     * @param longitude the chem light's longitude.
+     * @param latitude the chem light's latitude.
+     * @param color the chem light's color, represented as an aRGB integer. See
+     *              Utilities.getAFMGeoEventColorString to learn more about chem
+     *              light colors in ArcGIS Runtime.
+     * @param id a unique ID for the chem light to be updated, or null to send a new chem light.
+     * @throws ParserConfigurationException if a DocumentBuilder cannot be created
+     *         for rendering the message's XML.
+     * @see com.esri.militaryapps.controller.ChemLightController#sendChemLight(double, double, int, int)
+     */
+    public void sendChemLight(double longitude, double latitude, int rgbColor, String id) {
+        sendChemLight(longitude, latitude, 4326, rgbColor, id);
+    }
+    
+    /**
      * Sends a chem light message to listening clients. If this application has a
      * UDPMessageGraphicsLayerController or other mechanism to receive UDP messages,
      * the chem light should appear on the map soon after this method returns.
+     * This is shorthand for <code>sendChemLight(x, y, spatialReferenceWkid, rgbColor, null)</code>.
      * @param x the chem light's X-coordinate.
      * @param y the chem light's Y-coordinate.
      * @param spatialReferenceWkid the WKID of the chem light's spatial reference.
@@ -80,8 +101,32 @@ public class ChemLightController {
      * @see com.esri.militaryapps.util.Utilities#getAFMGeoEventColorString(int)
      */
     public void sendChemLight(double x, double y, int spatialReferenceWkid, int rgbColor) {
+        sendChemLight(x, y, spatialReferenceWkid, rgbColor, null);
+    }
+    
+    /**
+     * Sends a chem light message to listening clients. If this application has a
+     * UDPMessageGraphicsLayerController or other mechanism to receive UDP messages,
+     * the chem light should appear on the map soon after this method returns.
+     * If <code>id</code> is not null or empty and matches the ID of an existing chem light,
+     * this method updates the location and color of that chem light; otherwise,
+     * this method sends a new chem light.
+     * @param x the chem light's X-coordinate.
+     * @param y the chem light's Y-coordinate.
+     * @param spatialReferenceWkid the WKID of the chem light's spatial reference.
+     * @param color the chem light's color, represented as an aRGB integer. See
+     *              Utilities.getAFMGeoEventColorString to learn more about chem
+     *              light colors in ArcGIS Runtime.
+     * @param id a unique ID for the chem light to be updated, or null to send a new chem light.
+     * @throws ParserConfigurationException if a DocumentBuilder cannot be created
+     *         for rendering the message's XML.
+     * @see com.esri.militaryapps.util.Utilities#getAFMGeoEventColorString(int)
+     */
+    public void sendChemLight(double x, double y, int spatialReferenceWkid, int rgbColor, String id) {
         try {
-            String id = UUID.randomUUID().toString();
+            if (null == id) {
+                id = UUID.randomUUID().toString();
+            }
             DomNodeAndDocument nodeAndDocument = Utilities.createGeomessageDocument();
             Document doc = nodeAndDocument.getDocument();
             Node geomessageElement = nodeAndDocument.getNode();
