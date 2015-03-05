@@ -79,17 +79,22 @@ public abstract class AdvancedSymbolController {
      * Clears all messages from the layer with the specified name. In ArcGIS Runtime,
      * you can call GraphicsLayer.removeAll().
      * @param layerName the name of the layer to clear (e.g. "chemlights")
+     * @param sendRemoveMessageForOwnMessages if true, this method will also send
+     *        a "remove" message for each of this layer's messages that were sent
+     *        by the current application instance. If false, this method sends no
+     *        "remove" messages and simply clears the layer.
      */
-    public abstract void clearLayer(String layerName);
+    public abstract void clearLayer(String layerName, boolean sendRemoveMessageForOwnMessages);
     
     /**
      * Clears all messages. This is the same as calling clearLayer with each value
      * in the array returned by getMessageLayerNames.
+     * @param sendRemoveMessageForOwnMessages see {@link #clearLayer(java.lang.String, boolean) clearLayer} for details.
      */
-    public void clearAllMessages() {
+    public void clearAllMessages(boolean sendRemoveMessageForOwnMessages) {
         String[] layerNames = getMessageLayerNames();
         for (String name : layerNames) {
-            clearLayer(name);
+            clearLayer(name, sendRemoveMessageForOwnMessages);
         }
     }
     
