@@ -15,7 +15,10 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.model.DomNodeAndDocument;
 import com.esri.militaryapps.model.Geomessage;
+import com.esri.militaryapps.util.Utilities;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +26,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * A controller for ArcGIS Runtime advanced symbology. Use this class when you want to use
@@ -96,6 +103,32 @@ public abstract class AdvancedSymbolController {
         for (String name : layerNames) {
             clearLayer(name, sendRemoveMessageForOwnMessages);
         }
+    }
+    
+    /**
+     * Sends a remove message to listening clients.
+     * @param messageController a MessageController for sending the remove message.
+     * @param geomessageId the ID of the Geomessage to remove.
+     * @param geomessageType the type of the Geomessage to remove.
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     * @throws IOException 
+     */
+    protected void sendRemoveMessage(MessageController messageController, String geomessageId, String geomessageType)
+            throws ParserConfigurationException, TransformerException, IOException {
+        //Send the message
+        DomNodeAndDocument nodeAndDocument = Utilities.createGeomessageDocument();
+        Document doc = nodeAndDocument.getDocument();
+        Node geomessageElement = nodeAndDocument.getNode();
+
+        Utilities.addTextElement(doc, geomessageElement,
+                Geomessage.TYPE_FIELD_NAME, geomessageType);
+        Utilities.addTextElement(doc, geomessageElement,
+                Geomessage.ID_FIELD_NAME, geomessageId);
+        Utilities.addTextElement(doc, geomessageElement,
+                Geomessage.ACTION_FIELD_NAME, "REMOVE");
+
+        messageController.sendMessage(doc);
     }
     
     /**
