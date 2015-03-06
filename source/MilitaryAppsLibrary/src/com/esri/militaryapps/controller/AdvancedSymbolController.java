@@ -202,9 +202,9 @@ public abstract class AdvancedSymbolController {
     
     /**
      * Removes a graphic from the spot reports layer.
-     * @param id the unique Geomessage ID for the spot report (not the graphic ID).
+     * @param id the graphic ID for the spot report to remove.
      */
-    protected abstract void removeSpotReportGraphic(String id);
+    protected abstract void removeSpotReportGraphic(int graphicId);
         
     /**
      * Processes a Geomessage, adding, modifying, or removing a symbol on the map
@@ -233,7 +233,7 @@ public abstract class AdvancedSymbolController {
                 }
             }
             if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
-                removeSpotReportGraphic(geomessage.getId());
+                removeSpotReportGraphic(spotReportIdToGraphicId.get(geomessage.getId()));
                 synchronized (spotReportIdToGraphicId) {
                     spotReportIdToGraphicId.remove(geomessage.getId());
                 }
