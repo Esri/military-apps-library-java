@@ -199,6 +199,12 @@ public abstract class AdvancedSymbolController {
             int wkid,
             Integer graphicId,
             Geomessage geomessage);
+    
+    /**
+     * Removes a graphic from the spot reports layer.
+     * @param id the unique Geomessage ID for the spot report (not the graphic ID).
+     */
+    protected abstract void removeSpotReportGraphic(String id);
         
     /**
      * Processes a Geomessage, adding, modifying, or removing a symbol on the map
@@ -210,6 +216,7 @@ public abstract class AdvancedSymbolController {
                 (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME));
         geomessage.setProperty(Geomessage.TYPE_FIELD_NAME, messageType);
         if ("spot_report".equals(messageType)) {
+            geomessage.setProperty(Geomessage.ID_FIELD_NAME, geomessage.getId());
             //Use a single symbol for all spot reports
             String controlPointsString = (String) geomessage.getProperty(Geomessage.CONTROL_POINTS_FIELD_NAME);
             if (null != controlPointsString) {
@@ -226,6 +233,7 @@ public abstract class AdvancedSymbolController {
                 }
             }
             if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
+                removeSpotReportGraphic(geomessage.getId());
                 synchronized (spotReportIdToGraphicId) {
                     spotReportIdToGraphicId.remove(geomessage.getId());
                 }
