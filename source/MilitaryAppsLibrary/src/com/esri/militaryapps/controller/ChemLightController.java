@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,14 +39,19 @@ public class ChemLightController {
     private static final Logger logger = Logger.getLogger(ChemLightController.class.getName());
 
     private final MessageController messageController;
+    
+    private String uniqueDesignation = null;
 
     /**
      * Creates a new ChemLightController for the application.
      * @param messageController the controller that this controller will
      *                                  use to send the message.
+     * @param uniqueDesignation the unique designation of the sender. Typically
+     *        this is a human-readable username but it could be a UUID if desired.
      */
-    public ChemLightController(MessageController messageController) {
+    public ChemLightController(MessageController messageController, String uniqueDesignation) {
         this.messageController = messageController;
+        this.uniqueDesignation = uniqueDesignation;
     }
 
     /**
@@ -141,7 +146,9 @@ public class ChemLightController {
                     Geomessage.CONTROL_POINTS_FIELD_NAME, x + "," + y);
             Utilities.addTextElement(doc, geomessageElement,
                     Geomessage.ACTION_FIELD_NAME, "UPDATE");
-            Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", id);
+            if (null != uniqueDesignation) {
+                Utilities.addTextElement(doc, geomessageElement, "uniquedesignation", uniqueDesignation);
+            }
             Utilities.addTextElement(doc, geomessageElement, "color", Utilities.getAFMGeoEventColorString(rgbColor));
             String dateString = Utilities.DATE_FORMAT_GEOMESSAGE.format(new Date());
             Utilities.addTextElement(doc, geomessageElement, "datetimesubmitted", dateString);
@@ -176,6 +183,24 @@ public class ChemLightController {
                 logger.log(Level.SEVERE, "Could not send chem light remove message", t);
             }
         }
+    }
+
+    /**
+     * Returns the sender's unique designation.
+     * @return the unique designation of the sender. Typically this is a human-readable
+     *         username but it could be a UUID if desired.
+     */
+    public String getUniqueDesignation() {
+        return uniqueDesignation;
+    }
+
+    /**
+     * Sets the sender's unique designation.
+     * @param uniqueDesignation the unique designation of the sender. Typically
+     *        this is a human-readable username but it could be a UUID if desired.
+     */
+    public void setUniqueDesignation(String uniqueDesignation) {
+        this.uniqueDesignation = uniqueDesignation;
     }
     
 }
