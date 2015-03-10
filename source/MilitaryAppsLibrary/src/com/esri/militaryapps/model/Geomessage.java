@@ -53,6 +53,11 @@ public class Geomessage implements Cloneable {
      */
     public static final String SIC_FIELD_NAME = "sic";
     
+    /**
+     * The Geomessage action for removing all messages of a given type.
+     */
+    public static final String ACTION_REMOVE_ALL = "removeall";
+    
     private final HashMap<String, Object> properties = new HashMap<String, Object>();
     
     private String id;
