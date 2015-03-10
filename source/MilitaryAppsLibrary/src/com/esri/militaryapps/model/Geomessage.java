@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,13 +15,22 @@
  ******************************************************************************/
 package com.esri.militaryapps.model;
 
+import com.esri.militaryapps.util.Utilities;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * A Geomessage bean.
  */
 public class Geomessage implements Cloneable {
+    
+    private static final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
     
     /**
      * The Geomessage ID field name.
@@ -109,6 +118,25 @@ public class Geomessage implements Cloneable {
      */
     public Map<String, Object> getProperties() {
         return properties;
+    }
+
+    /**
+     * Returns an XML string containing a "geomessages" element with one child element
+     * of type "geomessage".
+     * @return an XML string.
+     */
+    public String toGeomessagesElement() throws ParserConfigurationException, TransformerException {
+        DomNodeAndDocument domNodeAndDoc = Utilities.createGeomessageDocument();
+        Document doc = domNodeAndDoc.getDocument();
+        Node geomessageElement = domNodeAndDoc.getNode();
+        Utilities.addTextElement(doc, geomessageElement, ID_FIELD_NAME, getId());
+        Map<String, Object> props = getProperties();
+        Iterator<String> keyIterator = props.keySet().iterator();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            Utilities.addTextElement(doc, geomessageElement, key, (String) props.get(key));
+        }
+        return Utilities.documentToString(doc);
     }
     
 }
