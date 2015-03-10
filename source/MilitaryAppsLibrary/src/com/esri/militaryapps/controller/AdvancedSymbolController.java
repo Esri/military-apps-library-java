@@ -88,7 +88,7 @@ public abstract class AdvancedSymbolController {
      * @param messageType the message type, such as "chemlight" or "position_report".
      * @return the message layer name, such as "chemlights" or "position_reports".
      */
-    public abstract String getLayerName(String messageType);
+    public abstract String getMessageLayerName(String messageType);
     
     /**
      * Clears all messages from the layer with the specified name. In ArcGIS Runtime,
