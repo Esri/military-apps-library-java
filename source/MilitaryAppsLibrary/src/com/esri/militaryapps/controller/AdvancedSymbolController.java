@@ -83,6 +83,14 @@ public abstract class AdvancedSymbolController {
     public abstract String[] getMessageLayerNames();
     
     /**
+     * Returns the name of the message layer that corresponds to the specified message
+     * type.
+     * @param messageType the message type, such as "chemlight" or "position_report".
+     * @return the message layer name, such as "chemlights" or "position_reports".
+     */
+    public abstract String getLayerName(String messageType);
+    
+    /**
      * Clears all messages from the layer with the specified name. In ArcGIS Runtime,
      * you can call GraphicsLayer.removeAll().
      * @param layerName the name of the layer to clear (e.g. "chemlights")
