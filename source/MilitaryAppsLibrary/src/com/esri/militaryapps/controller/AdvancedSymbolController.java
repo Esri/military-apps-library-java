@@ -223,7 +223,11 @@ public abstract class AdvancedSymbolController {
         final String messageType = AdvancedSymbolController.getInboundMessageTypeName(
                 (String) geomessage.getProperty(Geomessage.TYPE_FIELD_NAME));
         geomessage.setProperty(Geomessage.TYPE_FIELD_NAME, messageType);
-        if ("spot_report".equals(messageType)) {
+        String messageAction = (String) geomessage.getProperty(Geomessage.ACTION_FIELD_NAME);
+        if (Geomessage.ACTION_REMOVE_ALL.equals(messageAction)) {
+            clearLayer(getMessageLayerName(messageType), false);
+        }
+        if (SpotReportController.REPORT_TYPE.equals(messageType)) {
             geomessage.setProperty(Geomessage.ID_FIELD_NAME, geomessage.getId());
             //Use a single symbol for all spot reports
             String controlPointsString = (String) geomessage.getProperty(Geomessage.CONTROL_POINTS_FIELD_NAME);
