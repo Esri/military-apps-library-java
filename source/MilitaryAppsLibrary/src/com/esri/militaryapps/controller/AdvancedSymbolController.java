@@ -226,6 +226,9 @@ public abstract class AdvancedSymbolController {
         String messageAction = (String) geomessage.getProperty(Geomessage.ACTION_FIELD_NAME);
         if (Geomessage.ACTION_REMOVE_ALL.equals(messageAction)) {
             clearLayer(getMessageLayerName(messageType), false);
+            if (SpotReportController.REPORT_TYPE.equals(messageType)) {
+                spotReportIdToGraphicId.clear();
+            }
         }
         if (SpotReportController.REPORT_TYPE.equals(messageType)) {
             geomessage.setProperty(Geomessage.ID_FIELD_NAME, geomessage.getId());
