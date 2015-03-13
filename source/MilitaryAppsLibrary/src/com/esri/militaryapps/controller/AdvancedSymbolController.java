@@ -248,9 +248,11 @@ public abstract class AdvancedSymbolController {
                 }
             }
             if ("remove".equalsIgnoreCase((String) geomessage.getProperty(getActionPropertyName()))) {
-                removeSpotReportGraphic(spotReportIdToGraphicId.get(geomessage.getId()));
-                synchronized (spotReportIdToGraphicId) {
-                    spotReportIdToGraphicId.remove(geomessage.getId());
+                if (spotReportIdToGraphicId.containsKey(geomessage.getId())) {
+                    removeSpotReportGraphic(spotReportIdToGraphicId.get(geomessage.getId()));
+                    synchronized (spotReportIdToGraphicId) {
+                        spotReportIdToGraphicId.remove(geomessage.getId());
+                    }
                 }
             }
         } else {
