@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.model.MapConfig;
 import com.esri.militaryapps.util.Utilities;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public abstract class MapController implements LocationListener {
     }
     
     private final List<MapControllerListener> listeners = new ArrayList<MapControllerListener>();
+    private final List<MapConfigListener> mapConfigListeners = new ArrayList<MapConfigListener>();
     
     private boolean mapReady = false;
     private final LocationController locationController;
@@ -82,6 +84,24 @@ public abstract class MapController implements LocationListener {
     public void removeListener(MapControllerListener listener) {
         listeners.remove(listener);
     }
+    
+    /**
+     * Adds a MapConfigListener to this MapController.
+     * @param listener the listener to add.
+     */
+    public void addMapConfigListener(MapConfigListener listener) {
+        mapConfigListeners.add(listener);
+    }
+    
+    /**
+     * Removes a MapConfigListener from this MapController. This method has
+     * no effect if this MapController does not have a reference to the specified
+     * listener.
+     * @param listener the listener to remove.
+     */
+    public void removeMapConfigListener(MapConfigListener listener) {
+        mapConfigListeners.remove(listener);
+    }
 
     /**
      * Called by an implementing class when layers are added or removed.
@@ -100,6 +120,15 @@ public abstract class MapController implements LocationListener {
         mapReady = true;
         for (MapControllerListener listener : listeners) {
             listener.mapReady();
+        }
+    }
+    
+    /**
+     * Called by an implementing class when a MapConfig has been read.
+     */
+    protected void fireMapConfigRead(MapConfig mapConfig) {
+        for (MapConfigListener listener : mapConfigListeners) {
+            listener.mapConfigRead(mapConfig);
         }
     }
     
