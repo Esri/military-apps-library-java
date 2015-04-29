@@ -325,7 +325,7 @@ public class MapConfigReader {
             mapConfig.setRotation(handler.rotation);
         }
         
-        if (null != handler.servicePath && null != handler.elevation) {
+        if (null != handler.servicePath || null != handler.elevation) {
             mapConfig.setViewshedElevationPath(handler.elevation);
             if (null != handler.observerHeight) {
                 mapConfig.setViewshedObserverHeight(handler.observerHeight);
