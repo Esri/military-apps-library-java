@@ -91,8 +91,8 @@ public class LocationControllerTest {
         }
         synchronized (locations) {
             Assert.assertTrue("LocationController should have provided a location", 0 < locations.size());
-            Assert.assertEquals(70.4085697998, locations.get(0).getLongitude(), 0.000001);
-            Assert.assertEquals(34.4188940003, locations.get(0).getLatitude(), 0.000001);
+            Assert.assertEquals(-121.912645338, locations.get(0).getLongitude(), 0.000001);
+            Assert.assertEquals(36.60402342, locations.get(0).getLatitude(), 0.000001);
         }
         instance.pause();
     }
