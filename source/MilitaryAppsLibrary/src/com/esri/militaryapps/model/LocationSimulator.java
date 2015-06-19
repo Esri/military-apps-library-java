@@ -194,7 +194,7 @@ public class LocationSimulator extends LocationProvider {
     }
     
     private static InputStream getSimulatedGPXInputStream() {
-        return LocationSimulator.class.getResourceAsStream("/com/esri/militaryapps/resources/OperationOscar.gpx");
+        return LocationSimulator.class.getResourceAsStream("/com/esri/militaryapps/resources/MontereyMounted.gpx");
     }
 
     /**
