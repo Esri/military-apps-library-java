@@ -75,7 +75,7 @@ public class Mil2525CMessageParserTest {
     public class Mil2525CMessageParserImpl extends Mil2525CMessageParser {
         
         public static final String ID_FIELD_NAME = "id";
-        public HashMap<String, String> message = null;
+        public HashMap<String, Object> message = null;
         public List<HashMap> messages = new ArrayList<HashMap>();
 
         public Mil2525CMessageParserImpl() throws ParserConfigurationException, SAXException {
@@ -83,7 +83,7 @@ public class Mil2525CMessageParserTest {
         }
 
         public void newMessage() {
-            message = new HashMap<String, String>();
+            message = new HashMap<String, Object>();
             messages.add(message);
         }
 
@@ -91,7 +91,7 @@ public class Mil2525CMessageParserTest {
             message.put(ID_FIELD_NAME, id);
         }
 
-        public void setMessageProperty(String key, String value) {
+        public void setMessageProperty(String key, Object value) {
             message.put(key, value);
         }
 
