@@ -99,7 +99,8 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
         String charString = new String(ch, start, length);
         if (readingId) {
             setMessageId(charString);
-        } else if (readingGeomessage) {
+        } else if (readingGeomessage && null != elementName
+                && !"message".equals(elementName) && !"geomessage".equals(elementName)) {
             setMessageProperty(elementName, charString);
         }
     }
