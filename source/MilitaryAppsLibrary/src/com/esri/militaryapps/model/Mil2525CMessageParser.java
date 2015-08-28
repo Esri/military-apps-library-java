@@ -67,7 +67,7 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
      * @param key the property name.
      * @param value the property value.
      */
-    protected abstract void setMessageProperty(String key, String value);
+    protected abstract void setMessageProperty(String key, Object value);
     
     /**
      * Returns the message ID property name for your implementation. For example,
