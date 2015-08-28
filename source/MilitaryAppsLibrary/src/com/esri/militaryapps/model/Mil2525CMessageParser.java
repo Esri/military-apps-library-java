@@ -37,6 +37,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class Mil2525CMessageParser extends DefaultHandler {
     private final SAXParser saxParser;
 
+    private boolean readingGeomessage = false;
     private boolean readingId = false;
     private String elementName = null;
     private String version = null;
@@ -84,6 +85,7 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if ("message".equals(qName) || "geomessage".equals(qName)) {
+            readingGeomessage = true;
             newMessage();
             version = attributes.getValue("v");
         } else if (getMessageIdPropertyName().equals(qName)) {
@@ -97,7 +99,7 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
         String charString = new String(ch, start, length);
         if (readingId) {
             setMessageId(charString);
-        } else {
+        } else if (readingGeomessage) {
             setMessageProperty(elementName, charString);
         }
     }
@@ -106,6 +108,8 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (getMessageIdPropertyName().equals(qName)) {
             readingId = false;
+        } else if ("message".equals(qName) || "geomessage".equals(qName)) {
+            readingGeomessage = false;
         }
         elementName = null;
     }
@@ -119,6 +123,7 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
     public synchronized void parseMessages(File xmlMessageFile) throws IOException, SAXException {
         clearMessages();
         saxParser.parse(new FileInputStream(xmlMessageFile), this);
+        System.out.println("blah");
     }
 
     /**
