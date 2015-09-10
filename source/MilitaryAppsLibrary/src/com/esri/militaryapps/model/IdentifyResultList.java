@@ -23,7 +23,7 @@ import java.util.HashMap;
  * came. Implementers should provide a way to access the layer for their specific platform, as well
  * as a way to add a result.
  */
-public abstract class IdentifyResultsList {
+public abstract class IdentifyResultList {
 
     private final ArrayList<IdentifiedItem> results = new ArrayList<IdentifiedItem>();
 
