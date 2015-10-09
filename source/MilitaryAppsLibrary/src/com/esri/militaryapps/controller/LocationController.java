@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,18 @@ import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.LocationProvider.LocationProviderState;
 import com.esri.militaryapps.model.LocationSimulator;
 import com.esri.militaryapps.model.NavigationMode;
+
+import org.xml.sax.SAXException;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  * A controller for location services and simulators. Locations can come from GPS
@@ -54,16 +60,16 @@ public abstract class LocationController {
     private LocationMode mode = LocationMode.LOCATION_SERVICE;
     private LocationProvider provider = null;
     private File gpxFile = null;
+    private String builtInGpxPath = "/com/esri/militaryapps/resources/MontereyMounted.gpx";
     private NavigationMode navigationMode = NavigationMode.NORTH_UP;
     private final Object navigationModeLock = new Object();
     
     /**
      * Creates a new LocationController.
      * @param mode the mode (e.g. real GPS or simulated).
-     * @param startImmediately true if the controller should start its provider immediately.
      */
-    public LocationController(LocationMode mode, boolean startImmediately) throws ParserConfigurationException, SAXException, IOException {
-        setMode(mode, startImmediately);
+    public LocationController(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
+        setMode(mode);
     }
     
     /**
@@ -83,7 +89,6 @@ public abstract class LocationController {
         gpxFile = null;
         provider.stop();
         provider = null;
-        setMode(mode, LocationProviderState.STARTED == state);
     }
     
     /**
@@ -113,13 +118,9 @@ public abstract class LocationController {
      * Sets the location mode. Calling this method attempts to start this controller's
      * LocationProvider.
      * @param mode the location mode to use.
-     * @param startImmediately true if the controller should start its provider immediately.
      */
-    public final void setMode(LocationMode mode, boolean startImmediately) throws ParserConfigurationException, SAXException, IOException {
+    public final void setMode(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
         this.mode = mode;
-        if (startImmediately) {
-            start();
-        }
     }
     
     /**
@@ -139,7 +140,7 @@ public abstract class LocationController {
             }
             case SIMULATOR:
             default: {
-                LocationSimulator simulator = createLocationSimulator();
+                LocationSimulator simulator = createLocationSimulator(getSimulatedGpxInputStream());
                 if (0 < speedMultiplier) {
                     simulator.setSpeedMultiplier(speedMultiplier);
                 }
@@ -187,20 +188,34 @@ public abstract class LocationController {
      * @return a new LocationProvider.
      */
     protected abstract LocationProvider createLocationServiceProvider();
-    
+
     /**
-     * Creates a new LocationSimulator. <b>You must override this method if you have
-     * subclassed LocationSimulator.</b>
-     * @return 
+     * Creates a LocationSimulator from an InputStream. This InputStream could be from any source, whether
+     * a JAR resource or a file on disk. The purpose of this method is to let you easily extend LocationSimulator
+     * if desired.
+     * @param gpxInputStream the InputStream for the LocationSimulator to use.
+     * @return a new LocationSimulator.
      */
-    protected LocationSimulator createLocationSimulator() throws ParserConfigurationException, SAXException, IOException {
-        if (null == gpxFile) {
-            return new LocationSimulator();
+    protected abstract LocationSimulator createLocationSimulator(InputStream gpxInputStream) throws IOException, SAXException, ParserConfigurationException;
+
+    /**
+     * Creates an InputStream of the GPX data to be used for the simulation. If gpxFile is not null,
+     * it will be used. Otherwise, gpxSimulationInputStream will be used if it is
+     * @return an InputStream for the GPX data for the location simulation.
+     * @throws FileNotFoundException if gpxFile is not null but does not represent a file that exists.
+     */
+    protected InputStream getSimulatedGpxInputStream() throws FileNotFoundException {
+        if (null != gpxFile) {
+            return new FileInputStream(gpxFile);
         } else {
-            return new LocationSimulator(gpxFile);
+            return getClass().getResourceAsStream(builtInGpxPath);
         }
+    };
+
+    public void setBuiltInGpxPath(String builtInGpxPath) {
+        this.builtInGpxPath = builtInGpxPath;
     }
-    
+
     /**
      * Sets a property used to instantiate the LocationProvider.
      * @param key the property's key.

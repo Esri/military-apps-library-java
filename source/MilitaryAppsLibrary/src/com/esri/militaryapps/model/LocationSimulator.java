@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013-2014 Esri
+ * Copyright 2013-2015 Esri
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 package com.esri.militaryapps.model;
 
 import com.esri.militaryapps.util.Utilities;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,11 +33,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A simulator that provides locations from a GPX file. The military-apps-library-java
@@ -145,13 +148,6 @@ public class LocationSimulator extends LocationProvider {
     private LocationProviderState state = LocationProviderState.STOPPED;
     
     /**
-     * Creates a GPSSimulator using built-in GPX file.
-     */
-    public LocationSimulator() throws ParserConfigurationException, SAXException, IOException {
-        this(getSimulatedGPXInputStream());
-    }
-    
-    /**
      * Creates a new LocationSimulator based on a GPX file.
      * @param gpxFile the GPX file.
      * @throws ParserConfigurationException
@@ -159,11 +155,7 @@ public class LocationSimulator extends LocationProvider {
      * @throws IOException
      */
     public LocationSimulator(File gpxFile) throws ParserConfigurationException, SAXException, IOException {
-        this(
-                null == gpxFile || !gpxFile.exists() || !gpxFile.isFile()
-                ? getSimulatedGPXInputStream()
-                : new FileInputStream(gpxFile)
-                );
+        this(new FileInputStream(gpxFile));
     }
 
     /**
@@ -191,10 +183,6 @@ public class LocationSimulator extends LocationProvider {
             }
         }.start();
         
-    }
-    
-    private static InputStream getSimulatedGPXInputStream() {
-        return LocationSimulator.class.getResourceAsStream("/com/esri/militaryapps/resources/MontereyMounted.gpx");
     }
 
     /**

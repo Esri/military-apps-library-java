@@ -17,13 +17,16 @@ package com.esri.militaryapps.controller;
 
 import com.esri.militaryapps.model.MapConfig;
 import com.esri.militaryapps.util.Utilities;
+
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  * A class for interacting with the map control, for convenience and abstraction.
@@ -53,9 +56,12 @@ public abstract class MapController implements LocationListener {
     
     /**
      * Instantiates a new MapController.
+     * @param builtInGpxPath the built-in GPX resource path for simulated GPX. You can pass null if
+     *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
+     *                       later.
      */
-    public MapController() {
-        locationController = createLocationController();
+    public MapController(String builtInGpxPath) {
+        locationController = createLocationController(builtInGpxPath);
         if (null != locationController) {
             locationController.addListener(this);
         }
@@ -63,9 +69,12 @@ public abstract class MapController implements LocationListener {
     
     /**
      * Instantiates a new LocationController.
+     * @param builtInGpxPath the built-in GPX resource path for simulated GPX. You can pass null if
+     *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
+     *                       later.
      * @return a new LocationController.
      */
-    protected abstract LocationController createLocationController();
+    protected abstract LocationController createLocationController(String builtInGpxPath);
     
     /**
      * Adds a MapControllerListener to this MapController.
