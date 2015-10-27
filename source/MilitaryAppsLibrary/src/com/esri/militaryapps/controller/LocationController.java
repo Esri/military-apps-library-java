@@ -15,6 +15,8 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import android.widget.Toast;
+
 import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.LocationProvider.LocationProviderState;
 import com.esri.militaryapps.model.LocationSimulator;
@@ -205,9 +207,10 @@ public abstract class LocationController {
      * @throws FileNotFoundException if gpxFile is not null but does not represent a file that exists.
      */
     protected InputStream getSimulatedGpxInputStream() throws FileNotFoundException {
-        if (null != gpxFile) {
+        if (null != gpxFile && gpxFile.exists()) {
             return new FileInputStream(gpxFile);
         } else {
+            setGpxFile(null);
             return getClass().getResourceAsStream(builtInGpxPath);
         }
     };
