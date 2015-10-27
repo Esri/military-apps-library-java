@@ -15,6 +15,7 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
+import com.esri.militaryapps.controller.LocationController.LocationMode;
 import com.esri.militaryapps.model.MapConfig;
 import com.esri.militaryapps.util.Utilities;
 
@@ -56,12 +57,13 @@ public abstract class MapController implements LocationListener {
     
     /**
      * Instantiates a new MapController.
+     * @param locationMode the location mode.
      * @param builtInGpxPath the built-in GPX resource path for simulated GPX. You can pass null if
      *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
      *                       later.
      */
-    public MapController(String builtInGpxPath) {
-        locationController = createLocationController(builtInGpxPath);
+    public MapController(LocationMode locationMode, String builtInGpxPath) {
+        locationController = createLocationController(builtInGpxPath, locationMode);
         if (null != locationController) {
             locationController.addListener(this);
         }
@@ -72,9 +74,10 @@ public abstract class MapController implements LocationListener {
      * @param builtInGpxPath the built-in GPX resource path for simulated GPX. You can pass null if
      *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
      *                       later.
+     * @param locationMode the location mode.
      * @return a new LocationController.
      */
-    protected abstract LocationController createLocationController(String builtInGpxPath);
+    protected abstract LocationController createLocationController(String builtInGpxPath, LocationMode locationMode);
     
     /**
      * Adds a MapControllerListener to this MapController.
