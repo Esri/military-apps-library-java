@@ -119,7 +119,7 @@ public abstract class LocationController {
      * LocationProvider.
      * @param mode the location mode to use.
      */
-    public final void setMode(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
+    public void setMode(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
         this.mode = mode;
     }
     
