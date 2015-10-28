@@ -103,10 +103,24 @@ public abstract class LocationController {
     }
     
     /**
-     * Sets the GPX file to use. Set this to null in order to use the built-in GPX file.
+     * Sets the GPX file to use but does not store it as a preference. Set this to null in order to
+     * use the built-in GPX file. To set the GPX file and store as a preference, call setMode(mode, true).
+     * (Note that this base implementation does not actually store preferences; see setGpxFile(LocationMode, boolean)
+     * for details.)
      * @param gpxFile the GPX file to use.
      */
     public void setGpxFile(File gpxFile) {
+        setGpxFile(gpxFile, false);
+    }
+
+    /**
+     * Sets the GPX file to use. Set this to null in order to use the built-in GPX file. This implementation
+     * of this method does not store the user's preference. If you want to store the preference, override
+     * this method.
+     * @param gpxFile the GPX file to use.
+     * @param storePreference true if the GPX file should be stored as a preference.
+     */
+    public void setGpxFile(File gpxFile, boolean storePreference) {
         this.gpxFile = gpxFile;
     }
     
@@ -136,6 +150,9 @@ public abstract class LocationController {
      */
     public void setMode(LocationMode mode, boolean storePreference) throws IOException, SAXException, ParserConfigurationException {
         this.mode = mode;
+        if (LocationMode.LOCATION_SERVICE.equals(mode)) {
+            setGpxFile(null, storePreference);
+        }
     }
     
     /**
@@ -223,7 +240,7 @@ public abstract class LocationController {
         if (null != gpxFile && gpxFile.exists()) {
             return new FileInputStream(gpxFile);
         } else {
-            setGpxFile(null);
+            setGpxFile(null, true);
             return getClass().getResourceAsStream(builtInGpxPath);
         }
     };
