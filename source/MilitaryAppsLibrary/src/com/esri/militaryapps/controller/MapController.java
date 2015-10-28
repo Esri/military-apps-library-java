@@ -62,8 +62,8 @@ public abstract class MapController implements LocationListener {
      *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
      *                       later.
      */
-    public MapController(LocationMode locationMode, String builtInGpxPath) {
-        locationController = createLocationController(builtInGpxPath, locationMode);
+    public MapController(LocationMode locationMode, String builtInGpxPath, String gpxDeploymentPath) {
+        locationController = createLocationController(builtInGpxPath, locationMode, gpxDeploymentPath);
         if (null != locationController) {
             locationController.addListener(this);
         }
@@ -75,9 +75,13 @@ public abstract class MapController implements LocationListener {
      *                       you will never use the built-in GPX, or you can call setBuiltInGpxPath
      *                       later.
      * @param locationMode the location mode.
+     * @param gpxDeploymentPath the path to a GPX to be used if locationMode is null. If locationMode
+     *                          is null and gpxDeploymentPath is null or doesn't exist, hardware mode
+     *                          will be used.
      * @return a new LocationController.
      */
-    protected abstract LocationController createLocationController(String builtInGpxPath, LocationMode locationMode);
+    protected abstract LocationController createLocationController(String builtInGpxPath, LocationMode locationMode,
+                                                                   String gpxDeploymentPath);
     
     /**
      * Adds a MapControllerListener to this MapController.
