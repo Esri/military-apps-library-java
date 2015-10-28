@@ -119,12 +119,13 @@ public abstract class LocationController {
     }
 
     /**
-     * Sets the location mode. Calling this method attempts to start this controller's
-     * LocationProvider.
+     * Sets the location mode but does not store it as a preference. To set the location mode and store
+     * as a preference, call setMode(mode, true). (Note that this base implementation does not actually
+     * store preferences; see setMode(LocationMode, boolean) for details.)
      * @param mode the location mode to use.
      */
     public void setMode(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
-        this.mode = mode;
+        setMode(mode, false);
     }
 
     /**
@@ -134,10 +135,7 @@ public abstract class LocationController {
      * @param storePreference true if the mode should be stored as a preference.
      */
     public void setMode(LocationMode mode, boolean storePreference) throws IOException, SAXException, ParserConfigurationException {
-        setMode(mode);
-        if (storePreference) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Preference will not be stored! Override this method to store the preference.");
-        }
+        this.mode = mode;
     }
     
     /**
