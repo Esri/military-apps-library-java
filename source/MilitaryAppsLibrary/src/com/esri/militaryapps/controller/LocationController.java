@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -123,6 +125,19 @@ public abstract class LocationController {
      */
     public void setMode(LocationMode mode) throws ParserConfigurationException, SAXException, IOException {
         this.mode = mode;
+    }
+
+    /**
+     * Sets the location mode. This implementation of this method does not store the user's preference.
+     * If you want to store the preference, override this method.
+     * @param mode the location mode to use.
+     * @param storePreference true if the mode should be stored as a preference.
+     */
+    public void setMode(LocationMode mode, boolean storePreference) throws IOException, SAXException, ParserConfigurationException {
+        setMode(mode);
+        if (storePreference) {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Preference will not be stored! Override this method to store the preference.");
+        }
     }
     
     /**
