@@ -173,6 +173,8 @@ public class MapConfigReader {
                     } else {
                         layerInfos.get(0).setLayerType(LayerType.FEATURE_SERVICE);
                     }
+                } else if ("GeoPackage".equals(currentLayerType)) {
+                    layerInfos.get(0).setLayerType(LayerType.GEOPACKAGE);
                 }
                 for (int i = layerInfos.size() - 1; i >= 0; i--) {
                     LayerInfo layerInfo = layerInfos.get(i);
