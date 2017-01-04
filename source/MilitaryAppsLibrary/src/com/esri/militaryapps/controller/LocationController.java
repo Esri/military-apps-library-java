@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.esri.militaryapps.controller;
 
-import android.widget.Toast;
-
 import com.esri.militaryapps.model.LocationProvider;
 import com.esri.militaryapps.model.LocationProvider.LocationProviderState;
 import com.esri.militaryapps.model.LocationSimulator;
@@ -31,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
