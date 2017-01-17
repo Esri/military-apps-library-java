@@ -124,7 +124,6 @@ public abstract class Mil2525CMessageParser extends DefaultHandler {
     public synchronized void parseMessages(File xmlMessageFile) throws IOException, SAXException {
         clearMessages();
         saxParser.parse(new FileInputStream(xmlMessageFile), this);
-        System.out.println("blah");
     }
 
     /**
