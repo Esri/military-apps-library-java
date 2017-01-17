@@ -85,6 +85,8 @@ public class MapConfigReader {
         private String currentLayerName = null;
         private boolean currentLayerBasemap = false;
         private String currentLayerThumbnail = null;
+        private boolean currentLayerShowVectors = false;
+        private boolean currentLayerShowRasters = false;
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -99,6 +101,8 @@ public class MapConfigReader {
                 currentLayerName = attributes.getValue("name");
                 currentLayerBasemap = "true".equalsIgnoreCase(attributes.getValue("basemap"));
                 currentLayerThumbnail = attributes.getValue("thumbnail");
+                currentLayerShowVectors = Boolean.parseBoolean(attributes.getValue("showvectors"));
+                currentLayerShowRasters = Boolean.parseBoolean(attributes.getValue("showrasters"));
             } else if (("datasetpath".equalsIgnoreCase(qName) || "url".equalsIgnoreCase(qName)) && readingLayer) {
                 readingDatasetpath = true;
             } else if ("initialextent".equalsIgnoreCase(qName) && readingMapconfig) {
@@ -175,6 +179,8 @@ public class MapConfigReader {
                     }
                 } else if ("GeoPackage".equals(currentLayerType)) {
                     layerInfos.get(0).setLayerType(LayerType.GEOPACKAGE);
+                    layerInfos.get(0).setShowVectors(currentLayerShowVectors);
+                    layerInfos.get(0).setShowRasters(currentLayerShowRasters);
                 }
                 for (int i = layerInfos.size() - 1; i >= 0; i--) {
                     LayerInfo layerInfo = layerInfos.get(i);

@@ -27,6 +27,36 @@ public class LayerInfo implements Serializable {
     private String datasetPath;
     private String name;
     private boolean visible;
+    private boolean showVectors = false;
+    private boolean showRasters = false;
+
+    /**
+     * True if vector sub-layers should be shown. Only relevant to certain layer types, such as GeoPackages.
+     */
+    public boolean isShowVectors() {
+        return showVectors;
+    }
+
+    /**
+     * True if vector sub-layers should be shown. Only relevant to certain layer types, such as GeoPackages.
+     */
+    public void setShowVectors(boolean showVectors) {
+        this.showVectors = showVectors;
+    }
+
+    /**
+     * True if raster sub-layers should be shown. Only relevant to certain layer types, such as GeoPackages.
+     */
+    public boolean isShowRasters() {
+        return showRasters;
+    }
+
+    /**
+     * True if raster sub-layers should be shown. Only relevant to certain layer types, such as GeoPackages.
+     */
+    public void setShowRasters(boolean showRasters) {
+        this.showRasters = showRasters;
+    }
 
     /**
      * @return the layerType
