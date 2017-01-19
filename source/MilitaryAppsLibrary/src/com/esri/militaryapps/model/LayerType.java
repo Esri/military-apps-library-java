@@ -29,5 +29,6 @@ public enum LayerType implements Serializable {
     MIL2525C_MESSAGE,
     IMAGE_SERVICE,
     FEATURE_SERVICE,
+    SHAPEFILE,
     GEOPACKAGE
 }

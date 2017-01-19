@@ -181,6 +181,8 @@ public class MapConfigReader {
                     layerInfos.get(0).setLayerType(LayerType.GEOPACKAGE);
                     layerInfos.get(0).setShowVectors(currentLayerShowVectors);
                     layerInfos.get(0).setShowRasters(currentLayerShowRasters);
+                } else if ("Shapefile".equals(currentLayerType)) {
+                    layerInfos.get(0).setLayerType(LayerType.SHAPEFILE);
                 }
                 for (int i = layerInfos.size() - 1; i >= 0; i--) {
                     LayerInfo layerInfo = layerInfos.get(i);
