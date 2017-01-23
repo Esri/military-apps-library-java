@@ -29,6 +29,7 @@ public class LayerInfo implements Serializable {
     private boolean visible;
     private boolean showVectors = false;
     private boolean showRasters = false;
+    private boolean editable = false;
 
     /**
      * True if vector sub-layers should be shown. Only relevant to certain layer types, such as GeoPackages.
@@ -112,6 +113,22 @@ public class LayerInfo implements Serializable {
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    /**
+     * Returns true if and only if the layer can be edited. The default is false.
+     * @return true if and only if the layer can be edited.
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
+     * Sets whether the layer can be edited. The default is false.
+     * @param editable true if and only if the layer can be edited.
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
     
 }
