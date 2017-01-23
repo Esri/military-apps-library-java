@@ -338,7 +338,20 @@ public abstract class MapController implements LocationListener {
      *         are provided.
      */
     public abstract double[] toMapPoint(int screenX, int screenY);
-    
+
+    /**
+     * Converts a map point to a screen point.
+     * @param mapX the X coordinate of the map point, in the MapController's map units.
+     * @param mapY the Y coordinate of the screen point, in the MapController's map units.
+     * @return an array in which element 0 is the X coordinate of the screen point
+     *         and element 1 is the Y coordinate of the screen point, in pixels.
+     *         The method returns null if the screen coordinates cannot be converted
+     *         to map coordinates; this can happen when the MapController or its
+     *         underlying map is not initialized or when bogus map coordinates
+     *         are provided.
+     */
+    public abstract double[] toScreenPoint(double mapX, double mapY);
+
     /**
      * Sets the map's grid to be visible or invisible. You must also set the grid
      * type, probably in your implementation of MapController.
