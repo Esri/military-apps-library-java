@@ -1,6 +1,9 @@
 military-apps-library-java
 ==========================
 
+## *This repository is no longer maintained* 
+
+
 A common, SDK-agnostic Java library for building military-oriented geospatial apps, especially for ArcGIS for the Military.
 
 ![Image of Library used in Squad Leader](Screenshot.png)
